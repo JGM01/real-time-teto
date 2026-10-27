@@ -12,9 +12,8 @@ testing = []
 cmudict = ["dep:sha2"]
 g2p-gru = ["dep:sha2", "dep:zip", "dep:npyz", "dep:ndarray"]
 voicebank-wav = ["dep:sha2", "dep:zip", "dep:encoding_rs", "dep:hound"]
-psola = []
-device-cpal = []
 llm-adapter = ["dep:teto-llm-protocol"]
+qualification = ["cmudict", "g2p-gru", "voicebank-wav", "dep:serde_json"]
 
 [dependencies]
 thiserror = "2"
@@ -27,9 +26,15 @@ hound = { version = "3.5", optional = true }
 npyz = { version = "0.8", optional = true }
 ndarray = { version = "0.17", optional = true }
 teto-llm-protocol = { path = "../teto-llm-protocol", optional = true }
+serde_json = { version = "1", optional = true }
 
 [dev-dependencies]
 proptest = "1"
 tempfile = "3"
 serde_json = "1"
 teto-llm-protocol = { path = "../teto-llm-protocol" }
+
+[[bin]]
+name = "speech_report"
+path = "src/bin/speech_report.rs"
+required-features = ["qualification"]

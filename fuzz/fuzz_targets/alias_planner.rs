@@ -2,12 +2,15 @@
 use libfuzzer_sys::fuzz_target;
 use teto_speech::{
     diagnostics::SpeechDiagnostics,
+    input::*,
+    plan::{PhoneTiming, ProsodyPlan},
+    sequence::PhonemeSequence,
+    span::IndexSpan,
     text::{
         lexicon::Lexicon,
         phonemize::{CmudictPhonemizer, OovBackend},
     },
-    types::*,
-    voicebank::select::TetoCvvcPlanner,
+    voicebank::cvvc::TetoCvvcPlanner,
 };
 fuzz_target!(|bytes: &[u8]| {
     if bytes.len() > 4096 {
@@ -45,7 +48,6 @@ fuzz_target!(|bytes: &[u8]| {
             sequence.phones().to_vec(),
             words,
             sequence.syllables().to_vec(),
-            sequence.breaks().to_vec(),
             [0; 32],
         );
     }
@@ -54,7 +56,6 @@ fuzz_target!(|bytes: &[u8]| {
         .iter()
         .enumerate()
         .map(|(i, _)| PhoneTiming {
-            target_phone: i as u32,
             start_us: i as u64 * 100000,
             end_us: (i as u64 + 1) * 100000,
         })

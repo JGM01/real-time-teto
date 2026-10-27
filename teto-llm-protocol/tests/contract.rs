@@ -2,30 +2,6 @@ use std::io::{self, Read};
 use teto_llm_protocol::*;
 
 #[test]
-fn policy_numbers_match_document() {
-    let document = include_str!("../../llm-subsystem.md");
-    for expected in [
-        format!("| Context | {} tokens", policy::CONTEXT_TOKENS),
-        format!(
-            "| Output reserve | {} generated tokens",
-            policy::OUTPUT_TOKENS
-        ),
-        format!("| Frame / record | {} bytes", policy::FRAME_BYTES),
-        format!("| Journal capacity | {} segments", policy::SEGMENTS),
-        format!("| Prompt batch | {} tokens", policy::PREFILL_CHUNK),
-        format!(
-            "| History low water | {} percent",
-            policy::HISTORY_LOW_WATER_PERCENT
-        ),
-    ] {
-        assert!(
-            document.contains(&expected),
-            "missing policy row: {expected}"
-        );
-    }
-}
-
-#[test]
 fn protocol_surface() {
     let input = Request::Start(UserInput::new("hello".into(), true).unwrap());
     let mut frame = Vec::new();

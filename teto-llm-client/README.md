@@ -15,4 +15,4 @@ completes.
 for the CLI. `JournalAdmin` handles initialize, inspect and prepared delete.
 
 The crate has no audio and no global tracing subscriber. See
-[the contract](../llm-subsystem.md).
+[the policy registry](../teto-llm-protocol/src/policy.rs).

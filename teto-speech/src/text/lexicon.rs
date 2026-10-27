@@ -1,8 +1,9 @@
 //! Pinned CMU pronunciations in contiguous spelling and phone pools.
 use crate::{
     error::{Result, SpeechError},
-    limits::*,
-    types::{EnglishPhone, IndexSpan},
+    phone::EnglishPhone,
+    span::IndexSpan,
+    text::limits::*,
 };
 use sha2::{Digest, Sha256};
 const DICTIONARY: &[u8] = include_bytes!("../../assets/cmudict/cmudict.dict");
@@ -25,14 +26,18 @@ pub struct Lexicon {
 }
 impl Lexicon {
     pub fn embedded() -> Result<Self> {
-        if <[u8; 32]>::from(Sha256::digest(DICTIONARY)) != SHA256 {
+        let revision: [u8; 32] = Sha256::digest(DICTIONARY).into();
+        if revision != SHA256 {
             return Err(SpeechError::ModelMismatch);
         }
-        Self::parse(DICTIONARY)
+        Self::parse_with_revision(DICTIONARY, revision)
     }
     pub fn parse(bytes: &[u8]) -> Result<Self> {
+        Self::parse_with_revision(bytes, Sha256::digest(bytes).into())
+    }
+    fn parse_with_revision(bytes: &[u8], revision: [u8; 32]) -> Result<Self> {
         if bytes.len() > MAX_DICTIONARY_BYTES {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let text =
             std::str::from_utf8(bytes).map_err(|_| SpeechError::LexiconInvalid { line: 0 })?;
@@ -40,11 +45,11 @@ impl Lexicon {
             spelling: String::new(),
             rows: Vec::new(),
             phones: Vec::new(),
-            revision: Sha256::digest(bytes).into(),
+            revision,
         };
         for (i, line) in text.lines().enumerate() {
-            if line.len() > MAX_LINE_BYTES {
-                return Err(SpeechError::Bounds);
+            if line.len() > MAX_DICTIONARY_LINE_BYTES {
+                return Err(SpeechError::LimitExceeded);
             }
             let line = line.split('#').next().unwrap_or("").trim();
             if line.is_empty() || line.starts_with(";;;") {
@@ -62,7 +67,7 @@ impl Lexicon {
     }
     fn add_row(&mut self, line: &str, number: u32) -> Result<()> {
         if self.rows.len() >= MAX_LEXICON_ROWS {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let mut parts = line.split_whitespace();
         let raw = parts
@@ -78,7 +83,7 @@ impl Lexicon {
             if self.phones.len() - start >= MAX_WORD_PHONES
                 || self.phones.len() >= MAX_LEXICON_PHONES
             {
-                return Err(SpeechError::Bounds);
+                return Err(SpeechError::LimitExceeded);
             }
             self.phones.push(
                 EnglishPhone::parse(token)
@@ -123,7 +128,7 @@ impl Lexicon {
                 continue;
             }
             if preceding.len() >= MAX_VARIANTS {
-                return Err(SpeechError::Bounds);
+                return Err(SpeechError::LimitExceeded);
             }
             keep.push(row);
         }

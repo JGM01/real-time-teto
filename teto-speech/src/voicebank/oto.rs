@@ -3,7 +3,7 @@ use crate::error::{Result, SpeechError};
 #[cfg(feature = "voicebank-wav")]
 mod import;
 #[cfg(feature = "voicebank-wav")]
-pub use import::{BankLocation, ImportReport, ImportedBank, TetoOtoImport};
+pub use import::{BankLocation, ImportReport, ImportedBank, import_voicebank};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OtoRow<'a> {
@@ -30,7 +30,7 @@ pub fn decimal_us(value: &str) -> Result<i64> {
     {
         return Err(SpeechError::VoicebankInvalid);
     }
-    let whole: i64 = whole.parse().map_err(|_| SpeechError::Bounds)?;
+    let whole: i64 = whole.parse().map_err(|_| SpeechError::LimitExceeded)?;
     let mut fractional = 0i64;
     for (i, b) in fraction.bytes().enumerate() {
         fractional += i64::from(b - b'0') * [100, 10, 1][i];
@@ -38,12 +38,12 @@ pub fn decimal_us(value: &str) -> Result<i64> {
     let result = whole
         .checked_mul(1000)
         .and_then(|v| v.checked_add(fractional))
-        .ok_or(SpeechError::Bounds)?;
+        .ok_or(SpeechError::LimitExceeded)?;
     Ok(if negative { -result } else { result })
 }
 pub fn parse_row(line: &str) -> Result<OtoRow<'_>> {
-    if line.len() > crate::limits::MAX_LINE_BYTES {
-        return Err(SpeechError::Bounds);
+    if line.len() > crate::voicebank::limits::MAX_OTO_LINE_BYTES {
+        return Err(SpeechError::LimitExceeded);
     }
     let (source, rest) = line.split_once('=').ok_or(SpeechError::VoicebankInvalid)?;
     let mut fields = rest.split(',');
@@ -51,9 +51,9 @@ pub fn parse_row(line: &str) -> Result<OtoRow<'_>> {
     if source.starts_with(['/', '\\'])
         || source.contains([':', '\0'])
         || source.split(['/', '\\']).any(|p| p == "..")
-        || source.len() > crate::limits::MAX_PATH_BYTES
+        || source.len() > crate::voicebank::limits::MAX_PATH_BYTES
         || source.is_empty()
-        || alias.len() > crate::limits::MAX_ALIAS_BYTES
+        || alias.len() > crate::voicebank::limits::MAX_ALIAS_BYTES
         || alias.chars().any(char::is_control)
     {
         return Err(SpeechError::VoicebankInvalid);
@@ -70,8 +70,8 @@ pub fn parse_row(line: &str) -> Result<OtoRow<'_>> {
     } else {
         alias
     };
-    if alias.len() > crate::limits::MAX_ALIAS_BYTES {
-        return Err(SpeechError::Bounds);
+    if alias.len() > crate::voicebank::limits::MAX_ALIAS_BYTES {
+        return Err(SpeechError::LimitExceeded);
     }
     Ok(OtoRow {
         source,
@@ -89,8 +89,8 @@ pub fn visit_rows(
     bytes: &[u8],
     mut consume: impl FnMut(u32, OtoRow<'_>) -> Result<()>,
 ) -> Result<()> {
-    if bytes.len() > crate::limits::MAX_OTO_BYTES {
-        return Err(SpeechError::Bounds);
+    if bytes.len() > crate::voicebank::limits::MAX_OTO_BYTES {
+        return Err(SpeechError::LimitExceeded);
     }
     let text = match std::str::from_utf8(bytes) {
         Ok(text) => std::borrow::Cow::Borrowed(text.trim_start_matches('\u{feff}')),
@@ -108,8 +108,8 @@ pub fn visit_rows(
             continue;
         }
         rows += 1;
-        if rows > crate::limits::MAX_OTO_ROWS {
-            return Err(SpeechError::Bounds);
+        if rows > crate::voicebank::limits::MAX_OTO_ROWS {
+            return Err(SpeechError::LimitExceeded);
         }
         consume(index as u32 + 1, parse_row(line)?)?;
     }

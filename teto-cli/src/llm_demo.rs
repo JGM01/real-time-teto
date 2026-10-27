@@ -323,7 +323,7 @@ fn qualify_run(shutdown: &Arc<AtomicBool>, lifecycle: bool) -> Result<()> {
         let prompt = measurement::PROMPTS[turns as usize % measurement::PROMPTS.len()];
         let interrupt = options
             .interrupt_every
-            .is_some_and(|period| (turns + 1) % period == 0);
+            .is_some_and(|period| (turns + 1).is_multiple_of(period));
         let rendered = render_until(
             &mut client,
             UserInput::new(prompt.into(), false)?,
@@ -403,14 +403,14 @@ fn lifecycle_transition(
     turns: u64,
     shutdown: &Arc<AtomicBool>,
 ) -> Result<Client> {
-    if turns % policy::SOAK_REOPEN_EVERY == 0 {
+    if turns.is_multiple_of(policy::SOAK_REOPEN_EVERY) {
         client.close().map_err(ClientError::into_protocol)?;
         client = open_client(shutdown)?;
         eprintln!(
             "{}",
             serde_json::json!({"qualification_action": "clean_process_reopen", "after_turn": turns})
         );
-    } else if turns % policy::SOAK_RESET_EVERY == 0 {
+    } else if turns.is_multiple_of(policy::SOAK_RESET_EVERY) {
         client.reset().map_err(ClientError::into_protocol)?;
         eprintln!(
             "{}",

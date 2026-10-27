@@ -1,18 +1,26 @@
 //! English speech contracts for the Teto pipeline.
 //!
-//! The default build contains checked contracts and planning logic. Asset and
-//! device backends are optional features.
+//! The default build contains checked contracts and planning logic. Asset
+//! backends are optional features.
 #![forbid(unsafe_code)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::todo,
+        clippy::unimplemented
+    )
+)]
 
-pub mod audio;
 pub mod diagnostics;
 pub mod error;
-pub mod limits;
-mod plan;
-pub mod prosody;
-mod sequence;
+pub mod input;
+pub mod phone;
+pub mod plan;
+pub mod sequence;
+pub mod span;
 pub mod text;
-pub mod types;
 pub mod voicebank;
 
 #[cfg(feature = "llm-adapter")]

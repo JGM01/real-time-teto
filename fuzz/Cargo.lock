@@ -800,6 +800,7 @@ dependencies = [
 name = "teto-fuzz"
 version = "0.0.0"
 dependencies = [
+ "hound",
  "libfuzzer-sys",
  "teto-llm",
  "teto-llm-protocol",

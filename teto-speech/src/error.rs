@@ -2,7 +2,7 @@
 #[derive(Debug, thiserror::Error)]
 pub enum SpeechError {
     #[error("unsupported speech text at bytes {span:?}")]
-    UnsupportedText { span: crate::types::ByteSpan },
+    UnsupportedText { span: crate::span::ByteSpan },
     #[error("invalid lexical data at line {line}")]
     LexiconInvalid { line: u32 },
     #[error("invalid speech span")]
@@ -16,7 +16,7 @@ pub enum SpeechError {
     InvalidInput,
     /// A length, index or time bound failed.
     #[error("speech bound exceeded")]
-    Bounds,
+    LimitExceeded,
     /// The requested language or backend is not available.
     #[error("speech capability is not available")]
     Unavailable,
@@ -35,22 +35,13 @@ pub enum SpeechError {
     /// No unit can render a target phone span.
     #[error("missing voicebank unit")]
     MissingUnit {
-        phones: crate::types::IndexSpan,
-        pitch: crate::types::PitchId,
+        phones: crate::span::IndexSpan,
+        pitch: crate::voicebank::id::PitchId,
         probes: u32,
     },
-    /// Rendering failed.
-    #[error("render failed")]
-    Render,
     /// The device format is unsupported.
     #[error("unsupported audio format")]
     UnsupportedFormat,
-    /// The caller cancelled the work.
-    #[error("speech cancelled")]
-    Cancelled,
-    /// The output device was lost.
-    #[error("audio device lost")]
-    DeviceLost,
 }
 
 /// A speech result.

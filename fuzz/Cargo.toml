@@ -10,6 +10,7 @@ cargo-fuzz = true
 [dependencies]
 teto-speech = {path="../teto-speech",features=["cmudict","voicebank-wav","testing"]}
 libfuzzer-sys = "0.4"
+hound = "3.5"
 teto-llm = { path = "../teto-llm", features = ["testing"] }
 teto-llm-protocol = { path = "../teto-llm-protocol" }
 
@@ -34,5 +35,17 @@ doc = false
 [[bin]]
 name = "alias_planner"
 path = "fuzz_targets/alias_planner.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "lexicon"
+path = "fuzz_targets/lexicon.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "import"
+path = "fuzz_targets/import.rs"
 test = false
 doc = false

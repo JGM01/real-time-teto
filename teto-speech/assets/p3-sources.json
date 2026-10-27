@@ -57,6 +57,10 @@
       }
     ]
   },
+  "voicebank": {
+    "file": "TETO-English-150401.zip",
+    "sha256": "addb3ab9dbe3dce7cb40fe6ba0c93ab5814d02acf5b091d0a762de370b813d6e"
+  },
   "corpora": {
     "g2p-words.txt": "b2b86db6e1984819e080d6143a2f2eb4ee5a9828fd8b65bad54ac3a5c4ae005c",
     "coverage-1050.txt": "857e5f426695c1fd3e2a5b6b426277edfb548a69b495bb6c6cf8df7e1d03e53c",

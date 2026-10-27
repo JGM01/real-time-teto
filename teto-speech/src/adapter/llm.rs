@@ -3,7 +3,7 @@ use teto_llm_protocol::Clause;
 
 use crate::{
     error::Result,
-    types::{SpeechInput, SpeechKey},
+    input::{SpeechInput, SpeechKey},
 };
 
 /// Build a speech input from one clause.

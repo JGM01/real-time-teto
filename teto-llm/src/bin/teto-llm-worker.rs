@@ -139,10 +139,10 @@ fn read_requests(
         };
         match incoming.request {
             Request::Cancel(id) => {
-                if let Some(active) = &*control.lock().map_err(|_| failure(ErrorKind::Worker))? {
-                    if active.id() == id {
-                        active.cancel();
-                    }
+                if let Some(active) = &*control.lock().map_err(|_| failure(ErrorKind::Worker))?
+                    && active.id() == id
+                {
+                    active.cancel();
                 }
             }
             Request::Played(receipt) => {
@@ -170,10 +170,10 @@ fn read_requests(
 struct CancelOnExit(Arc<Mutex<Option<TurnControl>>>);
 impl Drop for CancelOnExit {
     fn drop(&mut self) {
-        if let Ok(control) = self.0.lock() {
-            if let Some(active) = &*control {
-                active.cancel();
-            }
+        if let Ok(control) = self.0.lock()
+            && let Some(active) = &*control
+        {
+            active.cancel();
         }
     }
 }

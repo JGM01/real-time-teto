@@ -83,3 +83,7 @@ A test names one observable behavior. Tests do not parse source text. Tests do
 not mock the standard library. A property test covers arithmetic and chunk
 boundaries. A replay test covers text assembly. A failure model covers the
 journal write path.
+
+Unit tests live in the module file under `#[cfg(test)] mod tests`. A unit test
+that needs private items stays in the module file. End-to-end tests live in the
+crate `tests/` directory. A `src` module does not contain a `tests.rs` file.

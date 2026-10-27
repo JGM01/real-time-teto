@@ -1,14 +1,47 @@
 //! Checked target timing and complete selected-unit coverage.
 use crate::{
+    diagnostics::BankSubstitutions,
     error::{Result, SpeechError},
-    limits::*,
-    sequence::check_span,
-    types::*,
-    voicebank::alias::BankSymbol,
+    input::SpeechKey,
+    sequence::PhonemeSequence,
+    span::{IndexSpan, check_span},
+    text::limits::MAX_PHONES,
+    voicebank::{
+        alias::BankSymbol,
+        id::{AliasIndex, OtoRowId, PitchId},
+        index::VoicebankIndex,
+    },
 };
+
+/// Maximum realization symbols.
+pub const MAX_REALIZATIONS: usize = 2 * MAX_PHONES;
+/// Maximum selected units.
+pub const MAX_UNITS: usize = 2048;
+/// Maximum candidate probes.
+pub const MAX_CANDIDATE_PROBES: usize = 4096;
+/// Maximum pitch points.
+pub const MAX_CONTOUR_POINTS: usize = 1024;
+/// Maximum gain in Q16.
+pub const MAX_GAIN_Q16: u32 = 4 * 65_536;
+
+/// One phone timing on the target timeline.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PhoneTiming {
+    pub start_us: u64,
+    pub end_us: u64,
+}
+
+/// One F0 and gain point.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProsodyPoint {
+    pub at_us: u64,
+    pub f0_millihz: Option<u32>,
+    pub gain_q16: u32,
+}
 #[derive(Debug)]
 pub struct ProsodyPlan {
     key: SpeechKey,
+    sequence_revision: u64,
     duration_us: u64,
     timings: Vec<PhoneTiming>,
     contour: Vec<ProsodyPoint>,
@@ -20,24 +53,24 @@ impl ProsodyPlan {
         timings: Vec<PhoneTiming>,
         contour: Vec<ProsodyPoint>,
     ) -> Result<Self> {
-        if timings.len() != sequence.phones.len() || contour.len() > MAX_REALIZATIONS {
-            return Err(SpeechError::Bounds);
+        if timings.len() != sequence.phones.len() || contour.len() > MAX_CONTOUR_POINTS {
+            return Err(SpeechError::LimitExceeded);
         }
         let mut end = 0;
-        for (i, t) in timings.iter().enumerate() {
-            if t.target_phone as usize != i
-                || t.start_us < end
-                || t.end_us <= t.start_us
-                || t.end_us > duration_us
+        for timing in &timings {
+            if timing.start_us < end
+                || timing.end_us <= timing.start_us
+                || timing.end_us > duration_us
             {
                 return Err(SpeechError::InvalidSpan);
             }
-            end = t.end_us;
+            end = timing.end_us;
         }
         let mut previous = None;
         for p in &contour {
             if p.at_us > duration_us
                 || p.f0_millihz == Some(0)
+                || p.gain_q16 > MAX_GAIN_Q16
                 || previous.is_some_and(|t| t >= p.at_us)
             {
                 return Err(SpeechError::InvalidSpan);
@@ -46,6 +79,7 @@ impl ProsodyPlan {
         }
         Ok(Self {
             key: sequence.input.key(),
+            sequence_revision: sequence.revision(),
             duration_us,
             timings,
             contour,
@@ -53,6 +87,9 @@ impl ProsodyPlan {
     }
     pub fn key(&self) -> SpeechKey {
         self.key
+    }
+    pub fn sequence_revision(&self) -> u64 {
+        self.sequence_revision
     }
     pub fn duration_us(&self) -> u64 {
         self.duration_us
@@ -65,40 +102,55 @@ impl ProsodyPlan {
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RealizationPart {
-    Whole,
-    First,
-    Second,
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Realization {
+pub struct PhoneSymbol {
     pub target_phone: u32,
     pub symbol: BankSymbol,
-    pub part: RealizationPart,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PlannedUnit {
-    pub unit: UnitId,
-    pub alias: AliasId,
+    pub oto: OtoRowId,
     pub target_phones: IndexSpan,
     pub realizations: IndexSpan,
-    pub start_us: u64,
-    pub end_us: u64,
-    pub pitch: PitchId,
-    pub substitutions: crate::diagnostics::Substitutions,
+    pub substitutions: BankSubstitutions,
+}
+
+impl PlannedUnit {
+    /// Return the selected alias.
+    pub fn alias(&self, bank: &VoicebankIndex) -> Option<AliasIndex> {
+        bank.oto.get(self.oto.0 as usize).map(|row| row.alias)
+    }
+
+    /// Return the selected pitch group.
+    pub fn pitch(&self, bank: &VoicebankIndex) -> Option<PitchId> {
+        bank.oto.get(self.oto.0 as usize).map(|row| row.pitch)
+    }
+
+    /// Return the first target phone start time.
+    pub fn start_us(&self, prosody: &ProsodyPlan) -> u64 {
+        prosody.timings[self.target_phones.start as usize].start_us
+    }
+
+    /// Return the last target phone end time.
+    pub fn end_us(&self, prosody: &ProsodyPlan) -> u64 {
+        prosody.timings[self.target_phones.end as usize - 1].end_us
+    }
 }
 #[derive(Debug)]
 pub struct UnitPlan {
     pub(crate) key: SpeechKey,
+    pub(crate) sequence_revision: u64,
     pub(crate) bank_revision: [u8; 32],
     pub(crate) units: Vec<PlannedUnit>,
     pub(crate) groups: Vec<IndexSpan>,
-    pub(crate) realizations: Vec<Realization>,
+    pub(crate) realizations: Vec<PhoneSymbol>,
     pub(crate) prosody: ProsodyPlan,
 }
 impl UnitPlan {
     pub fn key(&self) -> SpeechKey {
         self.key
+    }
+    pub fn sequence_revision(&self) -> u64 {
+        self.sequence_revision
     }
     pub fn bank_revision(&self) -> [u8; 32] {
         self.bank_revision
@@ -109,15 +161,16 @@ impl UnitPlan {
     pub fn groups(&self) -> &[IndexSpan] {
         &self.groups
     }
-    pub fn realizations(&self) -> &[Realization] {
+    pub fn realizations(&self) -> &[PhoneSymbol] {
         &self.realizations
     }
     pub fn prosody(&self) -> &ProsodyPlan {
         &self.prosody
     }
-    pub fn validate(&self, sequence: &PhonemeSequence, bank: &VoicebankManifest) -> Result<()> {
+    pub fn validate(&self, sequence: &PhonemeSequence, bank: &VoicebankIndex) -> Result<()> {
         if self.key != sequence.input.key()
-            || self.prosody.key != self.key
+            || self.sequence_revision != sequence.revision()
+            || self.prosody.sequence_revision != self.sequence_revision
             || self.bank_revision != bank.revision
             || self.prosody.timings.len() != sequence.phones.len()
         {
@@ -127,7 +180,7 @@ impl UnitPlan {
             || self.units.len() > MAX_UNITS
             || self.realizations.len() > MAX_REALIZATIONS
         {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         self.validate_realizations(sequence)?;
         let mut covered = [0u16; MAX_REALIZATIONS];
@@ -152,7 +205,7 @@ impl UnitPlan {
             self.validate_unit(unit, sequence, bank)?;
             if unit
                 .substitutions
-                .contains(crate::diagnostics::Substitutions::COVERAGE_REPAIR)
+                .contains(BankSubstitutions::COVERAGE_REPAIR)
                 && !covered[unit.realizations.range()].contains(&1)
             {
                 return Err(SpeechError::InvalidSpan);
@@ -167,19 +220,19 @@ impl UnitPlan {
         &self,
         unit: &PlannedUnit,
         sequence: &PhonemeSequence,
-        bank: &VoicebankManifest,
+        bank: &VoicebankIndex,
     ) -> Result<()> {
         check_span(unit.realizations, self.realizations.len())?;
         check_span(unit.target_phones, sequence.phones.len())?;
         let oto = bank
             .oto
-            .get(unit.unit.0 as usize)
+            .get(unit.oto.0 as usize)
             .ok_or(SpeechError::VoicebankInvalid)?;
-        if unit.alias != oto.alias
-            || unit.pitch != oto.pitch
-            || unit.start_us >= unit.end_us
-            || unit.end_us > self.prosody.duration_us
-            || unit.realizations.is_empty()
+        if unit.target_phones.is_empty() || unit.realizations.is_empty() {
+            return Err(SpeechError::InvalidSpan);
+        }
+        if unit.start_us(&self.prosody) >= unit.end_us(&self.prosody)
+            || unit.end_us(&self.prosody) > self.prosody.duration_us
         {
             return Err(SpeechError::VoicebankInvalid);
         }
@@ -190,46 +243,31 @@ impl UnitPlan {
             return Err(SpeechError::InvalidSpan);
         }
         let symbols = bank
-            .alias_symbols(unit.alias)
+            .alias_symbols(oto.alias)
             .ok_or(SpeechError::VoicebankInvalid)?;
         validate_symbols(atoms, symbols, unit.substitutions)?;
-        if unit.start_us != self.prosody.timings[unit.target_phones.start as usize].start_us
-            || unit.end_us != self.prosody.timings[unit.target_phones.end as usize - 1].end_us
-        {
-            return Err(SpeechError::InvalidSpan);
-        }
         Ok(())
     }
     fn validate_realizations(&self, sequence: &PhonemeSequence) -> Result<()> {
         let mut cursor = 0;
         for phone in 0..sequence.phones.len() {
-            let first = self
-                .realizations
-                .get(cursor)
-                .ok_or(SpeechError::InvalidSpan)?;
-            if first.target_phone as usize != phone {
-                return Err(SpeechError::InvalidSpan);
+            let start = cursor;
+            while cursor < self.realizations.len()
+                && self.realizations[cursor].target_phone as usize == phone
+            {
+                cursor += 1;
             }
-            match first.part {
-                RealizationPart::Whole => {
+            let symbols = &self.realizations[start..cursor];
+            match symbols {
+                [first] => {
                     if first.symbol
-                        != crate::text::xsampa::TetoXsampaMap::map(sequence.phones[phone].phone())
+                        != crate::text::xsampa::bank_symbol(sequence.phones[phone].phone())
                     {
                         return Err(SpeechError::Pronunciation);
                     }
-                    cursor += 1;
                 }
-                RealizationPart::First => {
-                    let second = self
-                        .realizations
-                        .get(cursor + 1)
-                        .ok_or(SpeechError::InvalidSpan)?;
-                    if second.part != RealizationPart::Second
-                        || second.target_phone != first.target_phone
-                    {
-                        return Err(SpeechError::InvalidSpan);
-                    }
-                    use crate::types::ArpaPhone;
+                [first, second] => {
+                    use crate::phone::ArpaPhone;
                     use BankSymbol::*;
                     let expected = match sequence.phones[phone].phone() {
                         ArpaPhone::Ch => (T, Sh),
@@ -244,9 +282,8 @@ impl UnitPlan {
                     if (first.symbol, second.symbol) != expected {
                         return Err(SpeechError::Pronunciation);
                     }
-                    cursor += 2;
                 }
-                RealizationPart::Second => return Err(SpeechError::InvalidSpan),
+                _ => return Err(SpeechError::InvalidSpan),
             }
         }
         if cursor != self.realizations.len() {
@@ -257,42 +294,38 @@ impl UnitPlan {
 }
 
 fn validate_symbols(
-    atoms: &[Realization],
+    atoms: &[PhoneSymbol],
     symbols: &[BankSymbol],
-    changes: crate::diagnostics::Substitutions,
+    changes: BankSubstitutions,
 ) -> Result<()> {
-    let mut normalized = arrayvec::ArrayVec::<BankSymbol, { MAX_ALIAS_BYTES * 2 }>::new();
-    for symbol in symbols {
-        for part in symbol.parts() {
-            normalized
-                .try_push(*part)
-                .map_err(|_| SpeechError::Bounds)?;
-        }
-    }
-    let mut cursor = 0;
+    let mut actual = symbols
+        .iter()
+        .flat_map(|symbol| symbol.parts().iter().copied())
+        .filter(|symbol| *symbol != BankSymbol::Boundary);
     for (index, atom) in atoms.iter().enumerate() {
         let symbol = realized_symbol(atom.symbol, changes, index + 1 < atoms.len());
         for part in symbol.parts() {
-            let offset = normalized[cursor..]
-                .iter()
-                .position(|s| s == part)
-                .ok_or(SpeechError::VoicebankInvalid)?;
-            cursor += offset + 1;
+            if actual.next() != Some(*part) {
+                return Err(SpeechError::VoicebankInvalid);
+            }
         }
+    }
+    if actual.next().is_some() {
+        return Err(SpeechError::VoicebankInvalid);
     }
     Ok(())
 }
 
 fn realized_symbol(
     symbol: BankSymbol,
-    changes: crate::diagnostics::Substitutions,
+    changes: BankSubstitutions,
     before_consonant: bool,
 ) -> BankSymbol {
-    use crate::diagnostics::Substitutions;
+    use BankSubstitutions;
     match symbol {
-        BankSymbol::Ah if changes.contains(Substitutions::TETO_SCHWA) => BankSymbol::Schwa,
-        BankSymbol::Ng if changes.contains(Substitutions::VELAR_NASAL) => BankSymbol::N,
-        BankSymbol::R if before_consonant && changes.contains(Substitutions::RHOTIC) => {
+        BankSymbol::Ah if changes.contains(BankSubstitutions::TETO_SCHWA) => BankSymbol::Schwa,
+        BankSymbol::Ng if changes.contains(BankSubstitutions::VELAR_NASAL) => BankSymbol::N,
+        BankSymbol::R if before_consonant && changes.contains(BankSubstitutions::RHOTIC) => {
             BankSymbol::Er
         }
         _ => symbol,
@@ -303,12 +336,14 @@ fn realized_symbol(
 mod tests {
     use super::*;
     use crate::{
-        diagnostics::{SpeechDiagnostics, Substitutions},
+        diagnostics::{BankSubstitutions, SpeechDiagnostics},
+        input::SpeechInput,
+        phone::ArpaPhone,
         text::{
             lexicon::Lexicon,
             phonemize::{CmudictPhonemizer, OovBackend},
         },
-        voicebank::select::TetoCvvcPlanner,
+        voicebank::cvvc::TetoCvvcPlanner,
     };
     fn sequence(phones: &str) -> PhonemeSequence {
         let lexicon = Lexicon::parse(format!("test {phones}").as_bytes()).unwrap();
@@ -318,13 +353,12 @@ mod tests {
         f.phonemize(&input, &mut SpeechDiagnostics::default())
             .unwrap()
     }
-    fn plan(sequence: &PhonemeSequence, bank: &VoicebankManifest) -> Result<UnitPlan> {
+    fn plan(sequence: &PhonemeSequence, bank: &VoicebankIndex) -> Result<UnitPlan> {
         let timing = sequence
             .phones
             .iter()
             .enumerate()
             .map(|(i, _)| PhoneTiming {
-                target_phone: i as u32,
                 start_us: i as u64 * 100000,
                 end_us: (i as u64 + 1) * 100000,
             })
@@ -342,12 +376,25 @@ mod tests {
         let sequence = sequence("B AH1");
         let bank = crate::testing::manifest(&["- bV", "- b@", "V -", "@ -"]).unwrap();
         let exact = plan(&sequence, &bank).unwrap();
-        assert_eq!(bank.alias_text(exact.units[0].alias), Some("- bV"));
-        assert_eq!(exact.units[0].substitutions, Substitutions::empty());
+        assert_eq!(
+            exact.units[0]
+                .alias(&bank)
+                .and_then(|id| bank.alias_text(id)),
+            Some("- bV")
+        );
+        assert_eq!(exact.units[0].substitutions, BankSubstitutions::empty());
         let bank = crate::testing::manifest(&["- b@", "@ -"]).unwrap();
         let fallback = plan(&sequence, &bank).unwrap();
-        assert_eq!(bank.alias_text(fallback.units[0].alias), Some("- b@"));
-        assert_eq!(fallback.units[0].substitutions, Substitutions::TETO_SCHWA);
+        assert_eq!(
+            fallback.units[0]
+                .alias(&bank)
+                .and_then(|id| bank.alias_text(id)),
+            Some("- b@")
+        );
+        assert_eq!(
+            fallback.units[0].substitutions,
+            BankSubstitutions::TETO_SCHWA
+        );
         assert_eq!(sequence.phones()[1].phone(), ArpaPhone::Ah);
     }
     #[test]
@@ -355,8 +402,8 @@ mod tests {
         let sequence = sequence("CH AA1");
         let bank = crate::testing::manifest(&["- t", "t S", "SA", "A -"]).unwrap();
         let selected = plan(&sequence, &bank).unwrap();
-        assert_eq!(selected.realizations[0].part, RealizationPart::First);
-        assert_eq!(selected.realizations[1].part, RealizationPart::Second);
+        assert_eq!(selected.realizations[0].symbol, BankSymbol::T);
+        assert_eq!(selected.realizations[1].symbol, BankSymbol::Sh);
         selected.validate(&sequence, &bank).unwrap();
         let combined = crate::testing::manifest(&["- tS", "SA", "A -"]).unwrap();
         plan(&sequence, &combined)
@@ -377,10 +424,15 @@ mod tests {
         let sequence = sequence("AH1 L");
         let bank = crate::testing::manifest(&["- @", "@5"]).unwrap();
         let selected = plan(&sequence, &bank).unwrap();
-        assert!(selected.units.iter().any(|u| {
-            u.substitutions
-                .contains(Substitutions::TETO_SCHWA | Substitutions::DARK_L)
-        }));
+        let unit = selected.units.last().unwrap();
+        assert_eq!(
+            unit.alias(&bank).and_then(|id| bank.alias_text(id)),
+            Some("@5")
+        );
+        assert!(
+            unit.substitutions
+                .contains(BankSubstitutions::TETO_SCHWA | BankSubstitutions::DARK_L)
+        );
     }
     #[test]
     fn planner_returns_missing_unit_without_partial_plan() {
@@ -400,7 +452,6 @@ mod tests {
             .iter()
             .enumerate()
             .map(|(i, _)| PhoneTiming {
-                target_phone: i as u32,
                 start_us: i as u64 * 100000,
                 end_us: (i as u64 + 1) * 100000,
             })
@@ -414,14 +465,37 @@ mod tests {
         assert_eq!(diagnostics.counts()[5], 1);
     }
     #[test]
+    fn symbol_validation_rejects_extra_alias_parts() {
+        let mut symbols = Vec::new();
+        assert!(BankSymbol::parse_alias("- bV", &mut symbols));
+        let atoms = [PhoneSymbol {
+            target_phone: 0,
+            symbol: BankSymbol::B,
+        }];
+        assert!(validate_symbols(&atoms, &symbols, BankSubstitutions::empty()).is_err());
+    }
+
+    #[test]
     fn plan_rejects_wrong_revision_and_unit_provenance() {
         let sequence = sequence("AA1");
         let bank = crate::testing::manifest(&["- A", "A -"]).unwrap();
         let mut selected = plan(&sequence, &bank).unwrap();
+        selected.sequence_revision = selected.sequence_revision.wrapping_add(1);
+        assert!(selected.validate(&sequence, &bank).is_err());
+        selected.sequence_revision = sequence.revision();
         selected.bank_revision[0] = 1;
         assert!(selected.validate(&sequence, &bank).is_err());
         selected.bank_revision = bank.revision;
-        selected.units[0].unit = UnitId(u32::MAX);
+        selected.units[0].oto = OtoRowId(u32::MAX);
+        assert!(selected.validate(&sequence, &bank).is_err());
+    }
+
+    #[test]
+    fn plan_rejects_wrong_unit_provenance() {
+        let sequence = sequence("AA1");
+        let bank = crate::testing::manifest(&["- A", "A -"]).unwrap();
+        let mut selected = plan(&sequence, &bank).unwrap();
+        selected.units[0].oto = OtoRowId(u32::MAX);
         assert!(selected.validate(&sequence, &bank).is_err());
     }
 }

@@ -1,14 +1,13 @@
 //! Bounded g2p_en inference from the original NumPy checkpoint.
 use crate::{
     error::{Result, SpeechError},
-    limits::*,
-    types::EnglishPhone,
+    phone::EnglishPhone,
+    text::limits::*,
 };
 use ndarray::{Array2, ArrayView1, ArrayViewMut1, linalg::general_mat_vec_mul};
 use sha2::{Digest, Sha256};
 use std::{
-    fs::File,
-    io::{Read, Seek, SeekFrom},
+    io::{Cursor, Read, Seek},
     path::Path,
 };
 const HIDDEN: usize = 256;
@@ -46,29 +45,15 @@ pub struct G2pEnGru {
 }
 impl G2pEnGru {
     pub fn load(path: &Path) -> Result<Self> {
-        let mut file = File::open(path)?;
-        if file.metadata()?.len() > MAX_MODEL_BYTES {
-            return Err(SpeechError::Bounds);
+        let bytes = std::fs::read(path)?;
+        if bytes.len() as u64 > MAX_MODEL_BYTES {
+            return Err(SpeechError::LimitExceeded);
         }
-        let mut hash = Sha256::new();
-        let mut bytes = [0; 65536];
-        let mut total = 0u64;
-        loop {
-            let n = file.read(&mut bytes)?;
-            if n == 0 {
-                break;
-            }
-            total += n as u64;
-            if total > MAX_MODEL_BYTES {
-                return Err(SpeechError::Bounds);
-            }
-            hash.update(&bytes[..n]);
-        }
-        if <[u8; 32]>::from(hash.finalize()) != CHECKPOINT {
+        if <[u8; 32]>::from(Sha256::digest(&bytes)) != CHECKPOINT {
             return Err(SpeechError::ModelMismatch);
         }
-        file.seek(SeekFrom::Start(0))?;
-        let mut zip = zip::ZipArchive::new(file).map_err(|_| SpeechError::ModelMismatch)?;
+        let mut zip =
+            zip::ZipArchive::new(Cursor::new(bytes)).map_err(|_| SpeechError::ModelMismatch)?;
         if zip.len() != 12 {
             return Err(SpeechError::ModelMismatch);
         }
@@ -92,7 +77,7 @@ impl G2pEnGru {
     pub fn predict_into(&mut self, word: &str, output: &mut Vec<EnglishPhone>) -> Result<()> {
         let tokens = self.decode_into(word)?;
         if output.len() + tokens.len() > MAX_PHONES {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         for &token in tokens {
             output.push(EnglishPhone::parse(VOCABULARY[token as usize])?);
@@ -211,7 +196,7 @@ fn step(
         hidden[i] = (1. - update) * new + update * hidden[i];
     }
 }
-fn cell(zip: &mut zip::ZipArchive<File>, prefix: &str) -> Result<Cell> {
+fn cell<R: Read + Seek>(zip: &mut zip::ZipArchive<R>, prefix: &str) -> Result<Cell> {
     Ok(Cell {
         input: matrix(zip, &format!("{prefix}_w_ih"), GATES, HIDDEN)?,
         recurrent: matrix(zip, &format!("{prefix}_w_hh"), GATES, HIDDEN)?,
@@ -219,8 +204,8 @@ fn cell(zip: &mut zip::ZipArchive<File>, prefix: &str) -> Result<Cell> {
         recurrent_bias: tensor(zip, &format!("{prefix}_b_hh"), &[GATES as u64])?,
     })
 }
-fn matrix(
-    zip: &mut zip::ZipArchive<File>,
+fn matrix<R: Read + Seek>(
+    zip: &mut zip::ZipArchive<R>,
     name: &str,
     rows: usize,
     columns: usize,
@@ -231,13 +216,17 @@ fn matrix(
     )
     .map_err(|_| SpeechError::ModelMismatch)
 }
-fn tensor(zip: &mut zip::ZipArchive<File>, name: &str, shape: &[u64]) -> Result<Vec<f32>> {
+fn tensor<R: Read + Seek>(
+    zip: &mut zip::ZipArchive<R>,
+    name: &str,
+    shape: &[u64],
+) -> Result<Vec<f32>> {
     let mut entry = zip
         .by_name(&format!("{name}.npy"))
         .map_err(|_| SpeechError::ModelMismatch)?;
     let count = shape.iter().product::<u64>();
     if entry.size() > count * 4 + 2048 {
-        return Err(SpeechError::Bounds);
+        return Err(SpeechError::LimitExceeded);
     }
     let mut prefix = [0u8; 10];
     entry.read_exact(&mut prefix)?;
@@ -268,5 +257,30 @@ mod tests {
     #[test]
     fn greedy_ties_select_first_token() {
         assert_eq!(super::greedy(&[1., 3., 3., 0.]).unwrap(), 1);
+    }
+
+    #[test]
+    fn checkpoint_pin_matches_sources() {
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/assets/p3-sources.json");
+        let value: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+        let expected = value["g2p"]["files"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|record| {
+                record["path"]
+                    .as_str()
+                    .unwrap()
+                    .ends_with("checkpoint20.npz")
+            })
+            .unwrap()["sha256"]
+            .as_str()
+            .unwrap();
+        let actual: String = super::CHECKPOINT
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect();
+        assert_eq!(actual, expected);
     }
 }

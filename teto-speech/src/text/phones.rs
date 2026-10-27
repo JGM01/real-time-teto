@@ -1,7 +1,7 @@
 //! Checked ARPAbet symbols and lexical stress.
 use crate::{
     error::{Result, SpeechError},
-    types::{ArpaPhone, EnglishPhone, Stress},
+    phone::{ArpaPhone, EnglishPhone, Stress},
 };
 
 pub const SYMBOLS: [&str; 39] = [

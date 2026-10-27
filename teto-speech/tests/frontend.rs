@@ -1,11 +1,12 @@
 #![cfg(feature = "cmudict")]
 use teto_speech::{
     diagnostics::SpeechDiagnostics,
+    input::*,
+    phone::*,
     text::{
         lexicon::Lexicon,
         phonemize::{CmudictPhonemizer, OovBackend},
     },
-    types::*,
 };
 fn frontend(data: &[u8]) -> CmudictPhonemizer {
     CmudictPhonemizer::new(
@@ -62,34 +63,40 @@ fn frontend_rejects_unsupported_text_without_expansion() {
     );
 }
 #[test]
-fn embedded_dictionary_and_cluster_syllables_validate() {
+fn embedded_dictionary_matches_curated_pronunciations() {
     let mut f = CmudictPhonemizer::embedded(OovBackend::Disabled).unwrap();
-    for text in [
-        "strengths",
-        "judgment",
-        "church",
-        "singing",
-        "through",
-        "vision",
-        "world",
-        "yellow",
-        "we'll",
-        "beautiful",
-        "syllable",
-        "rhythm",
+    for (text, phones, syllables) in [
+        (
+            "strengths",
+            &["S", "T", "R", "EH", "NG", "K", "TH", "S"][..],
+            1,
+        ),
+        ("judgment", &["JH", "AH", "JH", "M", "AH", "N", "T"][..], 2),
+        ("church", &["CH", "ER", "CH"][..], 1),
+        ("singing", &["S", "IH", "NG", "IH", "NG"][..], 2),
+        ("through", &["TH", "R", "UW"][..], 1),
+        ("vision", &["V", "IH", "ZH", "AH", "N"][..], 2),
+        ("world", &["W", "ER", "L", "D"][..], 1),
+        ("yellow", &["Y", "EH", "L", "OW"][..], 2),
+        ("we'll", &["W", "IY", "L"][..], 1),
+        (
+            "beautiful",
+            &["B", "Y", "UW", "T", "AH", "F", "AH", "L"][..],
+            3,
+        ),
+        ("syllable", &["S", "IH", "L", "AH", "B", "AH", "L"][..], 3),
+        ("rhythm", &["R", "IH", "DH", "AH", "M"][..], 2),
     ] {
         let sequence = f
             .phonemize(&input(text), &mut SpeechDiagnostics::default())
             .unwrap();
-        sequence.validate().unwrap();
-        assert_eq!(
-            sequence
-                .syllables()
-                .iter()
-                .map(|s| s.phones.len())
-                .sum::<u32>(),
-            sequence.phones().len() as u32
-        );
+        let actual: Vec<_> = sequence
+            .phones()
+            .iter()
+            .map(|phone| phone.phone().symbol())
+            .collect();
+        assert_eq!(actual, phones, "{text}");
+        assert_eq!(sequence.syllables().len(), syllables, "{text}");
     }
 }
 proptest::proptest! {

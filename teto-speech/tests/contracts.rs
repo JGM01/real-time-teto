@@ -1,8 +1,12 @@
 use teto_speech::{
+    diagnostics::MAX_DIAGNOSTICS,
     diagnostics::{Diagnostic, SpeechDiagnostics},
     error::SpeechError,
-    limits::*,
-    types::*,
+    input::*,
+    phone::*,
+    plan::*,
+    sequence::PhonemeSequence,
+    span::*,
 };
 fn input() -> SpeechInput {
     SpeechInput::new(SpeechKey::new(0, 1, 0).unwrap(), "a").unwrap()
@@ -15,18 +19,16 @@ fn sequence() -> PhonemeSequence {
             text: ByteSpan::new(0, 1).unwrap(),
             phones: IndexSpan::new(0, 1).unwrap(),
             syllables: IndexSpan::new(0, 1).unwrap(),
+            break_kind: BreakKind::Word,
             part_of_speech: PartOfSpeech::Unknown,
             source: PronunciationSource::Lexicon,
             status: PronunciationStatus::Selected,
         }],
         vec![Syllable {
             phones: IndexSpan::new(0, 1).unwrap(),
-            onset: IndexSpan::new(0, 0).unwrap(),
-            nucleus: IndexSpan::new(0, 1).unwrap(),
-            coda: IndexSpan::new(1, 1).unwrap(),
+            nucleus: 0,
             stress: Stress::Primary,
         }],
-        vec![],
         [0; 32],
     )
     .unwrap()
@@ -68,26 +70,21 @@ fn lexical_stress_rejects_invalid_symbols() {
     assert!(EnglishPhone::new(ArpaPhone::Aa, None).is_err());
 }
 #[test]
-fn prosody_rejects_missing_duplicate_and_reversed_timings() {
+fn prosody_rejects_reversed_and_oversized_timings() {
     let sequence = sequence();
     assert!(ProsodyPlan::new(&sequence, 100, vec![], vec![]).is_err());
-    for (target_phone, start_us, end_us) in [(1, 0, 100), (0, 100, 99), (0, 0, 101)] {
+    for (start_us, end_us) in [(100, 99), (0, 101)] {
         assert!(
             ProsodyPlan::new(
                 &sequence,
                 100,
-                vec![PhoneTiming {
-                    target_phone,
-                    start_us,
-                    end_us
-                }],
+                vec![PhoneTiming { start_us, end_us }],
                 vec![]
             )
             .is_err()
         );
     }
     let timing = PhoneTiming {
-        target_phone: 0,
         start_us: 0,
         end_us: 100,
     };
@@ -120,7 +117,6 @@ fn phoneme_partitions_reject_orphan_and_invalid_byte_spans() {
                 sequence.phones().to_vec(),
                 vec![word],
                 vec![syllable],
-                vec![],
                 [0; 32]
             )
             .is_err()
@@ -134,12 +130,14 @@ fn phoneme_partitions_reject_orphan_and_invalid_byte_spans() {
             sequence.phones().to_vec(),
             vec![word],
             vec![syllable],
-            vec![],
             [0; 32]
         )
         .is_err()
     );
-    assert!(matches!(IndexSpan::new(2, 1), Err(SpeechError::Bounds)));
+    assert!(matches!(
+        IndexSpan::new(2, 1),
+        Err(SpeechError::LimitExceeded)
+    ));
 }
 proptest::proptest! {
     #[test]

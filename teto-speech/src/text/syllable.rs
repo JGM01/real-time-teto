@@ -2,24 +2,23 @@
 use crate::{
     diagnostics::{Diagnostic, SpeechDiagnostics},
     error::{Result, SpeechError},
-    types::*,
+    phone::{ArpaPhone, EnglishPhone, LexicalWord, Stress, Syllable},
+    span::IndexSpan,
+    text::limits::{MAX_SYLLABLES, MAX_WORD_PHONES},
 };
 
-pub struct SyllableSplitter;
-impl SyllableSplitter {
-    pub(crate) fn split(
-        phones: &[EnglishPhone],
-        words: &mut [LexicalWord],
-        diagnostics: &mut SpeechDiagnostics,
-    ) -> Result<Vec<Syllable>> {
-        let mut syllables = Vec::new();
-        for word in words {
-            let first = syllables.len();
-            split_word(phones, word.phones, &mut syllables, diagnostics)?;
-            word.syllables = IndexSpan::new(first as u32, syllables.len() as u32)?;
-        }
-        Ok(syllables)
+pub(crate) fn syllabify(
+    phones: &[EnglishPhone],
+    words: &mut [LexicalWord],
+    diagnostics: &mut SpeechDiagnostics,
+) -> Result<Vec<Syllable>> {
+    let mut syllables = Vec::new();
+    for word in words {
+        let first = syllables.len();
+        split_word(phones, word.phones, &mut syllables, diagnostics)?;
+        word.syllables = IndexSpan::new(first as u32, syllables.len() as u32)?;
     }
+    Ok(syllables)
 }
 fn split_word(
     phones: &[EnglishPhone],
@@ -32,7 +31,7 @@ fn split_word(
     for i in span.start..span.end {
         if phones[i as usize].phone.is_vowel() {
             if count == nuclei.len() {
-                return Err(SpeechError::Bounds);
+                return Err(SpeechError::LimitExceeded);
             }
             nuclei[count] = i;
             count += 1;
@@ -44,7 +43,7 @@ fn split_word(
     let mut start = span.start;
     for (i, nucleus) in nuclei[..count].iter().copied().enumerate() {
         if output.len() >= MAX_SYLLABLES {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let end = if i + 1 < count {
             boundary(phones, nucleus + 1, nuclei[i + 1], diagnostics)?
@@ -53,9 +52,7 @@ fn split_word(
         };
         output.push(Syllable {
             phones: IndexSpan::new(start, end)?,
-            onset: IndexSpan::new(start, nucleus)?,
-            nucleus: IndexSpan::new(nucleus, nucleus + 1)?,
-            coda: IndexSpan::new(nucleus + 1, end)?,
+            nucleus,
             stress: phones[nucleus as usize].stress.unwrap_or(Stress::Unknown),
         });
         start = end;

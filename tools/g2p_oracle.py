@@ -6,7 +6,13 @@ import json
 from pathlib import Path
 import numpy as np
 
-CHECKPOINT_SHA256 = "b8af35e4596d8dd5836dfd3fe9b2ba4f97b9c311efe8879544cbcfcbd566d8c6"
+ROOT = Path(__file__).resolve().parents[1]
+PINS = json.loads((ROOT / "teto-speech/assets/p3-sources.json").read_text())
+CHECKPOINT_SHA256 = next(
+    record["sha256"]
+    for record in PINS["g2p"]["files"]
+    if record["path"].endswith("checkpoint20.npz")
+)
 
 
 def cell(x, h, weights, prefix):

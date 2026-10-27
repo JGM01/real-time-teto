@@ -1,16 +1,23 @@
 //! Deterministic contextual CVVC selection.
 type AliasText = arrayvec::ArrayString<MAX_ALIAS_BYTES>;
-macro_rules! alias {($($args:tt)*)=>{crate::voicebank::select::alias_text(format_args!($($args)*))?};}
+macro_rules! alias {($($args:tt)*)=>{crate::voicebank::cvvc::alias_text(format_args!($($args)*))?};}
 macro_rules! list {($($args:expr),* $(,)?)=>{arrayvec::ArrayVec::<AliasText,5>::from_iter([$($args),*])};}
 mod realize;
 mod syllable;
 use super::alias::BankSymbol;
 use crate::{
-    diagnostics::{Diagnostic, SpeechDiagnostics, Substitution, Substitutions},
+    diagnostics::{BankSubstitutions, Diagnostic, SpeechDiagnostics, Substitution},
     error::{Result, SpeechError},
-    limits::*,
-    text::xsampa::TetoXsampaMap,
-    types::*,
+    phone::BreakKind,
+    plan::{MAX_CANDIDATE_PROBES, MAX_UNITS, PhoneSymbol, PlannedUnit, ProsodyPlan, UnitPlan},
+    sequence::PhonemeSequence,
+    span::IndexSpan,
+    text::xsampa::bank_symbol,
+    voicebank::limits::MAX_ALIAS_BYTES,
+    voicebank::{
+        id::{OtoRowId, PitchId},
+        index::{OtoEntry, VoicebankIndex},
+    },
 };
 #[derive(Debug, Clone, Copy)]
 pub enum PitchPolicy {
@@ -27,23 +34,46 @@ impl Default for TetoCvvcPlanner {
         }
     }
 }
+#[derive(Clone, Copy)]
+struct FallbackProfile {
+    schwa: bool,
+    nasal: bool,
+    dark_l: bool,
+}
+
+impl FallbackProfile {
+    fn for_bank(bank: &VoicebankIndex, pitch: PitchId) -> Self {
+        let has = |alias: &str| bank.find(alias, pitch).is_some();
+        Self {
+            schwa: !has("- bV") && !has("bV"),
+            nasal: ["N g", "N g-", "N k", "N k-"]
+                .iter()
+                .any(|alias| !has(alias)),
+            dark_l: ["@5", "u5", "O5", "A5", "E5", "I5", "i5"]
+                .iter()
+                .any(|alias| has(alias)),
+        }
+    }
+}
+
 struct Selection<'a> {
-    bank: &'a VoicebankManifest,
+    bank: &'a VoicebankIndex,
     pitch: PitchPolicy,
+    fallback: FallbackProfile,
     probes: usize,
     units: Vec<PlannedUnit>,
     groups: Vec<IndexSpan>,
-    atoms: Vec<Realization>,
+    atoms: Vec<PhoneSymbol>,
     phone_atoms: Vec<IndexSpan>,
+    covered: Vec<u16>,
     diagnostics: &'a mut SpeechDiagnostics,
-    prosody: &'a ProsodyPlan,
 }
 impl TetoCvvcPlanner {
     pub fn plan(
-        &mut self,
+        &self,
         sequence: &PhonemeSequence,
         prosody: ProsodyPlan,
-        bank: &VoicebankManifest,
+        bank: &VoicebankIndex,
         diagnostics: &mut SpeechDiagnostics,
     ) -> Result<UnitPlan> {
         if prosody.key() != sequence.input.key() || prosody.timings().len() != sequence.phones.len()
@@ -57,16 +87,18 @@ impl TetoCvvcPlanner {
             return Err(SpeechError::VoicebankInvalid);
         }
         let (atoms, phone_atoms) = realize::components(sequence, bank, pitch, diagnostics)?;
+        let covered = vec![0; atoms.len()];
         let mut selection = Selection {
             bank,
             pitch: self.pitch,
+            fallback: FallbackProfile::for_bank(bank, pitch),
             probes: 0,
-            units: Vec::new(),
-            groups: Vec::new(),
+            units: Vec::with_capacity(sequence.syllables.len().saturating_mul(2)),
+            groups: Vec::with_capacity(sequence.syllables.len().saturating_add(1)),
             atoms,
             phone_atoms,
+            covered,
             diagnostics,
-            prosody: &prosody,
         };
         selection.select(sequence)?;
         let units = selection.units;
@@ -74,12 +106,14 @@ impl TetoCvvcPlanner {
         let groups = selection.groups;
         let plan = UnitPlan {
             key: sequence.input.key(),
+            sequence_revision: sequence.revision(),
             bank_revision: bank.revision,
             units,
             groups,
             realizations,
             prosody,
         };
+        #[cfg(debug_assertions)]
         plan.validate(sequence, bank)?;
         Ok(plan)
     }
@@ -87,22 +121,19 @@ impl TetoCvvcPlanner {
 impl Selection<'_> {
     fn select(&mut self, sequence: &PhonemeSequence) -> Result<()> {
         let mut previous = None;
+        let mut word_index = 0usize;
         for syllable in &sequence.syllables {
-            let nucleus = self.phone_atoms[syllable.nucleus.start as usize].start as usize;
+            while word_index + 1 < sequence.words.len()
+                && sequence.words[word_index].phones.end <= syllable.nucleus
+            {
+                word_index += 1;
+            }
+            let nucleus = self.phone_atoms[syllable.nucleus as usize].start as usize;
             let start =
                 previous.unwrap_or(self.phone_atoms[syllable.phones.start as usize].start as usize);
-            let word_start = sequence
-                .words
-                .iter()
-                .find(|w| {
-                    w.phones.start <= syllable.nucleus.start
-                        && w.phones.end > syllable.nucleus.start
-                })
-                .ok_or(SpeechError::InvalidSpan)?
-                .phones
-                .start as usize;
+            let word_start = sequence.words[word_index].phones.start as usize;
             let group_start = self.units.len();
-            self.port_syllable(
+            self.select_syllable(
                 start,
                 nucleus,
                 previous.is_none(),
@@ -110,10 +141,10 @@ impl Selection<'_> {
             )?;
             self.groups
                 .push(IndexSpan::new(group_start as u32, self.units.len() as u32)?);
-            let next_break = sequence.breaks.iter().any(|b| {
-                b.after_phone >= syllable.nucleus.start
-                    && b.after_phone < syllable.phones.end
-                    && b.kind != BreakKind::Word
+            let next_break = sequence.breaks().any(|item| {
+                item.after_phone >= syllable.nucleus
+                    && item.after_phone < syllable.phones.end
+                    && item.kind != BreakKind::Word
             });
             if next_break {
                 let group_start = self.units.len();
@@ -136,7 +167,7 @@ impl Selection<'_> {
         }
         Ok(())
     }
-    fn vv(&mut self, start: usize, nucleus: usize) -> Result<()> {
+    fn select_vowel_transition(&mut self, start: usize, nucleus: usize) -> Result<()> {
         let a = self.atoms[start].symbol;
         let b = self.atoms[nucleus].symbol.text();
         if self.choose(
@@ -191,11 +222,7 @@ impl Selection<'_> {
         let mut cursor = start;
         while cursor < end {
             let last = cursor + 1 == end;
-            if last
-                && self.units.iter().any(|u| {
-                    u.realizations.start as usize <= cursor && u.realizations.end as usize > cursor
-                })
-            {
+            if last && self.covered[cursor] != 0 {
                 break;
             }
             let mut selected = false;
@@ -238,11 +265,11 @@ impl Selection<'_> {
             if index > 0 {
                 output
                     .try_push_str(separator)
-                    .map_err(|_| SpeechError::Bounds)?;
+                    .map_err(|_| SpeechError::LimitExceeded)?;
             }
             output
                 .try_push_str(atom.symbol.text())
-                .map_err(|_| SpeechError::Bounds)?;
+                .map_err(|_| SpeechError::LimitExceeded)?;
         }
         Ok(output)
     }
@@ -256,15 +283,15 @@ impl Selection<'_> {
     fn find_candidates(
         &mut self,
         candidates: &[AliasText],
-    ) -> Result<Option<(UnitId, OtoEntry, Substitutions)>> {
+    ) -> Result<Option<(OtoRowId, OtoEntry, BankSubstitutions)>> {
         let requested = match self.pitch {
             PitchPolicy::Exact(p) | PitchPolicy::Prefer(p) => p,
         };
         for candidate in candidates {
             if let Some(result) = self.lookup(candidate, requested)? {
-                return Ok(Some((result.0, result.1, Substitutions::empty())));
+                return Ok(Some((result.0, result.1, BankSubstitutions::empty())));
             }
-            let (fallback, changes) = fallback_alias(candidate, self.bank, requested)?;
+            let (fallback, changes) = fallback_alias(candidate, self.fallback)?;
             if !changes.is_empty()
                 && let Some(result) = self.lookup(&fallback, requested)?
             {
@@ -282,30 +309,33 @@ impl Selection<'_> {
                             requested,
                             selected: PitchId(p as u32),
                         });
-                        return Ok(Some((result.0, result.1, Substitutions::empty())));
+                        return Ok(Some((result.0, result.1, BankSubstitutions::empty())));
                     }
                 }
             }
         }
         Ok(None)
     }
-    fn lookup(&mut self, text: &str, pitch: PitchId) -> Result<Option<(UnitId, OtoEntry)>> {
+    fn lookup(&mut self, text: &str, pitch: PitchId) -> Result<Option<(OtoRowId, OtoEntry)>> {
         if self.probes >= MAX_CANDIDATE_PROBES {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         self.probes += 1;
         Ok(self.bank.find(text, pitch).map(|(id, row)| (id, *row)))
     }
     fn add(
         &mut self,
-        id: UnitId,
-        row: OtoEntry,
+        id: OtoRowId,
+        _row: OtoEntry,
         start: usize,
         end: usize,
-        reason: Substitutions,
+        reason: BankSubstitutions,
     ) -> Result<()> {
         if self.units.len() >= MAX_UNITS {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
+        }
+        for count in &mut self.covered[start..end] {
+            *count = count.saturating_add(1);
         }
         for reason in reason.reasons() {
             self.diagnostics.record(Diagnostic::Substitution {
@@ -319,13 +349,9 @@ impl Selection<'_> {
         let first = self.atoms[start].target_phone;
         let last = self.atoms[end - 1].target_phone;
         self.units.push(PlannedUnit {
-            unit: id,
-            alias: row.alias,
+            oto: id,
             target_phones: IndexSpan::new(first, last + 1)?,
             realizations: IndexSpan::new(start as u32, end as u32)?,
-            start_us: self.prosody.timings()[first as usize].start_us,
-            end_us: self.prosody.timings()[last as usize].end_us,
-            pitch: row.pitch,
             substitutions: reason,
         });
         Ok(())
@@ -357,31 +383,23 @@ fn alias_text(arguments: std::fmt::Arguments<'_>) -> Result<AliasText> {
     let mut output = AliasText::new();
     output
         .write_fmt(arguments)
-        .map_err(|_| SpeechError::Bounds)?;
+        .map_err(|_| SpeechError::LimitExceeded)?;
     Ok(output)
 }
-fn fallback_alias(
-    alias: &str,
-    bank: &VoicebankManifest,
-    pitch: PitchId,
-) -> Result<(AliasText, Substitutions)> {
-    let schwa = bank.find("- bV", pitch).is_none() && bank.find("bV", pitch).is_none();
-    let nasal = ["N g", "N g-", "N k", "N k-"]
-        .iter()
-        .any(|s| bank.find(s, pitch).is_none());
-    let dark_l = ["@5", "u5", "O5", "A5", "E5", "I5", "i5"]
-        .iter()
-        .any(|a| bank.find(a, pitch).is_some());
+fn fallback_alias(alias: &str, profile: FallbackProfile) -> Result<(AliasText, BankSubstitutions)> {
+    let schwa = profile.schwa;
+    let nasal = profile.nasal;
+    let dark_l = profile.dark_l;
     let mut text = AliasText::new();
-    let mut changes = Substitutions::empty();
+    let mut changes = BankSubstitutions::empty();
     let mut remaining = alias;
     while !remaining.is_empty() {
         let first = remaining.as_bytes()[0];
         let replacement = if first == b'V' && schwa {
-            changes |= Substitutions::TETO_SCHWA;
+            changes |= BankSubstitutions::TETO_SCHWA;
             '@'
         } else if nasal && (remaining.starts_with("N g") || remaining.starts_with("N k")) {
-            changes |= Substitutions::VELAR_NASAL;
+            changes |= BankSubstitutions::VELAR_NASAL;
             'n'
         } else if remaining.starts_with("r ")
             && remaining
@@ -389,7 +407,7 @@ fn fallback_alias(
                 .get(2)
                 .is_some_and(|b| b"btDd fghk lmnNpr sStTvwjzZ".contains(b) && *b != b' ')
         {
-            changes |= Substitutions::RHOTIC;
+            changes |= BankSubstitutions::RHOTIC;
             '3'
         } else if first == b'l'
             && dark_l
@@ -398,13 +416,13 @@ fn fallback_alias(
                 .last()
                 .is_some_and(|b| b"@uOAEIi".contains(b))
         {
-            changes |= Substitutions::DARK_L;
+            changes |= BankSubstitutions::DARK_L;
             '5'
         } else {
             first as char
         };
         text.try_push(replacement)
-            .map_err(|_| SpeechError::Bounds)?;
+            .map_err(|_| SpeechError::LimitExceeded)?;
         remaining = &remaining[1..];
     }
     Ok((text, changes))

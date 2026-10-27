@@ -1,7 +1,7 @@
 //! Bounded diagnostics without clause text.
 use crate::{
-    limits::MAX_DIAGNOSTICS,
-    types::{ByteSpan, IndexSpan, PitchId},
+    span::{ByteSpan, IndexSpan},
+    voicebank::id::PitchId,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -19,7 +19,7 @@ pub enum Substitution {
 
 bitflags::bitflags! {
     #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-    pub struct Substitutions: u16 {
+    pub struct BankSubstitutions: u16 {
         const TETO_SCHWA = 1;
         const VELAR_NASAL = 2;
         const DARK_L = 4;
@@ -27,7 +27,7 @@ bitflags::bitflags! {
         const COVERAGE_REPAIR = 16;
     }
 }
-impl Substitutions {
+impl BankSubstitutions {
     pub fn reasons(self) -> impl Iterator<Item = Substitution> {
         [
             (Self::TETO_SCHWA, Substitution::TetoSchwa),
@@ -66,6 +66,9 @@ pub enum Diagnostic {
         pitch: PitchId,
     },
 }
+
+/// Maximum retained diagnostic events.
+pub const MAX_DIAGNOSTICS: usize = 128;
 
 #[derive(Debug, Default)]
 pub struct SpeechDiagnostics {

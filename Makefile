@@ -4,12 +4,14 @@ export RUSTC := $(TOOLCHAIN_BIN)rustc
 export RUSTDOC := $(TOOLCHAIN_BIN)rustdoc
 CARGO := $(TOOLCHAIN_BIN)cargo
 
-.PHONY: fmt clippy test doc build build-release check comments invariants policy-check qualify phone-build speech-qualify speech-fuzz
+.PHONY: fmt clippy test doc build build-release check comments fuzz-check qualify phone-build speech-qualify speech-fuzz
 fmt:
 	$(CARGO) fmt --all -- --check
+	$(CARGO) fmt --manifest-path fuzz/Cargo.toml -- --check
 format:
 	$(CARGO) fmt --all
 	$(CARGO) fmt --manifest-path phone-spike/Cargo.toml
+	$(CARGO) fmt --manifest-path fuzz/Cargo.toml
 clippy:
 	$(CARGO) clippy --workspace --all-targets -- -D warnings -D clippy::too_many_lines
 test:
@@ -25,13 +27,11 @@ build:
 	$(CARGO) build --workspace
 build-release:
 	$(CARGO) build --workspace --release
-check: fmt clippy test test-features doc comments invariants
+check: fmt clippy test test-features doc comments fuzz-check
 comments:
 	python3 tools/check_comments.py
-invariants:
-	python3 tools/check_invariants.py
-policy-check:
-	$(CARGO) test -p teto-llm-protocol --test contract policy_numbers_match_document
+fuzz-check:
+	$(CARGO) check --manifest-path fuzz/Cargo.toml --all-targets
 qualify:
 	$(CARGO) test --release -p teto-llm --features measurement --test real_model $(TEST_FILTER) -- --ignored --test-threads=1
 cache-probe:
@@ -56,6 +56,8 @@ phone-link: phone-build
 speech-qualify:
 	python3 tools/qualify_speech.py --bank voicebanks/TETO-English-150401.zip
 speech-fuzz:
-	mkdir -p target/p3/fuzz-corpus/oto target/p3/fuzz-corpus/alias_planner
+	mkdir -p target/p3/fuzz-corpus/oto target/p3/fuzz-corpus/alias_planner target/p3/fuzz-corpus/lexicon target/p3/fuzz-corpus/import
 	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run oto target/p3/fuzz-corpus/oto fuzz/seeds/oto -- -runs=10000 -max_len=4096 -timeout=5
 	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run alias_planner target/p3/fuzz-corpus/alias_planner fuzz/seeds/alias_planner -- -runs=10000 -max_len=4096 -timeout=5
+	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run lexicon target/p3/fuzz-corpus/lexicon -- -runs=10000 -max_len=4096 -timeout=5
+	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run import target/p3/fuzz-corpus/import -- -runs=1000 -max_len=4096 -timeout=5

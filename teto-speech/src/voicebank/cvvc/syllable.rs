@@ -1,6 +1,6 @@
 //! OpenUtau English X-SAMPA syllable candidate order.
 use super::*;
-type ClusterMatch = (UnitId, OtoEntry, Substitutions, usize);
+type ClusterMatch = (OtoRowId, OtoEntry, BankSubstitutions, usize);
 struct Context {
     start: usize,
     first: usize,
@@ -16,7 +16,7 @@ impl Context {
     }
 }
 impl Selection<'_> {
-    pub(super) fn port_syllable(
+    pub(super) fn select_syllable(
         &mut self,
         start: usize,
         nucleus: usize,
@@ -28,7 +28,7 @@ impl Selection<'_> {
         }
         let first = if initial { start } else { start + 1 };
         if first == nucleus {
-            return self.vv(start, nucleus);
+            return self.select_vowel_transition(start, nucleus);
         }
         let context = Context {
             start,
@@ -162,14 +162,13 @@ impl Selection<'_> {
         c: &Context,
         mut index: usize,
         base_start: usize,
-        base: &mut (UnitId, OtoEntry, Substitutions),
+        base: &mut (OtoRowId, OtoEntry, BankSubstitutions),
     ) -> Result<()> {
         let mut last = base_start - c.first;
         while index < last {
             let begin = c.first + index;
             let one = self.cluster(c, index)?;
             if index + 1 < last {
-                let _two = self.cluster(c, index + 1)?;
                 let suffix = self.join(begin + 1, c.nucleus, "")?;
                 let v = self.atoms[c.nucleus].symbol.text();
                 if c.current() >= 2
@@ -184,22 +183,16 @@ impl Selection<'_> {
                     if found.3 == c.nucleus {
                         index += 1;
                     }
-                } else {
-                    let already = self.units.iter().any(|u| {
-                        u.realizations.start as usize <= begin
-                            && u.realizations.end as usize > begin
-                    });
-                    if !already {
-                        let a = self.atoms[begin].symbol.text();
-                        if let Some(found) = self.find_candidates(&[alias!("{a}")])? {
-                            self.add(
-                                found.0,
-                                found.1,
-                                begin,
-                                begin + 1,
-                                Substitutions::COVERAGE_REPAIR,
-                            )?;
-                        }
+                } else if self.covered[begin] == 0 {
+                    let a = self.atoms[begin].symbol.text();
+                    if let Some(found) = self.find_candidates(&[alias!("{a}")])? {
+                        self.add(
+                            found.0,
+                            found.1,
+                            begin,
+                            begin + 1,
+                            BankSubstitutions::COVERAGE_REPAIR,
+                        )?;
                     }
                 }
             } else if let Some(found) = one {

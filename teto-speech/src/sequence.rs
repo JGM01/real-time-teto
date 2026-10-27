@@ -1,7 +1,10 @@
 //! Checked lexical and syllable partitions.
 use crate::{
     error::{Result, SpeechError},
-    types::*,
+    input::SpeechInput,
+    phone::{EnglishPhone, LexicalWord, Syllable, TextBreak},
+    span::check_span,
+    text::limits::{MAX_PHONES, MAX_SYLLABLES, MAX_WORDS},
 };
 
 #[derive(Debug)]
@@ -10,8 +13,8 @@ pub struct PhonemeSequence {
     pub(crate) phones: Vec<EnglishPhone>,
     pub(crate) words: Vec<LexicalWord>,
     pub(crate) syllables: Vec<Syllable>,
-    pub(crate) breaks: Vec<TextBreak>,
     pub(crate) frontend_revision: [u8; 32],
+    pub(crate) revision: u64,
 }
 impl PhonemeSequence {
     pub fn new(
@@ -19,16 +22,19 @@ impl PhonemeSequence {
         phones: Vec<EnglishPhone>,
         words: Vec<LexicalWord>,
         syllables: Vec<Syllable>,
-        breaks: Vec<TextBreak>,
         frontend_revision: [u8; 32],
     ) -> Result<Self> {
+        let mut revision = input.revision();
+        for byte in frontend_revision {
+            revision = crate::input::hash_byte(revision, u32::from(byte));
+        }
         let value = Self {
             input,
             phones,
             words,
             syllables,
-            breaks,
             frontend_revision,
+            revision,
         };
         value.validate()?;
         Ok(value)
@@ -45,11 +51,19 @@ impl PhonemeSequence {
     pub fn syllables(&self) -> &[Syllable] {
         &self.syllables
     }
-    pub fn breaks(&self) -> &[TextBreak] {
-        &self.breaks
+    pub fn breaks(&self) -> impl Iterator<Item = TextBreak> + '_ {
+        self.words.iter().map(|word| TextBreak {
+            after_phone: word.phones.end - 1,
+            kind: word.break_kind,
+        })
     }
     pub fn frontend_revision(&self) -> [u8; 32] {
         self.frontend_revision
+    }
+
+    /// Return the exact sequence revision.
+    pub fn revision(&self) -> u64 {
+        self.revision
     }
 
     pub fn validate(&self) -> Result<()> {
@@ -59,9 +73,8 @@ impl PhonemeSequence {
         if self.phones.len() > MAX_PHONES
             || self.words.len() > MAX_WORDS
             || self.syllables.len() > MAX_SYLLABLES
-            || self.breaks.len() > MAX_BREAKS
         {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let (mut phone, mut syllable, mut byte) = (0, 0, 0);
         for word in &self.words {
@@ -83,54 +96,36 @@ impl PhonemeSequence {
         if phone as usize != self.phones.len() || syllable as usize != self.syllables.len() {
             return Err(SpeechError::InvalidSpan);
         }
-        let mut previous = None;
-        for item in &self.breaks {
-            if item.after_phone as usize >= self.phones.len()
-                || previous.is_some_and(|p| p >= item.after_phone)
-            {
-                return Err(SpeechError::InvalidSpan);
-            }
-            previous = Some(item.after_phone);
-        }
         Ok(())
     }
     fn validate_word(&self, word: &LexicalWord) -> Result<()> {
         let mut cursor = word.phones.start;
-        for s in &self.syllables[word.syllables.range()] {
-            for span in [s.phones, s.onset, s.nucleus, s.coda] {
-                check_span(span, self.phones.len())?;
-            }
-            if s.phones.start != cursor
-                || s.phones.end > word.phones.end
-                || s.onset.start != cursor
-                || s.onset.end != s.nucleus.start
-                || s.nucleus.len() != 1
-                || s.nucleus.end != s.coda.start
-                || s.coda.end != s.phones.end
+        for syllable in &self.syllables[word.syllables.range()] {
+            let nucleus = syllable.nucleus;
+            if syllable.phones.start != cursor
+                || syllable.phones.end > word.phones.end
+                || nucleus < syllable.phones.start
+                || nucleus >= syllable.phones.end
             {
                 return Err(SpeechError::InvalidSpan);
             }
-            let nucleus = self.phones[s.nucleus.start as usize];
-            if !nucleus.phone.is_vowel()
-                || nucleus.stress != Some(s.stress)
-                || self.phones[s.onset.range()]
+            let phone = self.phones[nucleus as usize];
+            let onset = syllable.onset();
+            let coda = syllable.coda();
+            if !phone.phone.is_vowel()
+                || phone.stress != Some(syllable.stress)
+                || self.phones[onset.range()]
                     .iter()
-                    .chain(&self.phones[s.coda.range()])
+                    .chain(&self.phones[coda.range()])
                     .any(|p| p.phone.is_vowel())
             {
                 return Err(SpeechError::Pronunciation);
             }
-            cursor = s.phones.end;
+            cursor = syllable.phones.end;
         }
         if cursor != word.phones.end {
             return Err(SpeechError::InvalidSpan);
         }
         Ok(())
     }
-}
-pub(crate) fn check_span(span: IndexSpan, len: usize) -> Result<()> {
-    if span.start > span.end || span.end as usize > len {
-        return Err(SpeechError::InvalidSpan);
-    }
-    Ok(())
 }

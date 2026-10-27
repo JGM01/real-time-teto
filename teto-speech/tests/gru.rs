@@ -41,10 +41,10 @@ fn gru_rejects_unverified_and_oversized_assets() {
         Err(SpeechError::ModelMismatch)
     ));
     file.as_file()
-        .set_len(teto_speech::limits::MAX_MODEL_BYTES + 1)
+        .set_len(teto_speech::text::limits::MAX_MODEL_BYTES + 1)
         .unwrap();
     assert!(matches!(
         G2pEnGru::load(file.path()),
-        Err(SpeechError::Bounds)
+        Err(SpeechError::LimitExceeded)
     ));
 }

@@ -1,14 +1,12 @@
 //! Imported source ranges, OTO rows, and deterministic alias lookup.
 use crate::{
     error::{Result, SpeechError},
-    types::{AliasId, AliasInventoryId, IndexSpan, PitchId, UnitId},
+    span::IndexSpan,
+    voicebank::id::{AliasIndex, AliasInventoryId, OtoRowId, PitchId, SourceId},
 };
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SourceId(pub u32);
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Source {
-    pub path: String,
+    pub path: IndexSpan,
     pub length_bytes: u64,
     pub sample_rate_hz: u32,
     pub channels: u16,
@@ -19,7 +17,6 @@ pub struct Source {
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Alias {
-    pub id: AliasId,
     pub text: IndexSpan,
     pub symbols: IndexSpan,
     pub units: IndexSpan,
@@ -32,13 +29,12 @@ pub struct PitchMapping {
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PitchGroup {
-    pub id: PitchId,
     pub directory: String,
     pub mappings: Vec<PitchMapping>,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OtoEntry {
-    pub alias: AliasId,
+    pub alias: AliasIndex,
     pub source: SourceId,
     pub line: u32,
     pub offset_us: u64,
@@ -51,18 +47,19 @@ pub struct OtoEntry {
     pub pitch: PitchId,
 }
 #[derive(Debug)]
-pub struct VoicebankManifest {
+pub struct VoicebankIndex {
     pub(crate) revision: [u8; 32],
     pub(crate) inventory: AliasInventoryId,
     pub(crate) archive_sha256: Option<[u8; 32]>,
     pub(crate) alias_text: String,
+    pub(crate) source_text: String,
     pub(crate) aliases: Vec<Alias>,
     pub(crate) symbols: Vec<super::alias::BankSymbol>,
     pub(crate) oto: Vec<OtoEntry>,
     pub(crate) sources: Vec<Source>,
     pub(crate) pitches: Vec<PitchGroup>,
 }
-impl VoicebankManifest {
+impl VoicebankIndex {
     pub fn revision(&self) -> [u8; 32] {
         self.revision
     }
@@ -81,26 +78,32 @@ impl VoicebankManifest {
     pub fn sources(&self) -> &[Source] {
         &self.sources
     }
+    /// Return one source path.
+    pub fn source_path(&self, id: SourceId) -> Option<&str> {
+        let source = self.sources.get(id.0 as usize)?;
+        self.source_text.get(source.path.range())
+    }
     pub fn pitches(&self) -> &[PitchGroup] {
         &self.pitches
     }
-    pub fn alias_text(&self, id: AliasId) -> Option<&str> {
+    pub fn alias_text(&self, id: AliasIndex) -> Option<&str> {
         self.aliases
             .get(id.0 as usize)
             .and_then(|a| self.alias_text.get(a.text.range()))
     }
-    pub fn alias_symbols(&self, id: AliasId) -> Option<&[super::alias::BankSymbol]> {
+    pub fn alias_symbols(&self, id: AliasIndex) -> Option<&[super::alias::BankSymbol]> {
         self.aliases
             .get(id.0 as usize)
             .and_then(|a| self.symbols.get(a.symbols.range()))
     }
-    pub fn find(&self, text: &str, pitch: PitchId) -> Option<(UnitId, &OtoEntry)> {
+    pub fn find(&self, text: &str, pitch: PitchId) -> Option<(OtoRowId, &OtoEntry)> {
         if let Some(found) = self.find_exact(text, pitch) {
             return Some(found);
         }
         let mapping = self.pitches.get(pitch.0 as usize)?.mappings.first()?;
         use std::fmt::Write;
-        let mut decorated = arrayvec::ArrayString::<{ crate::limits::MAX_ALIAS_BYTES }>::new();
+        let mut decorated =
+            arrayvec::ArrayString::<{ crate::voicebank::limits::MAX_ALIAS_BYTES }>::new();
         write!(decorated, "{}{text}{}", mapping.prefix, mapping.suffix).ok()?;
         self.find_exact(&decorated, pitch)
     }
@@ -114,51 +117,73 @@ impl VoicebankManifest {
             None => Some(text),
         }
     }
-    fn find_exact(&self, text: &str, pitch: PitchId) -> Option<(UnitId, &OtoEntry)> {
+    fn find_exact(&self, text: &str, pitch: PitchId) -> Option<(OtoRowId, &OtoEntry)> {
         let index = self
             .aliases
             .binary_search_by(|a| self.alias_text[a.text.range()].cmp(text))
             .ok()?;
-        let span = self.aliases[index].units;
+        let alias = &self.aliases[index];
+        if alias.symbols.is_empty() {
+            return None;
+        }
+        let span = alias.units;
         self.oto[span.range()]
             .iter()
             .enumerate()
             .find(|(_, row)| row.pitch == pitch)
-            .map(|(i, row)| (UnitId(span.start + i as u32), row))
+            .map(|(i, row)| (OtoRowId(span.start + i as u32), row))
     }
     pub fn validate(&self) -> Result<()> {
         if self.aliases.is_empty()
             || self.oto.is_empty()
             || self.sources.is_empty()
-            || self.aliases.len() > crate::limits::MAX_OTO_ROWS
-            || self.sources.len() > crate::limits::MAX_SOURCES
-            || self.oto.len() > crate::limits::MAX_OTO_ROWS
+            || self.aliases.len() > crate::voicebank::limits::MAX_OTO_ROWS
+            || self.sources.len() > crate::voicebank::limits::MAX_SOURCES
+            || self.oto.len() > crate::voicebank::limits::MAX_OTO_ROWS
             || self.pitches.is_empty()
-            || self.pitches.len() > crate::limits::MAX_PITCHES
+            || self.pitches.len() > crate::voicebank::limits::MAX_PITCHES
         {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
+        let mut previous_text: Option<&str> = None;
         for (i, alias) in self.aliases.iter().enumerate() {
-            if alias.id.0 as usize != i
-                || self.alias_text.get(alias.text.range()).is_none()
+            let text = self
+                .alias_text
+                .get(alias.text.range())
+                .ok_or(SpeechError::VoicebankInvalid)?;
+            let id = AliasIndex(i as u32);
+            if previous_text.is_some_and(|previous| previous >= text)
                 || self.symbols.get(alias.symbols.range()).is_none()
-                || self.oto.get(alias.units.range()).is_none()
+                || self.symbols[alias.symbols.range()].is_empty()
+                || self
+                    .oto
+                    .get(alias.units.range())
+                    .is_none_or(|rows| rows.iter().any(|row| row.alias != id))
             {
                 return Err(SpeechError::VoicebankInvalid);
             }
+            previous_text = Some(text);
         }
         for row in &self.oto {
             let source = self
                 .sources
                 .get(row.source.0 as usize)
                 .ok_or(SpeechError::VoicebankInvalid)?;
+            if self.source_text.get(source.path.range()).is_none() {
+                return Err(SpeechError::VoicebankInvalid);
+            }
+            let duration_us = source
+                .frames
+                .checked_mul(1_000_000)
+                .and_then(|value| value.checked_div(u64::from(source.sample_rate_hz)))
+                .ok_or(SpeechError::VoicebankInvalid)?;
             if row.alias.0 as usize >= self.aliases.len()
                 || row.pitch.0 as usize >= self.pitches.len()
                 || row.offset_us >= row.end_us
-                || row.end_us > source.frames.saturating_mul(1_000_000) / 44100
+                || row.end_us > duration_us
                 || row.consonant_us > row.end_us - row.offset_us
                 || row.preutterance_us > row.end_us - row.offset_us
-                || row.overlap_us.unsigned_abs() > source.frames.saturating_mul(1_000_000) / 44100
+                || row.overlap_us.unsigned_abs() > duration_us
             {
                 return Err(SpeechError::OtoTiming { line: row.line });
             }

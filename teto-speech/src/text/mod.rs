@@ -3,6 +3,7 @@
 pub mod gru;
 #[cfg(feature = "cmudict")]
 pub mod lexicon;
+pub mod limits;
 pub mod phonemize;
 mod phones;
 #[cfg(feature = "cmudict")]

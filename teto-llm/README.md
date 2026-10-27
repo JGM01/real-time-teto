@@ -12,4 +12,4 @@ The journal uses a caller-supplied zeroizing key, random XChaCha20-Poly1305 nonc
 
 Measurements use integer microseconds. The optional `measurement` feature adds the real-model harness. Enable it for the phone spike and for measurement runs.
 
-See [the contract](../llm-subsystem.md), [the policy registry](../teto-llm-protocol/src/policy.rs), [CLI instructions](../teto-cli/README.md), [the phone harness](../phone-spike/README.md) and [qualification](QUALIFICATION.md).
+See [the policy registry](../teto-llm-protocol/src/policy.rs), [CLI instructions](../teto-cli/README.md), [the phone harness](../phone-spike/README.md) and [qualification](QUALIFICATION.md).

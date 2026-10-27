@@ -11,7 +11,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "target/p3"
 PINS = json.loads((ROOT / "teto-speech/assets/p3-sources.json").read_text())
-FEATURES = "cmudict,g2p-gru,voicebank-wav,llm-adapter"
+FEATURES = "qualification"
 
 
 def run(command, **kwargs):
@@ -43,7 +43,7 @@ def check_sources(checkout):
 def rust_report(bank, checkpoint, corpus, name):
     path = OUTPUT / name
     with path.open("w") as stream:
-        run(["cargo", "run", "--offline", "--release", "-q", "-p", "teto-speech", "--example", "p3",
+        run(["cargo", "run", "--offline", "--release", "-q", "-p", "teto-speech", "--bin", "speech_report",
              "--features", FEATURES, "--", str(bank), str(corpus), str(checkpoint)], stdout=stream)
     return json.loads(path.read_text())
 
@@ -79,7 +79,7 @@ def main():
     args = parser.parse_args()
     args.bank = args.bank.resolve()
     with args.bank.open("rb") as bank_file:
-        if hashlib.file_digest(bank_file,"sha256").hexdigest()!="addb3ab9dbe3dce7cb40fe6ba0c93ab5814d02acf5b091d0a762de370b813d6e":
+        if hashlib.file_digest(bank_file, "sha256").hexdigest() != PINS["voicebank"]["sha256"]:
             raise ValueError("official bank checksum mismatch")
     check_sources(args.openutau)
     oracle = OUTPUT / "g2p-oracle.json"

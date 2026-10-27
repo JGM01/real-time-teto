@@ -1,13 +1,15 @@
 //! Metadata-only local bank import.
 use super::visit_rows;
 use crate::{
+    diagnostics::MAX_DIAGNOSTICS,
     error::{Result, SpeechError},
-    limits::*,
-    types::*,
+    span::IndexSpan,
+    voicebank::limits::*,
     voicebank::{
         alias::BankSymbol,
-        manifest::PitchMapping,
-        read::{BankReader, safe_path},
+        id::{AliasIndex, AliasInventoryId, PitchId, SourceId},
+        index::{Alias, OtoEntry, PitchGroup, PitchMapping, Source, VoicebankIndex},
+        read::{BankReader, SafePath},
     },
 };
 use sha2::{Digest, Sha256};
@@ -23,7 +25,7 @@ pub struct ImportReport {
     pub missing_preferred_aliases: u32,
     pub missing_aliases: Vec<(PitchId, &'static str)>,
     pub duplicate_lines: Vec<u32>,
-    pub unsupported_ids: Vec<AliasId>,
+    pub unsupported_ids: Vec<AliasIndex>,
 }
 #[derive(Debug)]
 pub enum BankLocation {
@@ -37,87 +39,96 @@ pub enum BankLocation {
 }
 pub struct ImportedBank {
     pub location: BankLocation,
-    pub manifest: VoicebankManifest,
+    pub index: VoicebankIndex,
     pub report: ImportReport,
 }
-pub struct TetoOtoImport;
 struct Row {
     alias: String,
     oto: OtoEntry,
 }
-impl TetoOtoImport {
-    pub fn load(path: &Path) -> Result<ImportedBank> {
-        let mut reader = BankReader::open(path)?;
-        let entries = reader.entries();
-        let expanded = entries.iter().try_fold(0u64, |n, (_, s)| {
-            n.checked_add(*s).ok_or(SpeechError::Bounds)
-        })?;
-        if expanded > MAX_EXPANDED_BYTES {
-            return Err(SpeechError::Bounds);
-        }
-        let otos: Vec<_> = entries
-            .iter()
-            .filter(|(p, _)| p.ends_with("oto.ini") && p.rsplit('/').next() == Some("oto.ini"))
-            .collect();
-        if otos.is_empty() || otos.len() > MAX_PITCHES {
-            return Err(SpeechError::VoicebankInvalid);
-        }
-        let root = common_root(&otos.iter().map(|e| e.0.as_str()).collect::<Vec<_>>());
-        let mut bank = VoicebankManifest {
-            revision: [0; 32],
-            inventory: AliasInventoryId([0; 32]),
-            archive_sha256: reader.digest(),
-            alias_text: String::new(),
-            aliases: Vec::new(),
-            symbols: Vec::new(),
-            oto: Vec::new(),
-            sources: Vec::new(),
-            pitches: Vec::new(),
-        };
-        let mut rows = Vec::new();
-        let mut source_ids = BTreeMap::new();
-        for (path, _) in otos {
-            import_oto(
-                &mut reader,
-                &entries,
-                path,
-                &root,
-                &mut bank,
-                &mut rows,
-                &mut source_ids,
-            )?;
-        }
-        let mut report = finish_aliases(&mut bank, rows)?;
-        bank.validate()?;
-        hash_manifest(&mut bank);
-        report_inventory(&bank, &mut report);
-        let location = if path.is_dir() {
-            BankLocation::Directory {
-                root: path.canonicalize()?.join(root.trim_end_matches('/')),
-            }
-        } else {
-            BankLocation::Archive {
-                path: path.canonicalize()?,
-                prefix: root,
-            }
-        };
-        Ok(ImportedBank {
-            manifest: bank,
-            report,
-            location,
-        })
+pub fn import_voicebank(path: &Path) -> Result<ImportedBank> {
+    let mut reader = BankReader::open(path)?;
+    let entries = reader.entries().to_vec();
+    let expanded = entries.iter().try_fold(0u64, |total, entry| {
+        total
+            .checked_add(entry.size)
+            .ok_or(SpeechError::LimitExceeded)
+    })?;
+    if expanded > MAX_EXPANDED_BYTES {
+        return Err(SpeechError::LimitExceeded);
     }
+    let otos: Vec<_> = entries
+        .iter()
+        .filter(|entry| {
+            entry.path.as_str().ends_with("oto.ini")
+                && entry.path.as_str().rsplit('/').next() == Some("oto.ini")
+        })
+        .collect();
+    if otos.is_empty() || otos.len() > MAX_PITCHES {
+        return Err(SpeechError::VoicebankInvalid);
+    }
+    let root = common_root(
+        &otos
+            .iter()
+            .map(|entry| entry.path.as_str())
+            .collect::<Vec<_>>(),
+    );
+    let mut bank = VoicebankIndex {
+        revision: [0; 32],
+        inventory: AliasInventoryId([0; 32]),
+        archive_sha256: reader.digest(),
+        alias_text: String::new(),
+        source_text: String::new(),
+        aliases: Vec::new(),
+        symbols: Vec::new(),
+        oto: Vec::new(),
+        sources: Vec::new(),
+        pitches: Vec::new(),
+    };
+    let mut rows = Vec::new();
+    let mut source_ids = BTreeMap::new();
+    for entry in otos {
+        import_oto(
+            &mut reader,
+            &entries,
+            entry,
+            &root,
+            &mut bank,
+            &mut rows,
+            &mut source_ids,
+        )?;
+    }
+    let mut report = finish_aliases(&mut bank, rows)?;
+    bank.validate()?;
+    hash_manifest(&mut bank);
+    report_inventory(&bank, &mut report);
+    let location = if path.is_dir() {
+        BankLocation::Directory {
+            root: path.canonicalize()?.join(root.trim_end_matches('/')),
+        }
+    } else {
+        BankLocation::Archive {
+            path: path.canonicalize()?,
+            prefix: root,
+        }
+    };
+    Ok(ImportedBank {
+        index: bank,
+        report,
+        location,
+    })
 }
-fn report_inventory(bank: &VoicebankManifest, report: &mut ImportReport) {
+fn report_inventory(bank: &VoicebankIndex, report: &mut ImportReport) {
     report.sources = bank.sources.len() as u32;
     report.rows = bank.oto.len() as u32;
     report.aliases = bank.aliases.len() as u32;
-    for group in &bank.pitches {
+    for (index, _group) in bank.pitches.iter().enumerate() {
+        let pitch = PitchId(index as u32);
         for alias in ["- bV", "bV", "N g", "N g-", "N k", "N k-"] {
-            if bank.find(alias, group.id).is_none() {
+            if bank.find(alias, pitch).is_none() {
                 report.missing_preferred_aliases += 1;
                 if report.missing_aliases.len() < MAX_DIAGNOSTICS {
-                    report.missing_aliases.push((group.id, alias));
+                    report.missing_aliases.push((pitch, alias));
                 }
             }
         }
@@ -153,50 +164,57 @@ fn decode(bytes: &[u8]) -> Result<String> {
 }
 fn import_oto(
     reader: &mut BankReader,
-    entries: &[(String, u64)],
-    path: &str,
+    entries: &[crate::voicebank::read::Entry],
+    entry: &crate::voicebank::read::Entry,
     root: &str,
-    bank: &mut VoicebankManifest,
+    bank: &mut VoicebankIndex,
     rows: &mut Vec<Row>,
-    sources: &mut BTreeMap<String, SourceId>,
+    sources: &mut BTreeMap<SafePath, SourceId>,
 ) -> Result<()> {
-    let bytes = reader.bytes(path, MAX_OTO_BYTES)?;
-    let directory = path
+    let bytes = reader.bytes(&entry.path, MAX_OTO_BYTES)?;
+    let directory = entry
+        .path
+        .as_str()
         .strip_suffix("oto.ini")
         .ok_or(SpeechError::VoicebankInvalid)?;
     let pitches = import_pitch(reader, entries, directory, root, bank)?;
+    let mut source_buf = String::with_capacity(MAX_PATH_BYTES);
     visit_rows(&bytes, |line_number, row| {
         if rows.len() >= MAX_OTO_ROWS {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let pitch = *pitches
             .iter()
             .find(|id| bank.core_alias(row.alias, **id).is_some())
             .ok_or(SpeechError::VoicebankInvalid)?;
-        let source_path = format!("{directory}{}", safe_path(row.source)?);
-        let source = match sources.get(&source_path) {
-            Some(id) => *id,
-            None => {
-                if bank.sources.len() >= MAX_SOURCES {
-                    return Err(SpeechError::Bounds);
-                }
-                let length = entries
-                    .iter()
-                    .find(|e| e.0 == source_path)
-                    .ok_or(SpeechError::VoicebankInvalid)?
-                    .1;
-                let id = SourceId(bank.sources.len() as u32);
-                bank.sources
-                    .push(read_wav(reader, &source_path, root, length)?);
-                sources.insert(source_path, id);
-                id
+        source_buf.clear();
+        source_buf.push_str(directory);
+        source_buf.push_str(row.source);
+        let source_path = SafePath::from_archive(&source_buf)?;
+        let source = if let Some(id) = sources.get(&source_path) {
+            *id
+        } else {
+            if bank.sources.len() >= MAX_SOURCES {
+                return Err(SpeechError::LimitExceeded);
             }
+            let length = entries
+                .iter()
+                .find(|candidate| candidate.path == source_path)
+                .ok_or(SpeechError::VoicebankInvalid)?
+                .size;
+            let id = SourceId(bank.sources.len() as u32);
+            let source = read_wav(reader, &source_path, root, length, &mut bank.source_text)?;
+            bank.sources.push(source);
+            sources.insert(source_path, id);
+            id
         };
-        let duration = bank.sources[source.0 as usize]
+        let source_row = &bank.sources[source.0 as usize];
+        let duration = source_row
             .frames
             .checked_mul(1_000_000)
-            .ok_or(SpeechError::Bounds)?
-            / 44100;
+            .ok_or(SpeechError::LimitExceeded)?
+            .checked_div(u64::from(source_row.sample_rate_hz))
+            .ok_or(SpeechError::LimitExceeded)?;
         let end_us = if row.cutoff_us < 0 {
             row.offset_us.checked_add(row.cutoff_us.unsigned_abs())
         } else {
@@ -206,7 +224,7 @@ fn import_oto(
         rows.push(Row {
             alias: row.alias.into(),
             oto: OtoEntry {
-                alias: AliasId(0),
+                alias: AliasIndex(0),
                 source,
                 line: line_number,
                 offset_us: row.offset_us,
@@ -224,17 +242,18 @@ fn import_oto(
 }
 fn import_pitch(
     reader: &mut BankReader,
-    entries: &[(String, u64)],
+    entries: &[crate::voicebank::read::Entry],
     directory: &str,
     root: &str,
-    bank: &mut VoicebankManifest,
+    bank: &mut VoicebankIndex,
 ) -> Result<Vec<PitchId>> {
     let mut mappings = Vec::new();
-    let prefix = format!("{directory}prefix.map");
-    if entries.iter().any(|e| e.0 == prefix) {
+    let prefix = SafePath::from_archive(&format!("{directory}prefix.map"))?;
+    if entries.iter().any(|entry| entry.path == prefix) {
         for line in decode(&reader.bytes(&prefix, MAX_OTO_BYTES)?)?.lines() {
             let parts: Vec<_> = line.split('\t').collect();
-            if parts.len() != 3 || mappings.len() >= 128 || line.len() > MAX_LINE_BYTES {
+            if parts.len() != 3 || mappings.len() >= MAX_PITCHES || line.len() > MAX_OTO_LINE_BYTES
+            {
                 return Err(SpeechError::VoicebankInvalid);
             }
             mappings.push(PitchMapping {
@@ -270,11 +289,10 @@ fn import_pitch(
     let mut ids = Vec::new();
     for mappings in groups {
         if bank.pitches.len() >= MAX_PITCHES {
-            return Err(SpeechError::Bounds);
+            return Err(SpeechError::LimitExceeded);
         }
         let id = PitchId(bank.pitches.len() as u32);
         bank.pitches.push(PitchGroup {
-            id,
             directory: directory.strip_prefix(root).unwrap_or(directory).into(),
             mappings,
         });
@@ -291,9 +309,15 @@ fn import_pitch(
     });
     Ok(ids)
 }
-fn read_wav(reader: &mut BankReader, path: &str, root: &str, length_bytes: u64) -> Result<Source> {
-    let input = reader.reader(path)?.take(MAX_WAV_HEADER_BYTES);
-    let wav = hound::WavReader::new(input).map_err(|_| SpeechError::VoicebankInvalid)?;
+fn read_wav(
+    reader: &mut BankReader,
+    path: &SafePath,
+    root: &str,
+    length_bytes: u64,
+    source_text: &mut String,
+) -> Result<Source> {
+    let mut input = CountedReader::new(reader.reader(path)?.take(MAX_WAV_HEADER_BYTES));
+    let wav = hound::WavReader::new(&mut input).map_err(|_| SpeechError::VoicebankInvalid)?;
     let spec = wav.spec();
     if spec.sample_rate != 44100
         || spec.channels != 1
@@ -303,8 +327,8 @@ fn read_wav(reader: &mut BankReader, path: &str, root: &str, length_bytes: u64) 
         return Err(SpeechError::UnsupportedFormat);
     }
     let frames = u64::from(wav.duration());
-    let data_offset_bytes = MAX_WAV_HEADER_BYTES - wav.into_inner().limit();
-    let data_length_bytes = frames.checked_mul(2).ok_or(SpeechError::Bounds)?;
+    let data_offset_bytes = wav.into_inner().bytes;
+    let data_length_bytes = frames.checked_mul(2).ok_or(SpeechError::LimitExceeded)?;
     if frames == 0
         || data_offset_bytes
             .checked_add(data_length_bytes)
@@ -312,8 +336,11 @@ fn read_wav(reader: &mut BankReader, path: &str, root: &str, length_bytes: u64) 
     {
         return Err(SpeechError::VoicebankInvalid);
     }
+    let relative = path.as_str().strip_prefix(root).unwrap_or(path.as_str());
+    let start = source_text.len() as u32;
+    source_text.push_str(relative);
     Ok(Source {
-        path: path.strip_prefix(root).unwrap_or(path).into(),
+        path: IndexSpan::new(start, source_text.len() as u32)?,
         length_bytes,
         sample_rate_hz: 44100,
         channels: 1,
@@ -323,7 +350,26 @@ fn read_wav(reader: &mut BankReader, path: &str, root: &str, length_bytes: u64) 
         data_length_bytes,
     })
 }
-fn finish_aliases(bank: &mut VoicebankManifest, mut rows: Vec<Row>) -> Result<ImportReport> {
+
+struct CountedReader<R> {
+    inner: R,
+    bytes: u64,
+}
+
+impl<R> CountedReader<R> {
+    fn new(inner: R) -> Self {
+        Self { inner, bytes: 0 }
+    }
+}
+
+impl<R: Read> Read for CountedReader<R> {
+    fn read(&mut self, bytes: &mut [u8]) -> std::io::Result<usize> {
+        let count = self.inner.read(bytes)?;
+        self.bytes = self.bytes.saturating_add(count as u64);
+        Ok(count)
+    }
+}
+fn finish_aliases(bank: &mut VoicebankIndex, mut rows: Vec<Row>) -> Result<ImportReport> {
     rows.sort_by(|a, b| {
         a.alias
             .cmp(&b.alias)
@@ -348,9 +394,9 @@ fn finish_aliases(bank: &mut VoicebankManifest, mut rows: Vec<Row>) -> Result<Im
                 }
             }
             alias.units.end += 1;
-            alias.id
+            AliasIndex((bank.aliases.len() - 1) as u32)
         } else {
-            let id = AliasId(bank.aliases.len() as u32);
+            let id = AliasIndex(bank.aliases.len() as u32);
             let text_start = bank.alias_text.len() as u32;
             bank.alias_text.push_str(&row.alias);
             let symbol_start = bank.symbols.len() as u32;
@@ -363,9 +409,9 @@ fn finish_aliases(bank: &mut VoicebankManifest, mut rows: Vec<Row>) -> Result<Im
                 if report.unsupported_ids.len() < MAX_DIAGNOSTICS {
                     report.unsupported_ids.push(id);
                 }
+                continue;
             }
             bank.aliases.push(Alias {
-                id,
                 text: IndexSpan::new(text_start, bank.alias_text.len() as u32)?,
                 symbols: IndexSpan::new(symbol_start, bank.symbols.len() as u32)?,
                 units: IndexSpan::new(bank.oto.len() as u32, bank.oto.len() as u32 + 1)?,
@@ -379,7 +425,7 @@ fn finish_aliases(bank: &mut VoicebankManifest, mut rows: Vec<Row>) -> Result<Im
     }
     Ok(report)
 }
-fn hash_manifest(bank: &mut VoicebankManifest) {
+fn hash_manifest(bank: &mut VoicebankIndex) {
     let mut inventory = Sha256::new();
     inventory.update(b"teto-alias-inventory-v1");
     inventory.update((bank.aliases.len() as u64).to_le_bytes());
@@ -392,10 +438,11 @@ fn hash_manifest(bank: &mut VoicebankManifest) {
     bank.inventory = AliasInventoryId(inventory.finalize().into());
     let mut hash = Sha256::new();
     hash.update(b"teto-manifest-v1");
+    hash.update(b"teto-symbol-parser-v1");
     hash.update(bank.inventory.0);
     hash.update((bank.sources.len() as u64).to_le_bytes());
     for s in &bank.sources {
-        hash_bytes(&mut hash, s.path.as_bytes());
+        hash_bytes(&mut hash, bank.source_text[s.path.range()].as_bytes());
         for value in [
             s.length_bytes,
             s.frames,

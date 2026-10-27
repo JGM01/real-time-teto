@@ -1,49 +1,47 @@
 //! Explicit phone components for missing combined recordings.
 use super::*;
+use crate::plan::MAX_REALIZATIONS;
 pub(super) fn components(
     sequence: &PhonemeSequence,
-    bank: &VoicebankManifest,
+    bank: &VoicebankIndex,
     pitch: PitchId,
     diagnostics: &mut SpeechDiagnostics,
-) -> Result<(Vec<Realization>, Vec<IndexSpan>)> {
+) -> Result<(Vec<PhoneSymbol>, Vec<IndexSpan>)> {
     let mut atoms = Vec::with_capacity(sequence.phones.len());
     let mut spans = Vec::with_capacity(sequence.phones.len());
     for (index, phone) in sequence.phones.iter().enumerate() {
-        let symbol = TetoXsampaMap::map(phone.phone());
+        let symbol = bank_symbol(phone.phone());
         let start = atoms.len();
         let split = split_for_bank(symbol, bank, pitch)?;
         if let Some((a, b, reason)) = split {
-            atoms.push(Realization {
+            atoms.push(PhoneSymbol {
                 target_phone: index as u32,
                 symbol: a,
-                part: RealizationPart::First,
             });
-            atoms.push(Realization {
+            atoms.push(PhoneSymbol {
                 target_phone: index as u32,
                 symbol: b,
-                part: RealizationPart::Second,
             });
             diagnostics.record(Diagnostic::Substitution {
                 phones: IndexSpan::new(index as u32, index as u32 + 1)?,
                 reason,
             });
         } else {
-            atoms.push(Realization {
+            atoms.push(PhoneSymbol {
                 target_phone: index as u32,
                 symbol,
-                part: RealizationPart::Whole,
             });
         }
         spans.push(IndexSpan::new(start as u32, atoms.len() as u32)?);
     }
     if atoms.len() > MAX_REALIZATIONS {
-        return Err(SpeechError::Bounds);
+        return Err(SpeechError::LimitExceeded);
     }
     Ok((atoms, spans))
 }
 fn split_for_bank(
     symbol: BankSymbol,
-    bank: &VoicebankManifest,
+    bank: &VoicebankIndex,
     pitch: PitchId,
 ) -> Result<Option<(BankSymbol, BankSymbol, Substitution)>> {
     use BankSymbol::*;
