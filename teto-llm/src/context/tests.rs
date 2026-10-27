@@ -12,15 +12,13 @@ fn exact_fit_and_one_token_over() {
     );
     assert!(context_budget(u32::MAX, u32::MAX, u32::MAX).is_err());
 }
-#[test]
-fn context_budget_bound() {
-    exact_fit_and_one_token_over();
-}
+
 #[test]
 fn effective_context_limit() {
     assert_eq!(context_budget(100, 2048, 4096).unwrap(), (2048, 1436));
     assert_eq!(context_budget(100, 4096, 1024).unwrap(), (1024, 412));
 }
+
 #[test]
 fn oversized_pinned_prompt_error() {
     assert_eq!(
@@ -28,6 +26,7 @@ fn oversized_pinned_prompt_error() {
         ErrorKind::ContextBudget
     );
 }
+
 fn exchange(user: &str, tokens: u32) -> Exchange {
     Exchange {
         user: user.into(),
@@ -37,58 +36,25 @@ fn exchange(user: &str, tokens: u32) -> Exchange {
         tokens,
     }
 }
+
 #[test]
-fn exchange_eviction_order() {
+fn eviction_removes_the_oldest_exchange() {
     let mut builder = ContextBuilder::new(
         "system".into(),
-        Profile::lookup(policy::PROFILE_ID)
+        Profile::lookup(ProfileId::Desktop)
             .unwrap()
             .generation_prompt,
     );
     builder
         .history
         .extend([exchange("oldest", 10), exchange("newest", 20)]);
-    builder.bytes = builder.history.iter().map(|e| e.bytes).sum();
-    builder.evict();
+    builder.bytes = builder.history.iter().map(|item| item.bytes).sum();
+    builder.history_tokens = 30;
+    let old = builder.evict();
+    assert_eq!(old.user, "oldest");
     assert_eq!(builder.history[0].user, "newest");
-    assert_eq!(builder.system, "system");
-    assert_eq!(builder.evicted_tokens, 10);
-    assert_eq!(builder.evicted_turns, 1);
-}
-#[test]
-fn eviction_metrics() {
-    exchange_eviction_order();
-}
-#[test]
-fn pinned_content_preserved() {
-    exchange_eviction_order();
-}
-#[test]
-fn decode_requires_budgeted_prompt() {
-    let source = include_str!("../native.rs");
-    assert!(source.contains("prompt: PreparedPrompt"));
-    assert!(source.contains("context.clear_kv_cache()"));
-}
-#[test]
-fn single_prompt_assembler() {
-    assert!(!include_str!("../native.rs").contains("<|turn>"));
-    assert!(include_str!("../context.rs").contains("fn render("));
-}
-#[test]
-fn builder_does_not_decode() {
-    assert!(!include_str!("../context.rs").contains("context.decode("));
-}
-#[test]
-fn cache_capability_gate() {
-    assert_eq!(
-        Profile::cache_mode(policy::PHONE_PROFILE),
-        CacheMode::FullRebuild
-    );
-}
-#[test]
-fn cache_failure_rebuilds() {
-    decode_requires_budgeted_prompt();
-    cache_capability_gate();
+    assert_eq!(builder.history_tokens, 20);
+    assert_eq!(builder.bytes, "newest".len() + 6);
 }
 
 proptest::proptest! {

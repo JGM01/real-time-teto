@@ -1,8 +1,10 @@
 # iPhone feasibility harness
 
-This uses the same `teto-llm` crate directly. It is a measurement harness, not a phone runtime qualification. It explicitly disables journaling. Its clause sink acknowledges completed clauses for orchestration measurements only; it produces no audio and does not prove playback.
+This harness uses the same `teto-llm` crate on a physical phone. It measures text-to-clause latency and the cache probe. It disables journaling. The clause sink acknowledges clauses for orchestration measurements only. It produces no audio and does not prove playback. The iPhone 15 Pro Max is the current text and cache qualification device; audio remains pending.
 
-Target: physical iPhone 15 Pro, 8 GB. Copy the exact `PHONE_FILE` artifact from the policy registry into the app's Documents directory. Verify `PHONE_SHA256` before import. No multimodal projector is needed.
+The harness builds with the `measurement` feature.
+
+Copy the exact `PHONE_FILE` artifact into the app Documents directory. Verify `PHONE_SHA256` before import. No multimodal projector is needed.
 
 Build the isolated ABI library with Rust 1.88 and the installed iPhone SDK:
 
@@ -11,12 +13,14 @@ rustup target add aarch64-apple-ios --toolchain 1.88.0
 make phone-build
 ```
 
-In a new iOS SwiftUI app, add `App/TetoPhoneSpikeApp.swift`, use `App/TetoPhoneSpike.h` as the Objective-C bridging header, and link `target/aarch64-apple-ios/release/libteto_phone_spike.a`. Link libc++, Metal, Foundation and Accelerate. Enable Documents file sharing (`UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace`) to import the model and export reports. Choose the user's signing team; no signing identity is stored here.
+Add `App/TetoPhoneSpikeApp.swift` to a SwiftUI app, use `App/TetoPhoneSpike.h` as the bridging header, and link `target/aarch64-apple-ios/release/libteto_phone_spike.a`. Link libc++, Metal, Foundation and Accelerate. Enable Documents file sharing. Choose the signing team in Xcode. No signing identity is stored here.
 
-The early feasibility run measures at least ten turns and five minutes in the foreground, plus an immediate cancellation probe. This is separate from full device qualification. Use Instruments to record peak memory, thermal state and termination diagnostics. The JSONL report contains metrics and outcome metadata only. Record exact hardware and OS with the report. Simulator results cannot qualify memory or thermals.
+The harness measures at least ten turns and five minutes in the foreground, plus an immediate cancellation probe. Use Instruments for peak memory, thermal state and termination diagnostics. The JSONL report contains metrics and outcome metadata only. Record the exact hardware and OS with the report. Simulator results cannot qualify memory or thermals.
 
-The FFI shim contains the only application-owned unsafe code: bounded UTF-8 pointer conversion and the C export. The engine and desktop application forbid unsafe code. Do not call the synchronous export from the UI thread or call it concurrently.
+The FFI shim contains the only application-owned unsafe code: bounded UTF-8 pointer conversion and the C export. Do not call the synchronous export from the UI thread or call it concurrently.
 
-A ready Xcode project is provided at `TetoPhoneSpike.xcodeproj`. Run `make phone-build` first, open that project, select the paired device, and select the Apple development team in Signing & Capabilities. Xcode records the user-selected team ID in the project; certificates and account credentials remain in Keychain. A valid development certificate and provisioning profile are required before installation. The paired iPhone 15 Pro Max (iPhone16,2, iOS 27.0.1) is authorized as a separate feasibility measurement; its results never qualify the specified iPhone 15 Pro.
+A ready Xcode project is at `TetoPhoneSpike.xcodeproj`. Run `make phone-build`, open the project, select the paired device and select the Apple development team. Certificates and account credentials remain in Keychain.
 
-For a device explicitly authorized for this task, `TETO_PHONE_DEVICE=<devicectl-identifier> zsh tools/prepare_phone.sh` builds, signs, installs, copies the checksum-pinned model and launches the measurement. It never uninstalls other apps. Apple Personal Teams have a limited number of installed development apps; freeing a slot and trusting the development profile may require user action. Results and sampled resources are separate JSONL files in the app's Documents directory. The model is not copied back with the reports.
+For an authorized device, `TETO_PHONE_DEVICE=<devicectl-identifier> zsh tools/prepare_phone.sh` builds, signs, installs, copies the checksum-pinned model and launches the measurement. It never uninstalls other apps. Results and resource samples are separate JSONL files in the app Documents directory. The model is not copied back with the reports.
+
+The Pro Max cache probe and cache run are recorded in [qualification](../teto-llm/QUALIFICATION.md). Prefix reuse is enabled for the Pro Max triple. The probe and the run are separate actions in the app.

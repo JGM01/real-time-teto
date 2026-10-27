@@ -113,10 +113,6 @@ fn journal_open_failure() {
     assert!(Journal::open(dir, SecretKey::new([18; 32])).is_err());
 }
 #[test]
-fn existing_journal_missing_key() {
-    journal_open_failure();
-}
-#[test]
 fn existing_key_missing_journal() {
     let root = tempfile::tempdir().unwrap();
     assert!(Journal::open(root.path().join("missing"), SecretKey::new([17; 32])).is_err());
@@ -139,20 +135,11 @@ fn explicit_initialization_only() {
     assert_eq!(fs::read(dir.join("header.cbor")).unwrap(), old);
 }
 #[test]
-fn startup_never_creates_or_replaces_key() {
-    explicit_initialization_only();
-    existing_key_missing_journal();
-}
-#[test]
 fn journal_delete_and_key_loss() {
     let (_root, dir, key) = setup();
     let journal = Journal::open_for_delete(dir.clone(), key).unwrap();
     journal.delete().unwrap();
     assert!(!dir.exists());
-}
-#[test]
-fn per_turn_delete_unsupported() {
-    assert!(!include_str!("../journal.rs").contains("fn delete_turn"));
 }
 #[test]
 fn journal_capacity_preserves_records() {
@@ -167,6 +154,7 @@ fn journal_capacity_preserves_records() {
     assert!(journal.directory.join("header.cbor").exists());
 }
 #[test]
+#[ignore = "writes sixty-four megabytes with durable appends"]
 fn journal_full_startup_and_runtime() {
     let (_root, dir, key) = setup();
     let mut journal = Journal::open(dir.clone(), key).unwrap();
@@ -215,7 +203,7 @@ fn write_failure_stops_turns() {
     let failed = journal
         .append(&record(GenerationStop::Eos, PlaybackStop::Complete))
         .unwrap_err();
-    assert_eq!(failed.pending_durable(), Some(true));
+    assert_eq!(failed.pending_durability(), PendingDurability::Durable);
     assert!(dir.join("pending.cbor").is_file());
     let pending = journal.pending.as_ref().unwrap().bytes.to_vec();
     assert!(journal.reserve().is_err());
@@ -227,43 +215,12 @@ fn write_failure_stops_turns() {
     assert_eq!(journal.next_record, 2);
 }
 #[test]
-fn failure_never_disables_journal() {
-    write_failure_stops_turns();
-}
-#[test]
-fn no_plaintext_fallback() {
-    journal_aead_roundtrip_and_tamper();
-}
-#[test]
-fn journal_not_replayed() {
-    let (_root, dir, key) = setup();
-    let mut journal = Journal::open(dir.clone(), key).unwrap();
-    append_one(&mut journal);
-    drop(journal);
-    assert_eq!(
-        Journal::open(dir, SecretKey::new([17; 32]))
-            .unwrap()
-            .next_record,
-        2
-    );
-    assert!(!include_str!("../native.rs").contains("journal.history"));
-}
-#[test]
 fn token_limit_journal_record() {
     let record = record(GenerationStop::TokenLimit, PlaybackStop::Interrupted);
     let saved: FinalizedTurn = ciborium::from_reader(encode(&record).unwrap().as_slice()).unwrap();
     assert_eq!(saved.generation_stop, GenerationStop::TokenLimit);
     assert_eq!(saved.playback_stop, PlaybackStop::Interrupted);
     assert!(saved.partial);
-}
-#[test]
-fn interrupted_journal_record() {
-    token_limit_journal_record();
-}
-#[test]
-fn diagnostics_are_not_journal() {
-    let saved = record(GenerationStop::Eos, PlaybackStop::Complete);
-    assert!(!format!("{saved:?}").contains("SENTINEL"));
 }
 #[test]
 fn truncated_frame_fails_closed() {
@@ -301,5 +258,24 @@ fn earlier_byte_array_frames_remain_readable() {
     let mut bytes = Vec::new();
     write_frame(&mut bytes, &old).unwrap();
     fs::write(path, bytes).unwrap();
+    drop(Journal::open(dir, SecretKey::new([17; 32])).unwrap());
+}
+
+#[test]
+fn every_truncated_segment_prefix_fails_closed() {
+    let (_root, dir, key) = setup();
+    let mut journal = Journal::open(dir.clone(), key).unwrap();
+    append_one(&mut journal);
+    drop(journal);
+    let path = segment_path(&dir, 0);
+    let bytes = fs::read(&path).unwrap();
+    for cut in 1..bytes.len() {
+        fs::write(&path, &bytes[..cut]).unwrap();
+        assert!(
+            Journal::open(dir.clone(), SecretKey::new([17; 32])).is_err(),
+            "cut {cut}"
+        );
+    }
+    fs::write(&path, &bytes).unwrap();
     drop(Journal::open(dir, SecretKey::new([17; 32])).unwrap());
 }

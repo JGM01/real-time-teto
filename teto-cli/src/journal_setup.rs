@@ -1,11 +1,7 @@
 //! Apple key access stays in the parent. Native-free child messages perform disk work.
-use crate::llm_client::{Client, require};
 use sha2::{Digest, Sha256};
-use std::{
-    env,
-    path::PathBuf,
-    sync::{Arc, atomic::AtomicBool},
-};
+use std::{env, path::PathBuf};
+use teto_llm_client::{ClientError, JournalAdmin, WorkerLaunch};
 use teto_llm_protocol::*;
 use zeroize::{Zeroize, Zeroizing};
 
@@ -50,9 +46,6 @@ pub(super) fn access() -> Result<JournalAccess> {
         _ => Err(failure(ErrorKind::Config)),
     }
 }
-fn client() -> Result<Client> {
-    Client::spawn(Arc::new(AtomicBool::new(false)))
-}
 fn random<const N: usize>() -> Result<[u8; N]> {
     let mut output = [0; N];
     getrandom::fill(&mut output).map_err(|_| failure(ErrorKind::Persistence))?;
@@ -71,16 +64,9 @@ pub(super) fn initialize() -> Result<()> {
     };
     // SecItemAdd fails on duplicates. Never use the password setter, which overwrites.
     create_key(&account, &key)?;
-    let result = client().and_then(|mut client| {
-        require(
-            client.request(&Request::Initialize {
-                directory,
-                identity,
-                key,
-            })?,
-            |r| matches!(r, Response::Ready),
-        )
-    });
+    let launch = WorkerLaunch::from_environment().map_err(ClientError::into_protocol)?;
+    let result = JournalAdmin::initialize(launch, directory, identity, key)
+        .map_err(ClientError::into_protocol);
     if result.is_err() {
         delete_key(&account)?;
     }
@@ -90,16 +76,12 @@ pub(super) fn delete() -> Result<()> {
     let directory = directory()?;
     let account = account(&directory)?;
     let key = lookup(&account)?.ok_or_else(|| failure(ErrorKind::Persistence))?;
-    let mut client = client()?;
-    require(
-        client.request(&Request::PrepareDelete { directory, key })?,
-        |r| matches!(r, Response::Ready),
-    )?;
+    let launch = WorkerLaunch::from_environment().map_err(ClientError::into_protocol)?;
+    let prepared =
+        JournalAdmin::prepare_delete(launch, directory, key).map_err(ClientError::into_protocol)?;
     // The child holds the authenticated journal's writer lock before shredding.
     delete_key(&account)?;
-    require(client.request(&Request::Delete)?, |r| {
-        matches!(r, Response::Closed)
-    })
+    prepared.delete().map_err(ClientError::into_protocol)
 }
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]

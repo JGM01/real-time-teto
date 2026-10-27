@@ -1,4 +1,4 @@
 [workspace]
-members = ["teto-core", "teto-cli", "teto-llm-protocol", "teto-llm"]
-exclude = ["earshot"]
+members = ["teto-core", "teto-cli", "teto-llm-protocol", "teto-llm", "teto-llm-client", "teto-speech", "earshot", "earshot/earshot-audit"]
+exclude = ["fuzz", "phone-spike"]
 resolver = "3"

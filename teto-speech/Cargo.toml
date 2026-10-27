@@ -1,0 +1,25 @@
+[package]
+name = "teto-speech"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+license = "MIT OR Apache-2.0"
+
+[features]
+default = []
+cmudict = []
+g2p-tract = []
+g2p-ort = []
+voicebank-wav = []
+psola = []
+device-cpal = []
+llm-adapter = ["dep:teto-llm-protocol"]
+
+[dependencies]
+thiserror = "2"
+teto-llm-protocol = { path = "../teto-llm-protocol", optional = true }
+
+[dev-dependencies]
+proptest = "1"
+teto-llm-protocol = { path = "../teto-llm-protocol" }

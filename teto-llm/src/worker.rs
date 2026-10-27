@@ -1,8 +1,8 @@
-use crate::cache::PrefixCache;
+use crate::api::{Command, Reply};
+use crate::prefix_cache::PrefixCache;
 use crate::*;
 use crate::{
     context::{ContextBuilder, PreparedPrompt},
-    engine::{Active, Command, Reply, Session},
     mailbox::Mailbox,
     text::TextPipeline,
 };
@@ -15,11 +15,30 @@ use llama_cpp_2::{
     sampling::LlamaSampler,
 };
 use sha2::{Digest, Sha256};
-use std::{num::NonZeroU32, sync::Arc, time::Instant};
+use std::{num::NonZeroU32, panic::AssertUnwindSafe, sync::Arc, time::Instant};
+
+pub(crate) struct Active {
+    input: UserInput,
+    mailbox: Arc<Mailbox>,
+}
+
+struct Pending {
+    record: FinalizedTurn,
+    durable: bool,
+}
+
+pub(crate) struct Session {
+    context: ContextBuilder,
+    active: Option<Active>,
+    pending: Option<Pending>,
+    journal: Option<journal::Journal>,
+    session: [u8; 16],
+    profile: &'static str,
+}
 
 pub(crate) fn run(config: OpenConfig, commands: Receiver<Command>, ready: Reply<()>) -> Result<()> {
-    let profile = Profile::lookup(config.profile.as_str())?;
-    Profile::validate_assets_for(&config.assets, &profile)?;
+    let profile = Profile::lookup(config.profile)?;
+    Profile::validate_assets_for(&config.assets, &profile, config.asset_cache.as_deref())?;
     let journal = match config.journal {
         JournalAccess::Disabled => None,
         JournalAccess::Encrypted { directory, key } => {
@@ -42,14 +61,14 @@ pub(crate) fn run(config: OpenConfig, commands: Receiver<Command>, ready: Reply<
     Profile::validate_model(&model, &profile)?;
     let parameters = LlamaContextParams::default()
         .with_n_ctx(NonZeroU32::new(policy::CONTEXT_TOKENS))
-        .with_n_batch(policy::PREFILL_BATCH as u32)
-        .with_n_ubatch(policy::PREFILL_BATCH as u32)
+        .with_n_batch(policy::PREFILL_CHUNK as u32)
+        .with_n_ubatch(policy::PREFILL_CHUNK as u32)
         .with_swa_full(true);
     let mut context = model
         .new_context(&backend, parameters)
         .map_err(|_| failure(ErrorKind::Generation))?;
     backend.void_logs();
-    let mut cache = PrefixCache::new(Profile::cache_mode(profile.id));
+    let mut cache = PrefixCache::new(Profile::cache_policy(config.profile, &config.host));
     let mut session = Session {
         context: ContextBuilder::new(config.system_prompt, profile.generation_prompt),
         active: None,
@@ -60,14 +79,25 @@ pub(crate) fn run(config: OpenConfig, commands: Receiver<Command>, ready: Reply<
     };
     ready.send(Ok(())).map_err(|_| failure(ErrorKind::Worker))?;
     while let Ok(command) = commands.recv() {
-        if handle(
-            command,
-            &mut session,
-            &model,
-            &mut context,
-            config.seed,
-            &mut cache,
-        ) {
+        let stop = match std::panic::catch_unwind(AssertUnwindSafe(|| {
+            handle(
+                command,
+                &mut session,
+                &model,
+                &mut context,
+                config.seed,
+                &mut cache,
+            )
+        })) {
+            Ok(stop) => stop,
+            Err(_) => {
+                if let Some(active) = &session.active {
+                    active.mailbox.worker_failed();
+                }
+                return Err(failure(ErrorKind::Worker));
+            }
+        };
+        if stop {
             break;
         }
     }
@@ -152,6 +182,7 @@ struct Generation {
     seed: u64,
     started: Instant,
 }
+
 fn generate(
     context: &mut LlamaContext<'_>,
     model: &LlamaModel,
@@ -183,10 +214,9 @@ fn generate(
             (GenerationStop::Failed, Some(error))
         }
     };
-    run.metrics.generation_ms = (run.started.elapsed().as_secs_f64() * 1000.0
-        - run.metrics.prompt_ms
-        - run.metrics.prompt_render_ms)
-        .max(0.0);
+    run.metrics.decode_us = elapsed_us(run.started.elapsed())
+        .saturating_sub(run.metrics.prefill_us)
+        .saturating_sub(run.metrics.prompt_render_us);
     mailbox.end(stop, error, run.metrics);
     true
 }
@@ -201,7 +231,7 @@ fn decode(
 ) -> Result<GenerationStop> {
     let prompt_started = Instant::now();
     let prefix = cache.prepare(context, tokens, &mut run.metrics);
-    let prefilled = prefill(
+    let prefill_result = prefill(
         context,
         mailbox,
         &tokens[prefix..],
@@ -209,8 +239,8 @@ fn decode(
         cache,
         &mut run.metrics,
     );
-    run.metrics.prompt_ms = prompt_started.elapsed().as_secs_f64() * 1000.0;
-    prefilled?;
+    run.metrics.prefill_us = elapsed_us(prompt_started.elapsed());
+    prefill_result?;
     let started = run.started;
     let seed = run.seed;
     let metrics = &mut run.metrics;
@@ -218,9 +248,6 @@ fn decode(
     let mut text = TextPipeline::new(mailbox.id);
     let mut emit = |clause: Clause| {
         mailbox.publish(clause)?;
-        let now = started.elapsed().as_secs_f64() * 1000.0;
-        metrics.first_clause_ms.get_or_insert(now);
-        metrics.last_clause_ms = Some(now);
         Ok(())
     };
     let mut batch = LlamaBatch::new(1, 1);
@@ -233,18 +260,15 @@ fn decode(
             text.finish(true, &mut emit)?;
             return Ok(GenerationStop::Eos);
         }
-        let piece = model
-            .token_to_piece_bytes(token, 4096, true, None)
-            .map_err(|_| failure(ErrorKind::Generation))?;
+        let piece = token_piece(model, token)?;
         if piece == b"<turn|>" {
             text.finish(true, &mut emit)?;
             return Ok(GenerationStop::Eos);
         }
-        let answer = text.push(&piece, &mut emit)?;
-        if answer {
+        if text.push(&piece, &mut emit)? {
             metrics
-                .first_answer_ms
-                .get_or_insert(started.elapsed().as_secs_f64() * 1000.0);
+                .first_answer_us
+                .get_or_insert(elapsed_us(started.elapsed()));
         }
         if mailbox.cancelled() {
             return Err(failure(ErrorKind::Cancelled));
@@ -262,6 +286,16 @@ fn decode(
     }
     text.finish(false, &mut emit)?;
     Ok(GenerationStop::TokenLimit)
+}
+
+fn token_piece(model: &LlamaModel, token: llama_cpp_2::token::LlamaToken) -> Result<Vec<u8>> {
+    match model.token_to_piece_bytes(token, 64, true, None) {
+        Ok(piece) => Ok(piece),
+        Err(llama_cpp_2::TokenToStringError::InsufficientBufferSpace(_)) => model
+            .token_to_piece_bytes(token, 4096, true, None)
+            .map_err(|_| failure(ErrorKind::Generation)),
+        Err(_) => Err(failure(ErrorKind::Generation)),
+    }
 }
 
 fn sampler(seed: u64, turn: TurnId) -> LlamaSampler {
@@ -285,14 +319,14 @@ fn prefill(
     cache: &mut PrefixCache,
     metrics: &mut TurnMetrics,
 ) -> Result<()> {
-    let mut batch = LlamaBatch::new(policy::PREFILL_BATCH, 1);
-    for (chunk, tokens_chunk) in tokens.chunks(policy::PREFILL_BATCH).enumerate() {
+    let mut batch = LlamaBatch::new(policy::PREFILL_CHUNK, 1);
+    for (chunk, tokens_chunk) in tokens.chunks(policy::PREFILL_CHUNK).enumerate() {
         if mailbox.cancelled() {
             return Err(failure(ErrorKind::Cancelled));
         }
         batch.clear();
         for (index, token) in tokens_chunk.iter().enumerate() {
-            let relative = chunk * policy::PREFILL_BATCH + index;
+            let relative = chunk * policy::PREFILL_CHUNK + index;
             batch
                 .add(
                     *token,
@@ -310,4 +344,84 @@ fn prefill(
         metrics.evaluated_prompt_tokens += tokens_chunk.len() as u32;
     }
     Ok(())
+}
+
+fn elapsed_us(duration: std::time::Duration) -> u64 {
+    u64::try_from(duration.as_micros()).unwrap_or(u64::MAX)
+}
+
+impl Session {
+    fn finalize(
+        &mut self,
+        id: TurnId,
+        playback: PlaybackStop,
+        source: ReceiptSource,
+        model: &LlamaModel,
+    ) -> Result<FinalizedTurn> {
+        if source == ReceiptSource::TestSink && self.journal.is_some() {
+            return Err(failure(ErrorKind::Receipt));
+        }
+        if self.pending.is_some() {
+            return Err(failure(ErrorKind::Persistence));
+        }
+        let active = self
+            .active
+            .as_ref()
+            .ok_or_else(|| failure(ErrorKind::Receipt))?;
+        if active.mailbox.id != id {
+            return Err(failure(ErrorKind::Receipt));
+        }
+        let (assistant, generation_stop, metrics) = active.mailbox.seal(playback)?;
+        let active = self.active.take().expect("validated active turn");
+        self.pending = Some(Pending {
+            record: FinalizedTurn {
+                schema_version: 2,
+                policy_version: policy::VERSION,
+                session: self.session,
+                turn: id,
+                profile: self.profile.into(),
+                user: active.input,
+                assistant,
+                generation_stop,
+                playback_stop: playback,
+                partial: generation_stop != GenerationStop::Eos
+                    || playback != PlaybackStop::Complete,
+                receipt_source: source,
+                metrics,
+            },
+            durable: false,
+        });
+        self.persist()?;
+        self.commit(model)
+    }
+
+    fn persist(&mut self) -> Result<()> {
+        let pending = self
+            .pending
+            .as_mut()
+            .ok_or_else(|| failure(ErrorKind::Persistence))?;
+        if pending.durable {
+            return Ok(());
+        }
+        let started = Instant::now();
+        if let Some(journal) = self.journal.as_mut() {
+            journal.retry_record(&pending.record)?;
+        }
+        pending.record.metrics.journal_us = elapsed_us(started.elapsed());
+        pending.durable = true;
+        Ok(())
+    }
+
+    fn commit(&mut self, model: &LlamaModel) -> Result<FinalizedTurn> {
+        let pending = self
+            .pending
+            .as_ref()
+            .ok_or_else(|| failure(ErrorKind::Persistence))?;
+        if !pending.durable {
+            return Err(failure(ErrorKind::Persistence));
+        }
+        self.context.commit(model, &pending.record)?;
+        let pending = self.pending.take().expect("validated pending record");
+        Ok(pending.record)
+    }
 }

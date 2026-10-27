@@ -66,6 +66,7 @@ impl Filter {
 #[derive(Default)]
 struct Normalizer {
     word: String,
+    output: String,
     ticks: usize,
     code: usize,
     line_start: bool,
@@ -74,13 +75,14 @@ struct Normalizer {
     url: bool,
 }
 impl Normalizer {
-    fn character(&mut self, c: char) -> Result<Option<String>> {
+    /// Process one character. Return true when `output` holds a word.
+    fn character(&mut self, c: char) -> Result<bool> {
         if c == '`' {
             self.ticks = (self.ticks + 1).min(3);
             return if self.code == 0 {
                 self.flush()
             } else {
-                Ok(None)
+                Ok(false)
             };
         }
         if self.ticks > 0 {
@@ -92,7 +94,7 @@ impl Normalizer {
             self.ticks = 0;
         }
         if self.code > 0 {
-            return Ok(None);
+            return Ok(false);
         }
         if self.link_end {
             self.link_end = false;
@@ -104,11 +106,11 @@ impl Normalizer {
             if c == ')' {
                 self.url = false;
             }
-            return Ok(None);
+            return Ok(false);
         }
         if c == ']' {
             self.link_end = true;
-            return Ok(None);
+            return Ok(false);
         }
         if self.line_start && !c.is_whitespace() {
             self.table = c == '|';
@@ -121,7 +123,7 @@ impl Normalizer {
             if c == '\n' {
                 self.table = false;
             }
-            return Ok(None);
+            return Ok(false);
         }
         let c = punctuation(c);
         if c.is_whitespace() {
@@ -131,7 +133,7 @@ impl Normalizer {
             return Err(failure(ErrorKind::Normalization));
         }
         if c == '*' || c == '_' || c == '#' || c == '[' {
-            return Ok(None);
+            return Ok(false);
         }
         if is_emoji(c) {
             return self.flush();
@@ -143,21 +145,30 @@ impl Normalizer {
             return self.long_word();
         }
         self.word.push(c);
-        Ok(None)
+        Ok(false)
     }
-    fn long_word(&self) -> Result<Option<String>> {
+
+    fn long_word(&mut self) -> Result<bool> {
         if self.word.starts_with("http") || self.word.starts_with("www.") {
-            Ok(None)
+            self.word.clear();
+            Ok(false)
         } else {
             Err(failure(ErrorKind::Normalization))
         }
     }
-    fn flush(&mut self) -> Result<Option<String>> {
-        let raw = std::mem::take(&mut self.word);
-        if raw.is_empty() {
-            return Ok(None);
+
+    /// Normalize the current word into `output`.
+    fn flush(&mut self) -> Result<bool> {
+        if self.word.is_empty() {
+            return Ok(false);
         }
-        normalize_word(&raw)
+        let mut raw = std::mem::take(&mut self.word);
+        self.output.clear();
+        let result = normalize_word(&raw, &mut self.output);
+        raw.clear();
+        self.word = raw;
+        result?;
+        Ok(!self.output.is_empty())
     }
 }
 
@@ -175,23 +186,23 @@ fn punctuation(c: char) -> char {
     }
 }
 
-fn normalize_word(raw: &str) -> Result<Option<String>> {
+fn normalize_word(raw: &str, out: &mut String) -> Result<()> {
     if matches!(raw, "-" | "+") {
-        return Ok(None);
+        return Ok(());
     }
     if raw.starts_with("http://") || raw.starts_with("https://") || raw.starts_with("www.") {
-        return Ok(None);
+        return Ok(());
     }
-    if let Some(expanded) = abbreviation(raw) {
-        return Ok(Some(expanded));
+    if abbreviation(raw, out) {
+        return Ok(());
     }
     let core = raw
         .trim_matches(|c: char| matches!(c, '.' | ',' | '!' | '?' | ';' | ':' | '"' | '(' | ')'));
     if core.is_empty() {
-        return Ok(None);
+        return Ok(());
     }
     if core.chars().any(|c| c.is_ascii_digit()) {
-        return normalize_number(raw, core).map(Some);
+        return normalize_number(raw, core, out);
     }
     if [
         "kg", "mg", "km", "cm", "mm", "lbs", "lb", "oz", "mph", "kph", "kHz", "MHz", "GHz", "mL",
@@ -211,10 +222,11 @@ fn normalize_word(raw: &str) -> Result<Option<String>> {
     {
         return Err(failure(ErrorKind::Normalization));
     }
-    Ok(Some(raw.to_owned()))
+    out.push_str(raw);
+    Ok(())
 }
 
-fn abbreviation(raw: &str) -> Option<String> {
+fn abbreviation(raw: &str, out: &mut String) -> bool {
     let core = raw.trim_matches([',', '!', '?', ';', ':', '"', '(', ')']);
     let expanded = match core {
         "Mr." => "Mister",
@@ -223,18 +235,18 @@ fn abbreviation(raw: &str) -> Option<String> {
         "Dr." => "Doctor",
         "e.g." => "for example",
         "i.e." => "that is",
-        _ => return None,
+        _ => return false,
     };
-    let start = raw.find(core)?;
-    Some(format!(
-        "{}{}{}",
-        &raw[..start],
-        expanded,
-        &raw[start + core.len()..]
-    ))
+    let Some(start) = raw.find(core) else {
+        return false;
+    };
+    out.push_str(&raw[..start]);
+    out.push_str(expanded);
+    out.push_str(&raw[start + core.len()..]);
+    true
 }
 
-fn normalize_number(raw: &str, core: &str) -> Result<String> {
+fn normalize_number(raw: &str, core: &str, out: &mut String) -> Result<()> {
     const SMALL: [&str; 21] = [
         "zero",
         "one",
@@ -258,30 +270,32 @@ fn normalize_number(raw: &str, core: &str) -> Result<String> {
         "nineteen",
         "twenty",
     ];
-    if !core.bytes().all(|b| b.is_ascii_digit()) {
-        return Err(failure(ErrorKind::Normalization));
-    }
-    let value = core.parse::<usize>().ok().filter(|v| *v < SMALL.len());
-    let expanded = if let Some(value) = value {
-        SMALL[value].to_owned()
-    } else {
-        core.bytes()
-            .map(|b| SMALL[(b - b'0') as usize])
-            .collect::<Vec<_>>()
-            .join(" ")
-    };
-    if expanded.len() > policy::LATER_CHARS * 4 {
+    if !core.bytes().all(|byte| byte.is_ascii_digit()) {
         return Err(failure(ErrorKind::Normalization));
     }
     let start = raw
         .find(core)
         .ok_or_else(|| failure(ErrorKind::Normalization))?;
-    Ok(format!(
-        "{}{}{}",
-        &raw[..start],
-        expanded,
-        &raw[start + core.len()..]
-    ))
+    out.push_str(&raw[..start]);
+    let value = core
+        .parse::<usize>()
+        .ok()
+        .filter(|value| *value < SMALL.len());
+    if let Some(value) = value {
+        out.push_str(SMALL[value]);
+    } else {
+        for (index, byte) in core.bytes().enumerate() {
+            if index > 0 {
+                out.push(' ');
+            }
+            out.push_str(SMALL[(byte - b'0') as usize]);
+        }
+    }
+    out.push_str(&raw[start + core.len()..]);
+    if out.len() > policy::LATER_CHARS * 4 {
+        return Err(failure(ErrorKind::Normalization));
+    }
+    Ok(())
 }
 
 pub(crate) struct TextPipeline {
@@ -327,8 +341,8 @@ impl TextPipeline {
             self.utf8.clear();
             if let Some(c) = self.filter.character(c)? {
                 answer |= !c.is_whitespace();
-                if let Some(word) = self.normalizer.character(c)? {
-                    self.words(&word, emit)?;
+                if self.normalizer.character(c)? {
+                    self.process_output(emit)?;
                 }
             }
         }
@@ -343,10 +357,20 @@ impl TextPipeline {
         if !self.utf8.is_empty() {
             return Err(failure(ErrorKind::Normalization));
         }
-        if let Some(word) = self.normalizer.flush()? {
-            self.words(&word, emit)?;
+        if self.normalizer.flush()? {
+            self.process_output(emit)?;
         }
         self.emit(emit)
+    }
+    fn process_output(&mut self, emit: &mut impl FnMut(Clause) -> Result<()>) -> Result<()> {
+        if self.normalizer.output.is_empty() {
+            return Ok(());
+        }
+        let output = std::mem::take(&mut self.normalizer.output);
+        let result = self.words(&output, emit);
+        self.normalizer.output = output;
+        self.normalizer.output.clear();
+        result
     }
     fn words(&mut self, words: &str, emit: &mut impl FnMut(Clause) -> Result<()>) -> Result<()> {
         for word in words.split_whitespace() {
@@ -400,19 +424,7 @@ impl TextPipeline {
             &mut self.clause,
             String::with_capacity(policy::LATER_CHARS * 4),
         );
-        let sentence = text
-            .trim_end_matches(['"', '\'', ')'])
-            .ends_with(['.', '!', '?']);
-        let clause = Clause::new(
-            self.turn,
-            ClauseIndex::new(self.index)?,
-            text.try_into()?,
-            if sentence {
-                Boundary::Sentence
-            } else {
-                Boundary::Clause
-            },
-        )?;
+        let clause = Clause::new(self.turn, ClauseIndex::new(self.index)?, text.try_into()?)?;
         emit(clause)?;
         self.index = self
             .index

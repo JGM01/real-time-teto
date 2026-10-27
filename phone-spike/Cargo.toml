@@ -11,4 +11,4 @@ publish = false
 crate-type = ["staticlib"]
 
 [dependencies]
-teto-llm = { path = "../teto-llm" }
+teto-llm = { path = "../teto-llm", features = ["measurement"] }

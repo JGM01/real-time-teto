@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
 publish = false
+license = "MIT OR Apache-2.0"
 
 [[bin]]
 name = "teto-cli"
@@ -16,6 +17,7 @@ ctrlc = "=3.5.2"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 teto-llm-protocol = { path = "../teto-llm-protocol" }
+teto-llm-client = { path = "../teto-llm-client" }
 zeroize = "=1.8.2"
 sha2 = "=0.10.9"
 getrandom = "=0.3.4"

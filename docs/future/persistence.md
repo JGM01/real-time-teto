@@ -1,3 +1,5 @@
+Status: future design. The shipped subsystem does not implement it.
+
 # UniiChat: one chat that never ends
 
 AI agents forget. A session fills up, gets compacted or dropped, and the

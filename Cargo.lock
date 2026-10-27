@@ -569,11 +569,25 @@ dependencies = [
  "crossbeam-channel",
  "hound",
  "ort",
+ "proptest",
  "realfft",
  "ringbuf",
  "rubato",
  "serde",
+ "serde_json",
+ "sha2",
  "silero",
+ "tempfile",
+ "thiserror 2.0.21",
+]
+
+[[package]]
+name = "earshot-audit"
+version = "0.1.0"
+dependencies = [
+ "crossbeam-channel",
+ "earshot",
+ "hound",
  "thiserror 2.0.21",
 ]
 
@@ -1994,6 +2008,7 @@ dependencies = [
  "sha2",
  "tempfile",
  "teto-core",
+ "teto-llm-client",
  "teto-llm-protocol",
  "tracing",
  "tracing-subscriber",
@@ -2036,12 +2051,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "teto-llm-client"
+version = "0.1.0"
+dependencies = [
+ "crossbeam-channel",
+ "teto-llm-protocol",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "teto-llm-protocol"
 version = "0.1.0"
 dependencies = [
  "ciborium",
  "serde",
  "zeroize",
+]
+
+[[package]]
+name = "teto-speech"
+version = "0.1.0"
+dependencies = [
+ "proptest",
+ "teto-llm-protocol",
+ "thiserror 2.0.21",
 ]
 
 [[package]]

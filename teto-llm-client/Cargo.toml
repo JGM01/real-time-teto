@@ -1,0 +1,16 @@
+[package]
+name = "teto-llm-client"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+teto-llm-protocol = { path = "../teto-llm-protocol" }
+crossbeam-channel = "=0.5.15"
+thiserror = "2"
+
+[[bin]]
+name = "teto-llm-client-fixture"
+path = "src/bin/fixture.rs"

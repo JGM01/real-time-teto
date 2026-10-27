@@ -38,7 +38,8 @@ def main():
     env.update(TETO_LLM_ASSETS=str(ROOT / 'models'),
                TETO_WHISPER_MODEL=str(ROOT / 'models' / 'ggml-small.en.bin'),
                TETO_JOURNAL_DIR=str(Path(tempfile.mkdtemp(prefix='teto-qualification-')) / 'journal'),
-               TETO_JOURNAL='on', TETO_LOG='off')
+               TETO_JOURNAL='on', TETO_LOG='off',
+               TETO_ASSET_CACHE=str(Path(tempfile.gettempdir()) / 'teto-asset-cache'))
     binary = str(ROOT / 'target/release/teto-cli')
     subprocess.run([binary, 'journal-init'], env=env, check=True)
     started = time.monotonic()

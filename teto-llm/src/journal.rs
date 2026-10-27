@@ -45,7 +45,6 @@ struct Pending {
     bytes: Zeroizing<Vec<u8>>,
     segment: u32,
     offset: u64,
-    durable: bool,
 }
 
 /// Holds the exclusive file lock and key for the entire journal lifetime.
@@ -253,7 +252,7 @@ impl Journal {
         let a = &frame.aad;
         if a.journal != self.identity.journal
             || a.key != self.identity.key
-            || a.schema != 1
+            || a.schema != 2
             || a.segment != segment
             || a.record != self.next_record
             || a.cipher_length as usize != frame.ciphertext.len()
@@ -312,21 +311,24 @@ impl Journal {
         if self.pending.is_some() {
             return Err(failure(ErrorKind::Persistence));
         }
-        self.pending = Some(
-            self.prepare(record, random())
-                .map_err(|error| error.with_pending_durable(false))?,
-        );
+        let pending = self
+            .prepare(record, random())
+            .map_err(|error| error.with_pending_durable(false))?;
+        self.pending = Some(pending);
         self.retry()
     }
 
     fn prepare(&self, record: &FinalizedTurn, nonce: Result<[u8; 24]>) -> Result<Pending> {
         let nonce = nonce?;
         let plain = encode(record)?;
+        if plain.len() > policy::RECORD_BYTES {
+            return Err(failure(ErrorKind::Persistence));
+        }
         let plain_length = u32::try_from(plain.len()).map_err(persistence)?;
         let aad = Aad {
             journal: self.identity.journal,
             key: self.identity.key,
-            schema: 1,
+            schema: 2,
             segment: self.segment,
             record: self.next_record,
             plain_length,
@@ -360,7 +362,6 @@ impl Journal {
             bytes,
             segment: self.segment,
             offset: self.length,
-            durable: false,
         })
     }
 
@@ -372,27 +373,28 @@ impl Journal {
         }
     }
 
-    /// Retry precisely the retained encrypted frame. Partial appends are replaced.
+    /// Retry the retained encrypted frame. A failed segment write spills it.
     pub(crate) fn retry(&mut self) -> Result<()> {
-        self.persist_pending()?;
-        self.flush_pending().map_err(|error| {
-            error.with_pending_durable(self.pending.as_ref().is_some_and(|pending| pending.durable))
-        })
-    }
-    fn persist_pending(&mut self) -> Result<()> {
-        let pending = self
-            .pending
-            .as_mut()
-            .ok_or_else(|| failure(ErrorKind::Persistence))?;
-        if pending.durable && self.directory.join("pending.cbor").exists() {
-            return Ok(());
+        match self.flush_pending() {
+            Ok(()) => Ok(()),
+            Err(error) => {
+                let durable = self.spill_pending().is_ok();
+                Err(error.with_pending_durable(durable))
+            }
         }
+    }
+
+    fn flush_pending(&mut self) -> Result<()> {
+        let Some(pending) = self.pending.take() else {
+            return Err(failure(ErrorKind::Persistence));
+        };
         let result = (|| {
             let mut file = private_options()
                 .write(true)
-                .create(true)
-                .truncate(true)
-                .open(self.directory.join("pending.cbor"))
+                .open(segment_path(&self.directory, pending.segment))
+                .map_err(persistence)?;
+            file.set_len(pending.offset).map_err(persistence)?;
+            file.seek(SeekFrom::Start(pending.offset))
                 .map_err(persistence)?;
             file.write_all(&pending.bytes)
                 .and_then(|()| file.sync_all())
@@ -401,35 +403,40 @@ impl Journal {
         })();
         match result {
             Ok(()) => {
-                pending.durable = true;
+                self.length = pending.offset + pending.bytes.len() as u64;
+                self.next_record = self
+                    .next_record
+                    .checked_add(1)
+                    .ok_or_else(|| failure(ErrorKind::Persistence))?;
+                let pending_path = self.directory.join("pending.cbor");
+                if pending_path.exists() {
+                    let _ = fs::remove_file(&pending_path);
+                    let _ = sync_directory(&self.directory);
+                }
                 Ok(())
             }
-            Err(error) => Err(error.with_pending_durable(false)),
+            Err(error) => {
+                self.pending = Some(pending);
+                Err(error)
+            }
         }
     }
-    fn flush_pending(&mut self) -> Result<()> {
-        let Some(pending) = &self.pending else {
-            return Err(failure(ErrorKind::Persistence));
-        };
+
+    fn spill_pending(&mut self) -> Result<()> {
+        let pending = self
+            .pending
+            .as_ref()
+            .ok_or_else(|| failure(ErrorKind::Persistence))?;
         let mut file = private_options()
             .write(true)
-            .open(segment_path(&self.directory, pending.segment))
-            .map_err(persistence)?;
-        file.set_len(pending.offset).map_err(persistence)?;
-        file.seek(SeekFrom::Start(pending.offset))
+            .create(true)
+            .truncate(true)
+            .open(self.directory.join("pending.cbor"))
             .map_err(persistence)?;
         file.write_all(&pending.bytes)
             .and_then(|()| file.sync_all())
             .map_err(persistence)?;
-        fs::remove_file(self.directory.join("pending.cbor")).map_err(persistence)?;
-        sync_directory(&self.directory)?;
-        self.length = pending.offset + pending.bytes.len() as u64;
-        self.next_record = self
-            .next_record
-            .checked_add(1)
-            .ok_or_else(|| failure(ErrorKind::Persistence))?;
-        self.pending = None;
-        Ok(())
+        sync_directory(&self.directory)
     }
 
     /// Delete only this authenticated, exclusively locked journal after key deletion.

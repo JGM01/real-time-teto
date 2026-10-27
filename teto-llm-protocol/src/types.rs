@@ -1,25 +1,34 @@
 use crate::{ErrorKind, Result, failure, policy};
 use serde::{Deserialize, Serialize};
-use std::{fmt, num::NonZeroU64};
+use std::{fmt, num::NonZeroU64, sync::Arc};
 use zeroize::{Zeroize, ZeroizeOnDrop};
 
-/// A checked catalog identity. A bare path cannot name a profile.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-pub struct ProfileId(&'static str);
+/// A profile in the built-in catalog.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(try_from = "String")]
+pub enum ProfileId {
+    #[serde(rename = "gemma4-26b-qat-q4_0-macos-v1")]
+    Desktop,
+    #[serde(rename = "gemma4-e2b-qat-q4_0-ios-spike-v1")]
+    PhoneSpike,
+}
 impl ProfileId {
     pub fn desktop() -> Self {
-        Self(policy::PROFILE_ID)
+        Self::Desktop
     }
     pub fn phone_spike() -> Self {
-        Self(policy::PHONE_PROFILE)
+        Self::PhoneSpike
     }
     pub fn as_str(self) -> &'static str {
-        self.0
+        match self {
+            Self::Desktop => policy::PROFILE_ID,
+            Self::PhoneSpike => policy::PHONE_PROFILE,
+        }
     }
     pub fn parse(id: &str) -> Result<Self> {
         match id {
-            policy::PROFILE_ID => Ok(Self::desktop()),
-            policy::PHONE_PROFILE => Ok(Self::phone_spike()),
+            policy::PROFILE_ID => Ok(Self::Desktop),
+            policy::PHONE_PROFILE => Ok(Self::PhoneSpike),
             _ => Err(failure(ErrorKind::Profile)),
         }
     }
@@ -28,14 +37,6 @@ impl TryFrom<String> for ProfileId {
     type Error = crate::Error;
     fn try_from(id: String) -> Result<Self> {
         Self::parse(&id)
-    }
-}
-impl<'de> Deserialize<'de> for ProfileId {
-    fn deserialize<D: serde::Deserializer<'de>>(
-        deserializer: D,
-    ) -> std::result::Result<Self, D::Error> {
-        let id = String::deserialize(deserializer)?;
-        Self::parse(&id).map_err(serde::de::Error::custom)
     }
 }
 
@@ -67,13 +68,13 @@ impl TurnId {
 }
 impl TryFrom<u64> for TurnId {
     type Error = crate::Error;
-    fn try_from(v: u64) -> Result<Self> {
-        Self::new(v)
+    fn try_from(value: u64) -> Result<Self> {
+        Self::new(value)
     }
 }
 impl From<TurnId> for u64 {
-    fn from(v: TurnId) -> Self {
-        v.get()
+    fn from(value: TurnId) -> Self {
+        value.get()
     }
 }
 
@@ -93,13 +94,13 @@ impl ClauseIndex {
 }
 impl TryFrom<u32> for ClauseIndex {
     type Error = crate::Error;
-    fn try_from(v: u32) -> Result<Self> {
-        Self::new(v)
+    fn try_from(value: u32) -> Result<Self> {
+        Self::new(value)
     }
 }
 impl From<ClauseIndex> for u32 {
-    fn from(v: ClauseIndex) -> Self {
-        v.get()
+    fn from(value: ClauseIndex) -> Self {
+        value.get()
     }
 }
 
@@ -116,8 +117,8 @@ struct InputData {
 }
 impl TryFrom<InputData> for UserInput {
     type Error = crate::Error;
-    fn try_from(v: InputData) -> Result<Self> {
-        Self::new(v.text, v.truncated)
+    fn try_from(value: InputData) -> Result<Self> {
+        Self::new(value.text, value.truncated)
     }
 }
 impl UserInput {
@@ -138,20 +139,28 @@ impl UserInput {
     }
 }
 impl fmt::Debug for UserInput {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("UserInput([redacted])")
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("UserInput([redacted])")
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(try_from = "String")]
-pub struct SpeakableText(String);
+pub struct SpeakableText(Arc<str>);
+impl Serialize for SpeakableText {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<S::Ok, S::Error> {
+        serializer.serialize_str(&self.0)
+    }
+}
 impl SpeakableText {
     pub fn as_str(&self) -> &str {
         &self.0
     }
     pub fn into_string(self) -> String {
-        self.0
+        self.0.to_string()
     }
 }
 impl TryFrom<String> for SpeakableText {
@@ -161,81 +170,58 @@ impl TryFrom<String> for SpeakableText {
             || text.len() > policy::LATER_CHARS * 4
             || text.trim() != text
             || text.contains("  ")
-            || !text.chars().any(|c| c.is_alphabetic())
-            || text.chars().any(|c| {
-                !(c.is_alphabetic()
+            || !text.chars().any(char::is_alphabetic)
+            || text.chars().any(|character| {
+                !(character.is_alphabetic()
                     || matches!(
-                        c,
+                        character,
                         ' ' | '.' | ',' | '!' | '?' | ';' | ':' | '\'' | '"' | '(' | ')' | '-'
                     ))
             })
         {
             return Err(failure(ErrorKind::Normalization));
         }
-        Ok(Self(text))
+        Ok(Self(Arc::from(text)))
     }
 }
 impl fmt::Debug for SpeakableText {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("SpeakableText([redacted])")
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("SpeakableText([redacted])")
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Boundary {
-    Clause,
-    Sentence,
-}
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(try_from = "ClauseData")]
 pub struct Clause {
     turn: TurnId,
     index: ClauseIndex,
     text: SpeakableText,
-    boundary: Boundary,
 }
 #[derive(Deserialize)]
 struct ClauseData {
     turn: TurnId,
     index: ClauseIndex,
     text: SpeakableText,
-    boundary: Boundary,
 }
 impl TryFrom<ClauseData> for Clause {
     type Error = crate::Error;
-    fn try_from(v: ClauseData) -> Result<Self> {
-        Self::new(v.turn, v.index, v.text, v.boundary)
+    fn try_from(value: ClauseData) -> Result<Self> {
+        Self::new(value.turn, value.index, value.text)
     }
 }
 impl Clause {
-    pub fn new(
-        turn: TurnId,
-        index: ClauseIndex,
-        text: SpeakableText,
-        boundary: Boundary,
-    ) -> Result<Self> {
-        let sentence = text
-            .as_str()
-            .trim_end_matches(['"', '\'', ')'])
-            .ends_with(['.', '!', '?']);
-        if sentence != (boundary == Boundary::Sentence) {
-            return Err(failure(ErrorKind::Normalization));
-        }
-        let (words, chars) = if index.get() == 0 {
+    pub fn new(turn: TurnId, index: ClauseIndex, text: SpeakableText) -> Result<Self> {
+        let (words, characters) = if index.get() == 0 {
             (policy::FIRST_WORDS, policy::FIRST_CHARS)
         } else {
             (policy::LATER_WORDS, policy::LATER_CHARS)
         };
-        if text.as_str().chars().count() > chars || text.as_str().split_whitespace().count() > words
+        if text.as_str().chars().count() > characters
+            || text.as_str().split_whitespace().count() > words
         {
             return Err(failure(ErrorKind::Normalization));
         }
-        Ok(Self {
-            turn,
-            index,
-            text,
-            boundary,
-        })
+        Ok(Self { turn, index, text })
     }
     pub fn turn(&self) -> TurnId {
         self.turn
@@ -246,8 +232,11 @@ impl Clause {
     pub fn text(&self) -> &str {
         self.text.as_str()
     }
-    pub fn boundary(&self) -> Boundary {
-        self.boundary
+    pub fn is_sentence(&self) -> bool {
+        self.text
+            .as_str()
+            .trim_end_matches(['"', '\'', ')'])
+            .ends_with(['.', '!', '?'])
     }
     pub fn into_text(self) -> String {
         self.text.into_string()
@@ -271,8 +260,28 @@ pub enum PlaybackStop {
 pub enum ReceiptSource {
     Playback,
     Display,
-    /// Explicit orchestration-only measurement; never valid for persistent production history.
+    /// Explicit orchestration-only measurement. Never valid for persistent production history.
     TestSink,
+}
+
+/// How many delivered clauses may wait for acknowledgment.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DeliveryWindow {
+    /// One delivered clause.
+    #[default]
+    One,
+    /// Two delivered clauses for lookahead.
+    Two,
+}
+
+impl DeliveryWindow {
+    /// Return the window size.
+    pub fn get(self) -> usize {
+        match self {
+            Self::One => 1,
+            Self::Two => 2,
+        }
+    }
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -311,8 +320,8 @@ pub enum ClauseEvent {
     },
 }
 
-/// Only explicitly selected no-journal mode avoids key access.
-#[derive(Serialize, Deserialize)]
+/// The caller selects no-journal mode only when it is explicit.
+#[derive(Clone, Serialize, Deserialize)]
 pub enum JournalAccess {
     Disabled,
     Encrypted {
@@ -321,11 +330,11 @@ pub enum JournalAccess {
     },
 }
 impl fmt::Debug for JournalAccess {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("JournalAccess([redacted])")
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("JournalAccess([redacted])")
     }
 }
-#[derive(Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
+#[derive(Clone, Serialize, Deserialize, Zeroize, ZeroizeOnDrop)]
 pub struct SecretKey([u8; 32]);
 impl SecretKey {
     pub fn new(bytes: [u8; 32]) -> Self {
@@ -336,8 +345,23 @@ impl SecretKey {
     }
 }
 impl fmt::Debug for SecretKey {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("SecretKey([redacted])")
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("SecretKey([redacted])")
+    }
+}
+
+/// The device and OS recorded for cache qualification.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HostIdentity {
+    pub device: String,
+    pub os: String,
+}
+impl HostIdentity {
+    pub fn new(device: impl Into<String>, os: impl Into<String>) -> Self {
+        Self {
+            device: device.into(),
+            os: os.into(),
+        }
     }
 }
 
@@ -347,32 +371,32 @@ pub struct JournalIdentity {
     pub key: [u8; 16],
 }
 
+/// Measurements for one turn. Time values use microseconds.
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct TurnMetrics {
     pub cache_mode: CacheMode,
     pub cache_reason: CacheReason,
-    pub worker_name: String,
-    pub prompt_tokens: u32,
-    pub generated_tokens: u32,
-    pub cached_prefix_tokens: u32,
-    pub uncached_prompt_tokens: u32,
-    pub evaluated_prompt_tokens: u32,
-    pub evicted_turns: u32,
-    pub evicted_tokens: u32,
     pub context_tokens: u32,
     pub headroom_tokens: u32,
-    pub prompt_ms: f64,
-    pub prompt_render_ms: f64,
-    pub first_answer_ms: Option<f64>,
-    pub first_clause_ms: Option<f64>,
-    pub last_clause_ms: Option<f64>,
-    pub generation_ms: f64,
-    pub queue_wait_ms: f64,
-    pub queue_high_water: usize,
-    pub cancel_ms: Option<f64>,
-    pub journal_ms: f64,
+    pub prompt_tokens: u32,
+    pub cached_prefix_tokens: u32,
+    pub evaluated_prompt_tokens: u32,
+    pub generated_tokens: u32,
+    pub evicted_exchanges: u32,
+    pub evicted_tokens: u32,
+    pub context_rebuilds: u32,
+    pub prompt_render_us: u64,
+    pub prefill_us: u64,
+    pub decode_us: u64,
+    pub first_answer_us: Option<u64>,
+    pub first_clause_us: Option<u64>,
+    pub last_clause_us: Option<u64>,
+    pub queue_wait_us: u64,
+    pub journal_us: u64,
+    pub cancel_us: Option<u64>,
     pub clauses: u32,
     pub characters: u32,
+    pub queue_high_water: u32,
 }
 
 /// A finalized record contains no unacknowledged assistant text.
@@ -392,7 +416,7 @@ pub struct FinalizedTurn {
     pub metrics: TurnMetrics,
 }
 impl fmt::Debug for FinalizedTurn {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("FinalizedTurn([redacted])")
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("FinalizedTurn([redacted])")
     }
 }

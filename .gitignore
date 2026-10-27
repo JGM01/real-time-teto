@@ -5,3 +5,7 @@ models/*.partial
 .DS_Store
 *.xcuserstate
 **/xcuserdata/
+
+# User-supplied voicebanks. Do not redistribute.
+voicebanks/*
+!voicebanks/README.md

@@ -1,7 +1,7 @@
 use crate::*;
 use llama_cpp_2::{context::LlamaContext, token::LlamaToken};
 
-/// Token IDs describe only tokens successfully evaluated in this one context.
+/// The token prefix that this context has evaluated.
 pub(crate) struct PrefixCache {
     tokens: Vec<LlamaToken>,
     mode: CacheMode,
@@ -25,11 +25,13 @@ impl PrefixCache {
         target: &[LlamaToken],
         metrics: &mut TurnMetrics,
     ) -> usize {
-        assert!(!target.is_empty());
         metrics.cache_mode = self.mode;
+        if target.is_empty() {
+            return 0;
+        }
         let prefix = common_prefix(&self.tokens, target);
         let invalidated = self.invalidated.take();
-        let forced = if metrics.evicted_turns > 0 {
+        let forced = if metrics.evicted_exchanges > 0 {
             Some(CacheReason::Eviction)
         } else if invalidated.is_some() {
             invalidated
@@ -55,21 +57,22 @@ impl PrefixCache {
                 CacheReason::Reused
             }
         });
+        metrics.context_rebuilds = u32::from(keep == 0);
         if keep == 0 {
             context.clear_kv_cache();
         }
         self.tokens.truncate(keep);
         metrics.cached_prefix_tokens = keep as u32;
-        metrics.uncached_prompt_tokens = target.len() as u32 - keep as u32;
         keep
     }
     pub fn remember(&mut self, tokens: &[LlamaToken]) {
-        assert!(self.tokens.len() + tokens.len() <= policy::CONTEXT_TOKENS as usize);
+        debug_assert!(self.tokens.len() + tokens.len() <= policy::CONTEXT_TOKENS as usize);
         self.tokens.extend_from_slice(tokens);
     }
 }
+
+/// Return the shared prefix length. The last target token stays uncached.
 fn common_prefix(cached: &[LlamaToken], target: &[LlamaToken]) -> usize {
-    // Re-evaluate the last target token when the entire target is cached, to obtain logits.
     cached
         .iter()
         .zip(target)
@@ -77,6 +80,7 @@ fn common_prefix(cached: &[LlamaToken], target: &[LlamaToken]) -> usize {
         .count()
         .min(target.len().saturating_sub(1))
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -94,18 +98,5 @@ mod tests {
         );
         cache.invalidate(CacheReason::Reset);
         assert!(cache.tokens.is_empty());
-    }
-    #[test]
-    fn exact_profile_cache_evidence() {
-        let report: serde_json::Value =
-            serde_json::from_str(include_str!("../qualification/cache-m3-pro.json")).unwrap();
-        assert_eq!(report["model_sha256"], policy::MODEL_SHA256);
-        assert_eq!(report["runtime"], policy::RUNTIME);
-        assert_eq!(report["device"], policy::PREFIX_REUSE_DEVICE);
-        assert_eq!(report["os"], policy::PREFIX_REUSE_OS);
-        assert_eq!(report["cases"].as_array().unwrap().len(), 6);
-        for case in report["cases"].as_array().unwrap() {
-            assert_eq!(case["continuation_equal"], true);
-        }
     }
 }

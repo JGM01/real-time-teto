@@ -10,18 +10,26 @@ struct TetoPhoneSpikeApp: App {
 struct SpikeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var running = false
-    @State private var status = "Import the pinned E2B GGUF into Documents. Pro Max results are separate from iPhone 15 Pro qualification."
+    @State private var status = "Import the pinned E2B GGUF into Documents. iPhone 15 Pro Max is the qualification device."
     var body: some View {
         VStack(spacing: 24) {
             Text(status)
             Button("Run five-minute feasibility spike", action: begin).disabled(running)
+            Button("Run six-case cache probe", action: beginProbe).disabled(running)
             Button("Stop after current clause") { teto_phone_cancel() }.disabled(!running)
         }.padding()
-        .task { if ProcessInfo.processInfo.arguments.contains("--autorun") { begin() } }
+        .task {
+            if ProcessInfo.processInfo.arguments.contains("--cache-probe") {
+                beginProbe()
+            } else if ProcessInfo.processInfo.arguments.contains("--autorun") {
+                begin()
+            }
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background && running { teto_phone_cancel() }
         }
     }
+
     private func begin() {
         guard !running else { return }
         running = true
@@ -48,14 +56,65 @@ struct SpikeView: View {
             running = false
         }
     }
-}
 
-private func runSpike(_ documents: URL, _ report: URL) -> Int32 {
-    let assets = Array(documents.path.utf8)
-    let destination = Array(report.path.utf8)
-    return assets.withUnsafeBufferPointer { source in
-        destination.withUnsafeBufferPointer { target in
-            teto_phone_spike(source.baseAddress, source.count, target.baseAddress, target.count)
+    private func beginProbe() {
+        guard !running else { return }
+        running = true
+        UIApplication.shared.isIdleTimerDisabled = true
+        status = "Running the six-case cache probe in the foreground."
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let report = documents.appendingPathComponent("cache-\(UUID().uuidString).jsonl")
+        Task {
+            let result = await Task.detached { runCacheProbe(documents, report) }.value
+            UIApplication.shared.isIdleTimerDisabled = false
+            status = result == 0 ? "Cache probe passed: \(report.lastPathComponent)."
+                : "Cache probe failed: \(report.lastPathComponent). Export the report."
+            running = false
+        }
+    }
+
+    private func runSpike(_ documents: URL, _ report: URL) -> Int32 {
+        setHost()
+        let assets = Array(documents.path.utf8)
+        let destination = Array(report.path.utf8)
+        return assets.withUnsafeBufferPointer { source in
+            destination.withUnsafeBufferPointer { target in
+                teto_phone_spike(source.baseAddress, source.count, target.baseAddress, target.count)
+            }
+        }
+    }
+
+    private func runCacheProbe(_ documents: URL, _ report: URL) -> Int32 {
+        setHost()
+        let assets = Array(documents.path.utf8)
+        let destination = Array(report.path.utf8)
+        return assets.withUnsafeBufferPointer { source in
+            destination.withUnsafeBufferPointer { target in
+                teto_phone_cache_probe(
+                    source.baseAddress, source.count, target.baseAddress, target.count)
+            }
+        }
+    }
+
+    private func setHost() {
+        let device = Array(machineName().utf8)
+        let os = Array(UIDevice.current.systemVersion.utf8)
+        device.withUnsafeBufferPointer { deviceBuffer in
+            os.withUnsafeBufferPointer { osBuffer in
+                _ = teto_phone_set_host(
+                    deviceBuffer.baseAddress, deviceBuffer.count,
+                    osBuffer.baseAddress, osBuffer.count)
+            }
+        }
+    }
+
+    private func machineName() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+                String(cString: $0)
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ export RUSTC := $(TOOLCHAIN_BIN)rustc
 export RUSTDOC := $(TOOLCHAIN_BIN)rustdoc
 CARGO := $(TOOLCHAIN_BIN)cargo
 
-.PHONY: fmt clippy test doc build build-release check policy qualify phone-build
+.PHONY: fmt clippy test doc build build-release check comments invariants policy-check qualify phone-build
 fmt:
 	$(CARGO) fmt --all -- --check
 format:
@@ -14,25 +14,35 @@ clippy:
 	$(CARGO) clippy --workspace --all-targets -- -D warnings -D clippy::too_many_lines
 test:
 	$(CARGO) test --workspace $(TEST_FILTER)
+test-features:
+	$(CARGO) test -p teto-speech --features llm-adapter
 doc:
 	RUSTDOCFLAGS="-D warnings" $(CARGO) doc --workspace --no-deps
 build:
 	$(CARGO) build --workspace
 build-release:
 	$(CARGO) build --workspace --release
-check: fmt clippy test doc
-policy:
-	$(CARGO) run --quiet -p teto-llm-protocol --example render_policy
+check: fmt clippy test test-features doc comments invariants
+comments:
+	python3 tools/check_comments.py
+invariants:
+	python3 tools/check_invariants.py
+policy-check:
+	$(CARGO) test -p teto-llm-protocol --test contract policy_numbers_match_document
 qualify:
-	$(CARGO) test --release -p teto-llm --test real_model $(TEST_FILTER) -- --ignored --test-threads=1
+	$(CARGO) test --release -p teto-llm --features measurement --test real_model $(TEST_FILTER) -- --ignored --test-threads=1
 cache-probe:
-	$(CARGO) run --release -p teto-llm --example cache_probe
+	$(CARGO) run --release -p teto-llm --features measurement --example cache_probe
 keychain-test:
 	$(CARGO) test -p teto-cli keychain_adapter -- --ignored --test-threads=1
 replay-test:
 	$(CARGO) test --release -p teto-core replay_speech_to_clauses -- --ignored --test-threads=1
 isolation-test:
 	$(CARGO) test --release -p teto-core concurrent_native_inference -- --ignored --test-threads=1 --nocapture
+fuzz-smoke:
+	cd fuzz && cargo +nightly fuzz run text -- -runs=1000
+	cd fuzz && cargo +nightly fuzz run frame -- -runs=1000
+
 phone-build:
 	IPHONEOS_DEPLOYMENT_TARGET=17.0 CMAKE_OSX_DEPLOYMENT_TARGET=17.0 BINDGEN_EXTRA_CLANG_ARGS_aarch64_apple_ios="-isysroot $$(xcrun --sdk iphoneos --show-sdk-path)" $(CARGO) build --manifest-path phone-spike/Cargo.toml --release --target aarch64-apple-ios
 phone-clean-native:

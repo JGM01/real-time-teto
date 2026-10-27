@@ -12,147 +12,67 @@
     "audio": "pending",
     "cold_process_summary": true,
     "definition": "fresh worker/model/context; OS page and shader caches uncontrolled",
-    "p50_ms": 33355.566166,
-    "p95_ms": 33925.264665999995,
+    "p50_us": 1542286,
+    "p95_us": 1557130,
     "samples": 20
   },
   "desktop": {
     "exit_code": 0,
-    "turns": 260,
+    "turns": 2885,
     "session_summary": {
-      "audio": "pending",
+      "audio": "pending: real TTS required",
+      "cache_hit_p95_us": 444227,
+      "cache_hit_turns": 2806,
+      "context_rebuilds": 79,
       "elapsed_seconds": 1804,
-      "first_clause_p50_ms": 462.911541,
-      "first_clause_p95_ms": 8979.526208,
+      "evicted_exchanges": 2807,
+      "first_clause_p50_us": 347266,
+      "first_clause_p95_us": 449809,
       "qualification_summary": true,
       "status": "measured",
-      "turns": 260
+      "turns": 2885,
+      "warm_p50_us": 339680,
+      "warm_p95_us": 440756
     },
-    "first100_warm_p50_ms": 462.911541,
-    "first100_warm_p95_ms": 8979.526208,
-    "all_turns_p50_ms": 8705.824084,
-    "all_turns_p95_ms": 9324.119874999999,
-    "cache_hit_p95_ms": 512.368583,
-    "cache_hit_turns": 64,
-    "generation_tokens_per_second": 27.385892420951816,
+    "warm_p50_us": 339680,
+    "warm_p95_us": 440756,
+    "all_turns_p50_us": 347266,
+    "all_turns_p95_us": 449809,
+    "cache_hit_p95_us": 444227,
+    "cache_hit_turns": 2806,
+    "generation_tokens_per_second": 26.168564398690346,
     "generation_failures": 0,
     "interrupted_playback": 0,
     "actions": [],
-    "evicted_exchanges": 195,
-    "peak_parent_child_rss_bytes": 16237002752,
-    "thermal_state_values": [
-      0
-    ],
+    "evicted_exchanges": 2807,
+    "context_rebuilds": 79,
+    "peak_parent_child_rss_bytes": null,
+    "thermal_state_values": [],
     "binary_sha256": {
-      "teto-cli": "72e680c793f230aa2550decaff7431302a2b1a0ddbda4bad9ee2b7090fe6f9bc",
-      "teto-llm-worker": "d1e51bd424a0c0756c60d5d8e3e1b028348a106404164b35e47eba54644eb050"
+      "teto-cli": "36f3629fb4aa96ffa22e241e4c6cba0e7315b3fec57978a682c3974dd73e8ed2",
+      "teto-llm-worker": "ffc3dec0a65d3638ca66068c3d1e712b595a6de403f10c818e7695169fe784bc"
     }
   },
   "lifecycle": {
-    "exit_code": 0,
-    "turns": 375,
-    "session_summary": {
-      "audio": "pending",
-      "elapsed_seconds": 1807,
-      "first_clause_p50_ms": 424.478417,
-      "first_clause_p95_ms": 9535.273165999999,
-      "qualification_summary": true,
-      "status": "measured",
-      "turns": 375
-    },
-    "first100_warm_p50_ms": 424.478417,
-    "first100_warm_p95_ms": 9535.273165999999,
-    "all_turns_p50_ms": 513.734834,
-    "all_turns_p95_ms": 9533.532292,
-    "cache_hit_p95_ms": 500.117166,
-    "cache_hit_turns": 192,
-    "generation_tokens_per_second": 27.35378937117735,
-    "generation_failures": 0,
-    "interrupted_playback": 37,
-    "actions": [
-      {
-        "after_turn": 128,
-        "qualification_action": "reset"
-      },
-      {
-        "after_turn": 256,
-        "qualification_action": "clean_process_reopen"
-      }
-    ],
-    "evicted_exchanges": 180,
-    "peak_parent_child_rss_bytes": 16235659264,
-    "thermal_state_values": [
-      0,
-      1
-    ],
-    "binary_sha256": {
-      "teto-cli": "0aef17c4187a0aaa5fe28e4c55de207e79aacdfaedcaa18541d15de8b9939a55",
-      "teto-llm-worker": "3e77429ea7a52dda20765366e0e62a0277bf530fb463a06608261f61707261a5"
-    }
+    "status": "pending"
   },
   "phone_pro_max": [
     {
-      "report": "spike-1ED6EC71-F313-40EB-9FB8-E646CE40ADFD.jsonl",
-      "measured_turns": 0,
-      "summary": null,
-      "error": {
-        "spike_error": "Normalization",
-        "qualified": false
-      },
-      "load_ms": null,
-      "first_clause_p50_ms": null,
-      "first_clause_p95_ms": null,
-      "generation_tokens_per_second": null,
-      "peak_resident_bytes": null,
-      "peak_footprint_bytes": 197822424,
-      "thermal_state_values": [
-        1
-      ],
-      "probe": {
-        "audio": "pending: real TTS required",
-        "cancellation_probe": true,
-        "generation_stop": "Cancelled",
-        "metrics": {
-          "cache_mode": "FullRebuild",
-          "cache_reason": "Disabled",
-          "cached_prefix_tokens": 0,
-          "cancel_ms": 2.0795000000000003,
-          "characters": 0,
-          "clauses": 0,
-          "context_tokens": 4096,
-          "evaluated_prompt_tokens": 0,
-          "evicted_tokens": 0,
-          "evicted_turns": 0,
-          "first_answer_ms": null,
-          "first_clause_ms": null,
-          "generated_tokens": 0,
-          "generation_ms": 0.0062500000000002,
-          "headroom_tokens": 3507,
-          "journal_ms": 0.000125,
-          "last_clause_ms": null,
-          "prompt_ms": 2.080708,
-          "prompt_render_ms": 0.962959,
-          "prompt_tokens": 77,
-          "queue_high_water": 0,
-          "queue_wait_ms": 0.0,
-          "uncached_prompt_tokens": 77,
-          "worker_name": "teto-llm-inference"
-        },
-        "partial": true,
-        "playback_stop": "Interrupted"
-      }
-    },
-    {
       "report": "spike-508F0AA3-2AD7-4AF3-BB8D-07AF775ED3D9.jsonl",
       "measured_turns": 0,
+      "resource_samples": 6,
+      "cache_modes": [],
+      "context_rebuilds": 0,
+      "evicted_exchanges": 0,
+      "generation_failures": 0,
       "summary": null,
       "error": {
         "spike_error": "Normalization",
         "qualified": false
       },
-      "load_ms": null,
-      "first_clause_p50_ms": null,
-      "first_clause_p95_ms": null,
+      "load_us": null,
+      "first_clause_p50_us": null,
+      "first_clause_p95_us": null,
       "generation_tokens_per_second": null,
       "peak_resident_bytes": null,
       "peak_footprint_bytes": 139055296,
@@ -194,8 +114,134 @@
       }
     },
     {
+      "report": "spike-1ED6EC71-F313-40EB-9FB8-E646CE40ADFD.jsonl",
+      "measured_turns": 0,
+      "resource_samples": 3,
+      "cache_modes": [],
+      "context_rebuilds": 0,
+      "evicted_exchanges": 0,
+      "generation_failures": 0,
+      "summary": null,
+      "error": {
+        "spike_error": "Normalization",
+        "qualified": false
+      },
+      "load_us": null,
+      "first_clause_p50_us": null,
+      "first_clause_p95_us": null,
+      "generation_tokens_per_second": null,
+      "peak_resident_bytes": null,
+      "peak_footprint_bytes": null,
+      "thermal_state_values": [],
+      "probe": {
+        "audio": "pending: real TTS required",
+        "cancellation_probe": true,
+        "generation_stop": "Cancelled",
+        "metrics": {
+          "cache_mode": "FullRebuild",
+          "cache_reason": "Disabled",
+          "cached_prefix_tokens": 0,
+          "cancel_ms": 2.0795000000000003,
+          "characters": 0,
+          "clauses": 0,
+          "context_tokens": 4096,
+          "evaluated_prompt_tokens": 0,
+          "evicted_tokens": 0,
+          "evicted_turns": 0,
+          "first_answer_ms": null,
+          "first_clause_ms": null,
+          "generated_tokens": 0,
+          "generation_ms": 0.0062500000000002,
+          "headroom_tokens": 3507,
+          "journal_ms": 0.000125,
+          "last_clause_ms": null,
+          "prompt_ms": 2.080708,
+          "prompt_render_ms": 0.962959,
+          "prompt_tokens": 77,
+          "queue_high_water": 0,
+          "queue_wait_ms": 0.0,
+          "uncached_prompt_tokens": 77,
+          "worker_name": "teto-llm-inference"
+        },
+        "partial": true,
+        "playback_stop": "Interrupted"
+      }
+    },
+    {
+      "report": "spike-E02353D3-A9D8-4773-A871-BAE9265D1AC1.jsonl",
+      "measured_turns": 58,
+      "resource_samples": 64,
+      "cache_modes": [
+        "FullRebuild"
+      ],
+      "context_rebuilds": 0,
+      "evicted_exchanges": 0,
+      "generation_failures": 0,
+      "summary": {
+        "audio": "pending: real TTS required",
+        "elapsed_seconds": 308.361495042,
+        "interrupted": false,
+        "measured_turns": 58,
+        "measurement_summary": true,
+        "minimum_turns": 10,
+        "requested_seconds": 300
+      },
+      "error": null,
+      "load_us": 14012038.583,
+      "first_clause_p50_us": 5326062.834000001,
+      "first_clause_p95_us": 9655852.958,
+      "generation_tokens_per_second": 19.19620821243526,
+      "peak_resident_bytes": null,
+      "peak_footprint_bytes": 245633240,
+      "thermal_state_values": [
+        0,
+        1,
+        2
+      ],
+      "probe": {
+        "audio": "pending: real TTS required",
+        "cancellation_probe": true,
+        "generation_stop": "Cancelled",
+        "metrics": {
+          "cache_mode": "FullRebuild",
+          "cache_reason": "Disabled",
+          "cached_prefix_tokens": 0,
+          "cancel_ms": 1.5680830000000001,
+          "characters": 0,
+          "clauses": 0,
+          "context_tokens": 4096,
+          "evaluated_prompt_tokens": 0,
+          "evicted_tokens": 0,
+          "evicted_turns": 0,
+          "first_answer_ms": null,
+          "first_clause_ms": null,
+          "generated_tokens": 0,
+          "generation_ms": 0.19520800000000016,
+          "headroom_tokens": 3511,
+          "journal_ms": 4.1e-05,
+          "last_clause_ms": null,
+          "prompt_ms": 1.569542,
+          "prompt_render_ms": 0.7651249999999999,
+          "prompt_tokens": 73,
+          "queue_high_water": 0,
+          "queue_wait_ms": 0.0,
+          "uncached_prompt_tokens": 73,
+          "worker_name": "teto-llm-inference"
+        },
+        "partial": true,
+        "playback_stop": "Interrupted"
+      }
+    },
+    {
       "report": "spike-B84E31A2-E2CF-43BD-BB8E-6994E6A72FAF.jsonl",
       "measured_turns": 56,
+      "resource_samples": 65,
+      "cache_modes": [
+        "FullRebuild"
+      ],
+      "context_rebuilds": 0,
+      "evicted_exchanges": 0,
+      "generation_failures": 0,
       "summary": {
         "audio": "pending: real TTS required",
         "elapsed_seconds": 310.630638208,
@@ -206,9 +252,9 @@
         "requested_seconds": 300
       },
       "error": null,
-      "load_ms": 14037.464208,
-      "first_clause_p50_ms": 5702.785916,
-      "first_clause_p95_ms": 10090.632292,
+      "load_us": 14037464.207999999,
+      "first_clause_p50_us": 5702785.916,
+      "first_clause_p95_us": 10090632.292,
       "generation_tokens_per_second": 18.775643300145283,
       "peak_resident_bytes": 2050572288,
       "peak_footprint_bytes": 258167072,
@@ -252,24 +298,33 @@
       }
     },
     {
-      "report": "spike-E02353D3-A9D8-4773-A871-BAE9265D1AC1.jsonl",
-      "measured_turns": 58,
+      "report": "spike-FEC13184-6DAF-4D84-9DA3-A3825039ACC8.jsonl",
+      "measured_turns": 57,
+      "resource_samples": 63,
+      "cache_modes": [
+        "FullRebuild"
+      ],
+      "context_rebuilds": 57,
+      "evicted_exchanges": 0,
+      "generation_failures": 0,
       "summary": {
         "audio": "pending: real TTS required",
-        "elapsed_seconds": 308.361495042,
+        "elapsed_seconds": 303.323798167,
+        "first_clause_p50_us": 5312059,
+        "first_clause_p95_us": 10404177,
         "interrupted": false,
-        "measured_turns": 58,
-        "measurement_summary": true,
+        "measured_turns": 57,
         "minimum_turns": 10,
+        "qualification_summary": true,
         "requested_seconds": 300
       },
       "error": null,
-      "load_ms": 14012.038583000001,
-      "first_clause_p50_ms": 5326.062834,
-      "first_clause_p95_ms": 9655.852958000001,
-      "generation_tokens_per_second": 19.19620821243526,
-      "peak_resident_bytes": null,
-      "peak_footprint_bytes": 245633240,
+      "load_us": 14280269,
+      "first_clause_p50_us": 5312057,
+      "first_clause_p95_us": 10404175,
+      "generation_tokens_per_second": 8.147507489439576,
+      "peak_resident_bytes": 1720975360,
+      "peak_footprint_bytes": 286036256,
       "thermal_state_values": [
         0,
         1,
@@ -283,31 +338,162 @@
           "cache_mode": "FullRebuild",
           "cache_reason": "Disabled",
           "cached_prefix_tokens": 0,
-          "cancel_ms": 1.5680830000000001,
+          "cancel_us": 2495,
           "characters": 0,
           "clauses": 0,
+          "context_rebuilds": 1,
           "context_tokens": 4096,
+          "decode_us": 21,
           "evaluated_prompt_tokens": 0,
+          "evicted_exchanges": 0,
           "evicted_tokens": 0,
-          "evicted_turns": 0,
-          "first_answer_ms": null,
-          "first_clause_ms": null,
+          "first_answer_us": null,
+          "first_clause_us": null,
           "generated_tokens": 0,
-          "generation_ms": 0.19520800000000016,
           "headroom_tokens": 3511,
-          "journal_ms": 4.1e-05,
-          "last_clause_ms": null,
-          "prompt_ms": 1.569542,
-          "prompt_render_ms": 0.7651249999999999,
+          "journal_us": 0,
+          "last_clause_us": null,
+          "prefill_us": 2498,
+          "prompt_render_us": 1579,
           "prompt_tokens": 73,
           "queue_high_water": 0,
-          "queue_wait_ms": 0.0,
-          "uncached_prompt_tokens": 73,
-          "worker_name": "teto-llm-inference"
+          "queue_wait_us": 0
+        },
+        "partial": true,
+        "playback_stop": "Interrupted"
+      }
+    },
+    {
+      "report": "spike-60FB536F-1EB4-4FAC-88A5-172D3FE1F5B6.jsonl",
+      "measured_turns": 269,
+      "resource_samples": 3,
+      "cache_modes": [
+        "VerifiedPrefixReuse"
+      ],
+      "context_rebuilds": 6,
+      "evicted_exchanges": 180,
+      "generation_failures": 0,
+      "summary": {
+        "audio": "pending: real TTS required",
+        "elapsed_seconds": 300.593345334,
+        "first_clause_p50_us": 437554,
+        "first_clause_p95_us": 764265,
+        "interrupted": false,
+        "measured_turns": 269,
+        "minimum_turns": 10,
+        "qualification_summary": true,
+        "requested_seconds": 300
+      },
+      "error": null,
+      "load_us": 13667022,
+      "first_clause_p50_us": 673710,
+      "first_clause_p95_us": 816429,
+      "generation_tokens_per_second": 15.460456042615895,
+      "peak_resident_bytes": null,
+      "peak_footprint_bytes": null,
+      "thermal_state_values": [],
+      "probe": {
+        "audio": "pending: real TTS required",
+        "cancellation_probe": true,
+        "generation_stop": "Cancelled",
+        "metrics": {
+          "cache_mode": "VerifiedPrefixReuse",
+          "cache_reason": "Cold",
+          "cached_prefix_tokens": 0,
+          "cancel_us": 2587,
+          "characters": 0,
+          "clauses": 0,
+          "context_rebuilds": 1,
+          "context_tokens": 4096,
+          "decode_us": 136,
+          "evaluated_prompt_tokens": 0,
+          "evicted_exchanges": 0,
+          "evicted_tokens": 0,
+          "first_answer_us": null,
+          "first_clause_us": null,
+          "generated_tokens": 0,
+          "headroom_tokens": 3511,
+          "journal_us": 0,
+          "last_clause_us": null,
+          "prefill_us": 2589,
+          "prompt_render_us": 5795,
+          "prompt_tokens": 73,
+          "queue_high_water": 0,
+          "queue_wait_us": 0
         },
         "partial": true,
         "playback_stop": "Interrupted"
       }
     }
-  ]
+  ],
+  "phone_cache_probe": {
+    "report": "cache-BA02436A-2530-4F66-A435-06D2C18F0B47.jsonl",
+    "qualified": true,
+    "device": "iPhone16,2",
+    "os": "27.0.1",
+    "model_sha256": "fa401b55b07ee70a54c6dae3903c783a6e65064312529ea57175cb5f8dec6634",
+    "template_sha256": "0a2c8073c878ab1da004bee933a998606537bbb62016310352c7285c3f01c5b5",
+    "cases": [
+      {
+        "case": "append",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 18,
+        "forced_failure": false,
+        "greedy_tokens_compared": 6,
+        "partial_remove_succeeded": true,
+        "prefix_tokens": 1944,
+        "prompt_tokens": 1962
+      },
+      {
+        "case": "normalized",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 17,
+        "forced_failure": false,
+        "greedy_tokens_compared": 8,
+        "partial_remove_succeeded": true,
+        "prefix_tokens": 1942,
+        "prompt_tokens": 1959
+      },
+      {
+        "case": "token_limit",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 14,
+        "forced_failure": false,
+        "greedy_tokens_compared": 8,
+        "partial_remove_succeeded": true,
+        "prefix_tokens": 1944,
+        "prompt_tokens": 1958
+      },
+      {
+        "case": "interrupted",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 14,
+        "forced_failure": false,
+        "greedy_tokens_compared": 6,
+        "partial_remove_succeeded": true,
+        "prefix_tokens": 1944,
+        "prompt_tokens": 1958
+      },
+      {
+        "case": "evicted",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 16,
+        "forced_failure": false,
+        "greedy_tokens_compared": 8,
+        "partial_remove_succeeded": true,
+        "prefix_tokens": 15,
+        "prompt_tokens": 31
+      },
+      {
+        "case": "removal_failure",
+        "continuation_equal": true,
+        "evaluated_prompt_tokens": 1952,
+        "forced_failure": true,
+        "greedy_tokens_compared": 7,
+        "partial_remove_succeeded": false,
+        "prefix_tokens": 0,
+        "prompt_tokens": 1952
+      }
+    ]
+  }
 }

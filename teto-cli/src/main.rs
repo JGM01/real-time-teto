@@ -12,7 +12,6 @@
 #![forbid(unsafe_code)]
 
 mod journal_setup;
-mod llm_client;
 mod llm_demo;
 mod terminal;
 
@@ -33,6 +32,25 @@ use teto_core::{Capture, Config, Error, Language, TetoCore};
 use tracing_subscriber::EnvFilter;
 
 const DEFAULT_FILTER: &str = "warn,teto_core=info,teto_cli=info";
+
+/// The process mode. Transcription is the default.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Mode {
+    Transcribe,
+    Text,
+    Voice,
+}
+
+impl Mode {
+    fn parse(value: &str) -> Option<Self> {
+        match value {
+            "transcribe" => Some(Self::Transcribe),
+            "text" => Some(Self::Text),
+            "voice" => Some(Self::Voice),
+            _ => None,
+        }
+    }
+}
 
 enum LoopError {
     Core(Error),
@@ -101,7 +119,17 @@ fn main() -> ExitCode {
 }
 
 fn run(shutdown: &Arc<AtomicBool>) -> ExitCode {
-    let mode = env::var("TETO_MODE").unwrap_or_else(|_| "transcribe".into());
+    let mode = match env::var("TETO_MODE")
+        .ok()
+        .as_deref()
+        .map_or(Some(Mode::Transcribe), Mode::parse)
+    {
+        Some(mode) => mode,
+        None => {
+            eprintln!("TETO_MODE must be transcribe, text or voice");
+            return ExitCode::FAILURE;
+        }
+    };
     let command = match parse_command(env::args().skip(1)) {
         Ok(command) => command,
         Err(error) => {
@@ -109,7 +137,7 @@ fn run(shutdown: &Arc<AtomicBool>) -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    if command.is_some() || mode != "transcribe" {
+    if command.is_some() || mode != Mode::Transcribe {
         let result = match command.as_deref() {
             Some("journal-init") => journal_setup::initialize(),
             Some("journal-delete") => journal_setup::delete(),
@@ -119,7 +147,7 @@ fn run(shutdown: &Arc<AtomicBool>) -> ExitCode {
             Some(_) => Err(teto_llm_protocol::failure(
                 teto_llm_protocol::ErrorKind::Config,
             )),
-            None => llm_demo::run(&mode, shutdown),
+            None => llm_demo::run(mode, shutdown),
         };
         return match result {
             Ok(()) => ExitCode::SUCCESS,
@@ -280,7 +308,7 @@ mod tests {
     use teto_core::{Error, Language};
 
     #[test]
-    fn command_rejects_extra_arguments_before_side_effects() {
+    fn command_parsing() {
         assert!(
             parse_command(["journal-delete".into(), "/other/journal".into()].into_iter()).is_err()
         );
@@ -294,50 +322,28 @@ mod tests {
     }
 
     #[test]
-    fn model_path_requires_a_value() {
+    fn environment_parsing() {
         assert!(matches!(parse_model_path(None), Err(Error::Config(_))));
-    }
-
-    #[test]
-    fn model_path_rejects_empty_value() {
         assert!(matches!(
             parse_model_path(Some(OsString::new())),
             Err(Error::Config(_))
         ));
-    }
-
-    #[test]
-    fn model_path_accepts_a_path() {
-        let path = parse_model_path(Some(OsString::from("model.bin"))).unwrap();
-        assert_eq!(path, PathBuf::from("model.bin"));
-    }
-
-    #[test]
-    fn language_defaults_to_english() {
+        assert_eq!(
+            parse_model_path(Some(OsString::from("model.bin"))).unwrap(),
+            PathBuf::from("model.bin")
+        );
         assert!(matches!(
             parse_language(None),
             Ok(Language::Code(code)) if code == "en"
         ));
-    }
-
-    #[test]
-    fn language_accepts_auto() {
         assert!(matches!(
             parse_language(Some("auto".into())),
             Ok(Language::Auto)
         ));
-    }
-
-    #[test]
-    fn language_rejects_empty_value() {
         assert!(matches!(
             parse_language(Some(String::new())),
             Err(Error::Config(_))
         ));
-    }
-
-    #[test]
-    fn use_gpu_parses_boolean_values() {
         assert!(parse_use_gpu(Some("true".into())).unwrap());
         assert!(!parse_use_gpu(Some("0".into())).unwrap());
         assert!(matches!(

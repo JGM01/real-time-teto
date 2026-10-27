@@ -1,70 +1,106 @@
 # LLM qualification evidence
 
-Policy V1 is implemented and functionally validated. The desktop candidate misses the one-second first-clause p95 target when history eviction forces a rebuild. The Pro Max feasibility run also shows substantial rebuild latency and thermal pressure. Neither result establishes production audio qualification: real TTS, first audible sample, starvation and complete audio latency remain pending.
+Status: Policy 2. The desktop warm soak, the 20-process cold start, the Pro Max cache probe and the Pro Max cache run are complete. The lifecycle soak and audio are pending.
 
-## Identity and method
+## Identity
 
-Desktop: Mac15,7, Apple M3 Pro, 36 GiB, macOS 27.0.1. Native runtime: `llama-cpp-2` and `llama-cpp-sys-2` exactly 0.1.154, llama.cpp `5f55650a78f92aff4d48d671423e888fac0469ff`, Metal, full SWA cache. Rust 1.88.0. The exact Google Gemma 4 26B-A4B QAT Q4_0 artifact and template hashes are in the [canonical registry](../teto-llm-protocol/src/policy.rs). Both were validated before generation.
+Desktop: Mac15,7, Apple M3 Pro, 36 GiB, macOS 27.0.1. Native runtime: `llama-cpp-2` and `llama-cpp-sys-2` exactly 0.1.154, llama.cpp `5f55650a78f92aff4d48d671423e888fac0469ff`, Metal, full SWA cache. Rust 1.88.0. The model and template hashes are in [the policy registry](../teto-llm-protocol/src/policy.rs).
 
-Sampling uses temperature one, top-k sixty-four, top-p point-nine-five and the specified SHA-256 per-turn seed derivation. Desktop measurement uses base seed zero; phone uses seven. Percentiles use nearest rank. Generation throughput includes EOS/suppressed-channel tokens and excludes prompt evaluation and queue waiting. First-clause timing measures text delivery, before display acknowledgment.
+The worker verifies the model file with SHA-256. A metadata-keyed cache avoids a full hash when the file size, modification time and file identity are unchanged. The cache path is explicit. A missing or changed cache entry causes a full hash.
 
-The parent contains Whisper/Earshot; the worker contains llama.cpp. [Built-symbol checks](qualification/native-isolation.json) and resolved dependency tests verify the separate trees. The real WAV test additionally measured **1.03 seconds of overlapping Whisper and LLM inference** in separate processes under Rust 1.88. This is independent of the latency measurements.
+## Desktop warm soak
 
-## Cache capability
-
-[cache-m3-pro.json](qualification/cache-m3-pro.json) records six clean-baseline comparisons with approximately nineteen hundred cached tokens: append, normalization, token limit, interruption, eviction and forced failed removal. Each compared eight greedy continuation tokens and counted actual prompt evaluations. All continuations matched. A shorter-prefix run also passed. The probe completed within its four-hour limit.
-
-This proves the cache operation for the checksummed desktop profile on the recorded hardware/OS. Prefix reuse is enabled only within that scope. Unverified platforms use FullRebuild. Eviction, reset and failed removal explicitly rebuild and report their reason and evaluated-token count. A rebuild is never reported as a cache hit. Phone prefix reuse remains unverified.
-
-## Functional evidence
-
-Formatting, 116 deterministic Rust 1.88 tests, Clippy with warnings denied and a seventy-line function limit, and rustdoc with warnings denied pass. Tests cover blocked producer/consumer cancellation, receipt/seal races, malformed/bounded IPC, exact budget arithmetic, chunk-boundary properties, AEAD tampering, maximum-size records, actual eight-segment capacity, pending-write retry, legacy byte-array frames and explicit resource setup/deletion. All 104 stable invariant IDs have enforcement/test references; deferred activation gates are checked explicitly. Loom and compile-fail suites are supplementary and are not present.
-
-Seventeen real-model test cases were exercised separately from fast tests through serial and focused runs. These include persistent context, replacement, active close/reset, dropped consumers, played-prefix cancellation, actual token limit, portable cancellation measurement, encrypted durable finalization, authenticated reopening and wrong-key refusal. Token limit followed by playback interruption was finalized through an encrypted journal and followed by another prompt. Tests do not assert an exact generated sentence; one conversation asserts recall of a supplied name.
-
-The WAV integration passed: existing WAV → Earshot → Whisper → private child → normalized clauses → recording receipts → finalized exchange. Silence admitted no LLM turn. The real CLI tests passed text follow-up/EOF, Ctrl-C during output, broken stdout with failed playback finalization and active child crash as service failure. The isolated Apple Keychain test passed and removed its temporary test entry. Default transcription starts no child or journal; text mode requires no ASR configuration.
-
-The original counting prompt ended at EOS, so it could not prove the token limit. A longer prose request reached the actual 512-token limit. The first phone attempts failed normalization because the E2B artifact's generation prefix differs from the desktop template. Profiles now own distinct generation prefixes and validate exact template hashes; subsequent physical runs completed. These earlier failed reports are preserved with the successful evidence. Unplayed text was not written to diagnostics.
-
-## Desktop performance
-
-The [summary](qualification/summary.json), [turn metrics](qualification/desktop-final-run.log) and [resource samples](qualification/desktop-final-resources.json) record a real parent/client run with Whisper resident and an explicitly initialized Keychain-backed encrypted journal. Measurements contained no competing inference tests. The journal remains preserved at the location recorded in the resource report; no replay restored model context.
+The run uses the release CLI, the private worker, Whisper resident in the parent and an encrypted journal. It runs for 1,804 seconds. [Turn records](qualification/desktop-policy2-run.log) and [identities](qualification/desktop-policy2-resources.json) are preserved.
 
 | Measurement | Observed |
 |---|---:|
-| Model-resident session | 260 turns, 1,804 seconds |
-| First 100 warm turns, first-clause p50 / p95 | 463 ms / 8,980 ms |
-| All turns, first-clause p50 / p95 | 8,706 ms / 9,324 ms |
-| Verified-prefix cache-hit subset, p95 | 512 ms, 64 turns |
-| Aggregate generation throughput | 27.39 tokens/second |
-| Generation failures | Zero |
-| Evictions applied to later prompts | 195 |
-| Peak sampled parent-plus-child RSS | 16.24 GB / 15.12 GiB |
-| Sampled ProcessInfo thermal state | Nominal throughout |
-| Twenty cold process starts, first-clause p50 / p95 | 33.36 / 33.93 seconds |
+| Turns | 2,885 |
+| First-clause p50 / p95, all turns | 347 ms / 450 ms |
+| First-clause p50 / p95, warm sample | 340 ms / 441 ms |
+| Cache-hit turns | 2,806 |
+| Cache-hit first-clause p95 | 444 ms |
+| Context rebuilds | 79 (2.7 percent of turns) |
+| Evicted exchanges | 2,807 |
+| Generation throughput | 26.17 tokens/s |
+| Generation failures | 0 |
+| Interrupted playback | 0 |
 
-Cold timing includes worker/model loading while ASR remains resident; OS page and shader caches are uncontrolled. The first hundred warm samples exclude the initial turn and include cache misses after eviction. Once the 64-exchange bound is reached, conservative prompt rebuilding dominates latency. The one-second p95 target is **missed**; the twenty-token/second aggregate generation target is met. Policy limits were retained.
+The one-second p95 target is met on the desktop path. The worst observed clause in the run is a rebuild turn at 4.63 seconds. A rebuild evaluates 2,474 prompt tokens in 3.67 seconds. The p95 excludes that tail because fewer than five percent of turns rebuild.
 
-RSS and thermal pressure were sampled every five seconds. Summed RSS can count shared pages twice and does not provide complete GPU allocation accounting; the reported peak is sampled. Thermal pressure is an OS category, not a measured temperature. `pmset` recorded no warning levels. Exact measurement executable hashes are stored in resource JSON; cold and warm runs have distinct build identities. Subsequent boundary hardening and the separate lifecycle run are tracked independently.
+## Cold start
 
-The final mixed lifecycle run completed **375 turns in 1,807 seconds**, including **37 planned playback interruptions**, reset after turn 128 and a clean process reopen after turn 256. Generation failures: **0**. The same encrypted journal survived reopening; model context started fresh. Peak sampled RSS was 15.12 GiB, with nominal and fair thermal pressure observed. First-hundred-warm p50/p95 were 424/9535 ms; aggregate generation throughput was 27.35 tokens/second. [Lifecycle turn records](qualification/desktop-lifecycle-run.log) and [resources/build identities](qualification/desktop-lifecycle-resources.json) preserve the evidence. This run includes the final boundary hardening and lifecycle renderer. Errors stop the harness; a crash never triggers automatic restart. The 8K-context and twelve-word-first-target variants remain unqualified.
+Twenty independent children run with ASR resident and an encrypted journal. The identity cache and the operating-system page cache are warm. [Cold run](qualification/desktop-cold-policy2.log).
 
-## Physical phone feasibility
-
-The same `teto-llm` crate ran directly on the authorized **iPhone 15 Pro Max**, iPhone16,2, iOS 27.0.1. This does not qualify the specified iPhone 15 Pro. The signed SwiftUI app and checksum-verified E2B model remain installed. Account credentials remain in Keychain; Xcode records the user-selected signing team in the project.
-
-The five-minute harness explicitly disables journaling and uses tagged TestSink receipts, with no audio output or ASR. The two completed runs measured 58 turns in 308 seconds and 56 turns in 311 seconds. The latter includes resident-memory telemetry:
-
-| Pro Max feasibility measurement | Observed |
+| Measurement | Observed |
 |---|---:|
-| Model load | 14.04 seconds |
-| First-clause p50 / p95 | 5.70 / 10.09 seconds |
-| Aggregate generation throughput | 18.78 tokens/second |
-| Peak sampled resident memory | 2.05 GB / 1.91 GiB |
-| Peak sampled physical footprint | 258 MB |
-| Cancellation probe | 1.96 ms, immediately after admission |
-| Cache mode | FullRebuild |
-| Thermal states observed | Nominal, fair, serious |
-| Run interruption / generation failure | None |
+| Cold process p50 / p95 | 1.54 s / 1.56 s |
+| First clause after model load | 348 ms |
+| Identity cache | warm |
 
-[Raw phone reports](qualification/phone-pro-max/) contain metrics and resource samples only. Resident memory and physical footprint account for mappings differently and do not establish total GPU/system memory use. The cancellation probe does not establish worst-case cancellation during an in-flight native batch. First-clause latency grows with prompt history under FullRebuild. These are feasibility results, with significant latency/thermal limitations; sustained production phone operation, the exact Pro device, phone prefix reuse and all audio gates remain pending.
+A two-turn real-model run takes 32.9 seconds with a cold identity cache and 2.2 seconds with a warm identity cache. The difference is the full-file SHA-256. A first launch includes the hash.
+
+## Cache capability
+
+The desktop probe is recorded in [cache-m3-pro.json](qualification/cache-m3-pro.json). The phone probe is recorded in [cache-BA02436A-2530-4F66-A435-06D2C18F0B47.jsonl](qualification/phone-pro-max/cache-BA02436A-2530-4F66-A435-06D2C18F0B47.jsonl). Both cover append, normalized history, token limit, interruption, eviction and forced removal failure. All six phone cases return equal greedy continuations. Every non-forced case removes the suffix.
+
+Policy 2 enables `VerifiedPrefixReuse` for the desktop artifact on Mac15,7/macOS 27.0.1 and the phone artifact on iPhone16,2/iOS 27.0.1. Other hosts use `FullRebuild`. The phone probe matched the exact model and template hashes in the registry.
+
+## Phone qualification
+
+The run uses the release `teto-llm` crate directly on an iPhone 16,2 (iPhone 15 Pro Max), iOS 27.0.1. The iPhone 15 Pro Max is the qualification device. [Report](qualification/phone-pro-max/spike-60FB536F-1EB4-4FAC-88A5-172D3FE1F5B6.jsonl).
+
+| Measurement | Observed |
+|---|---:|
+| Turns | 269 |
+| Duration | 301 s |
+| First-clause p50 / p95, all turns | 674 ms / 816 ms |
+| First-clause p50 / p95, warm sample | 438 ms / 764 ms |
+| Cache mode | VerifiedPrefixReuse |
+| Cache reasons | 263 reused, 5 eviction, 1 cold |
+| Context rebuilds | 6 |
+| Evicted exchanges | 180 |
+| Generation throughput | 15.46 tokens/s |
+| Cancellation probe | 2.59 ms |
+| Generation failures | 0 |
+| Longest turn | 14.25 s (rebuild) |
+
+The one-second first-clause target is met on the phone. The tail contains six rebuild turns; the p95 excludes that tail. Resource sampling produced three samples in this run, so memory and thermal values are not reported for this run.
+
+## Delivery-window experiment
+
+The mailbox supports one or two delivered clauses. The default is one. The two-clause window allows one clause to play while the next is prepared. Unit tests cover prefetch, contiguous receipts and the complete-seal fence.
+
+The audio gap measurement is pending the audio sink. The experiment does not claim a latency improvement yet.
+
+## Probes and smoke
+
+A 2,230-token prompt evaluates in 3.62 seconds at 616 tokens per second with the 512-token batch. The first clause on that full rebuild is 4.35 seconds.
+
+A 120-turn engine run measures first-clause p50 332 milliseconds and p95 450 milliseconds. The run records two context rebuilds and 34 evicted exchanges in 66.4 seconds. The run uses the engine directly and excludes ASR, IPC and journal writes.
+
+All nine real-model tests pass on the desktop host. The suite covers replacement, reset, close, drop, context reuse, a cancelled prefix, the token limit with an encrypted journal, encrypted finalization, and the cancellation probe. It runs in 28.6 seconds with a warm identity cache.
+
+The five-case CLI smoke run passes with the real worker: text follow-up and EOF, Ctrl-C during output, broken stdout with failed playback finalization, an active child crash, and encrypted journal deletion.
+
+## Targets
+
+| Measurement | Target | Status |
+|---|---:|---|
+| Desktop first-clause p95 | 1,000 ms | met at 450 ms |
+| Context rebuilds per 100 turns | at most 5 | met at 2.7 |
+| Desktop generation throughput | 20 tokens/s | met at 26.17 |
+| Cold start p95, 20 processes | 20 s | met at 1.56 s with a warm identity cache |
+| Asset hash after the cache is warm | 100 ms | met; the warm path skips the hash |
+| Cancellation p95 | 500 ms | probe only; the soak does not interrupt |
+| Cache probe | six cases on the production prompt | met on desktop and Pro Max |
+| Phone first-clause p95 | 1,000 ms | met at 816 ms |
+| Phone generation throughput | 20 tokens/s | missed at 15.46 |
+
+## Pending runs
+
+1. The lifecycle soak with interrupts, reset and clean process reopen.
+2. Real TTS, first audible sample, starvation and complete audio latency.
+
+## Method
+
+First-clause latency is parent wall time from `Start` to the first clause. All times are integer microseconds. Percentiles use nearest rank. Generation throughput excludes prompt evaluation and queue wait. [Summary](qualification/summary.json) is generated by `python3 tools/summarize_qualification.py`.

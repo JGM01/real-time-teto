@@ -1,15 +1,21 @@
-//! Local inference, clause assembly, played-history and encrypted journaling.
+//! Local inference, clause assembly, played history, and encrypted journaling.
 #![forbid(unsafe_code)]
 
-pub use teto_llm_protocol::*;
-mod cache;
+mod api;
+#[cfg(feature = "measurement")]
+pub mod cache_probe;
 mod context;
-mod engine;
 pub mod journal;
 mod mailbox;
-mod native;
+#[cfg(feature = "measurement")]
+pub mod measurement;
+mod prefix_cache;
 mod profile;
-pub mod qualification;
+#[cfg(feature = "testing")]
+pub mod testing;
 mod text;
-pub use engine::{Llm, Turn, TurnControl};
+mod worker;
+
+pub use api::{Llm, Turn, TurnControl};
 pub use profile::Profile;
+pub use teto_llm_protocol::*;

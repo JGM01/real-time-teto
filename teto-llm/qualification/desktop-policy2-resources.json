@@ -1,0 +1,16 @@
+{
+  "kind": "warm",
+  "exit_code": 0,
+  "elapsed_seconds": 1804,
+  "binary_sha256": {
+    "teto-cli": "36f3629fb4aa96ffa22e241e4c6cba0e7315b3fec57978a682c3974dd73e8ed2",
+    "teto-llm-worker": "ffc3dec0a65d3638ca66068c3d1e712b595a6de403f10c818e7695169fe784bc"
+  },
+  "device": "Mac15,7",
+  "os": "27.0.1",
+  "journal": "enabled",
+  "audio": "pending: real TTS required",
+  "peak_parent_child_rss_bytes": null,
+  "samples": [],
+  "resource_sampling": "not sampled for this run"
+}

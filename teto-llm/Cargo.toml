@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.88"
 publish = false
+license = "MIT OR Apache-2.0"
+
+[features]
+default = []
+measurement = ["dep:serde_json"]
+testing = []
 
 [dependencies]
 teto-llm-protocol = { path = "../teto-llm-protocol" }
@@ -17,7 +23,7 @@ serde = { version = "1", features = ["derive"] }
 ciborium = "=0.2.2"
 fs2 = "=0.4.3"
 tracing = "0.1"
-serde_json = "1"
+serde_json = { version = "1", optional = true }
 serde_bytes = "=0.11.19"
 crossbeam-channel = "=0.5.15"
 
@@ -27,3 +33,12 @@ llama-cpp-2 = { version = "=0.1.154", default-features = false, features = ["met
 [dev-dependencies]
 tempfile = "3"
 proptest = "1"
+serde_json = "1"
+
+[[example]]
+name = "cache_probe"
+required-features = ["measurement"]
+
+[[example]]
+name = "long_run"
+required-features = ["measurement"]

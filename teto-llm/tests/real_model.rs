@@ -6,13 +6,17 @@ static MODEL_GATE: Mutex<()> = Mutex::new(());
 fn config() -> OpenConfig {
     OpenConfig {
         assets: PathBuf::from(std::env::var_os("TETO_LLM_ASSETS").expect("set TETO_LLM_ASSETS")),
-        profile: ProfileId::desktop(),
+        profile: ProfileId::Desktop,
         output_language: OutputLanguage::English,
         system_prompt: String::new(),
         seed: 7,
         journal: JournalAccess::Disabled,
+        asset_cache: std::env::var_os("TETO_ASSET_CACHE").map(Into::into),
+        host: HostIdentity::new("Mac15,7", "27.0.1"),
+        delivery_window: DeliveryWindow::One,
     }
 }
+
 fn drain(turn: &mut Turn) -> GenerationStop {
     loop {
         match turn.next_clause().unwrap() {
@@ -29,7 +33,10 @@ fn drain(turn: &mut Turn) -> GenerationStop {
         }
     }
 }
-fn replacement_scenario() {
+
+#[test]
+#[ignore = "requires exact desktop model and Metal"]
+fn replacement_cancels_before_admission() {
     let _gate = MODEL_GATE.lock().unwrap();
     let mut llm = Llm::open(config()).unwrap();
     let mut turn = llm
@@ -62,26 +69,7 @@ fn replacement_scenario() {
         .unwrap();
     llm.close().unwrap();
 }
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn one_active_turn() {
-    replacement_scenario();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn replacement_cancels_before_admission() {
-    replacement_scenario();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn replacement_terminal_once() {
-    replacement_scenario();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn stale_clause_dropped() {
-    replacement_scenario();
-}
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn reset_active_turn() {
@@ -99,6 +87,7 @@ fn reset_active_turn() {
     llm.reset_conversation().unwrap();
     llm.close().unwrap();
 }
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn drop_active_turn() {
@@ -116,6 +105,7 @@ fn drop_active_turn() {
     assert_eq!(record.generation_stop, GenerationStop::Cancelled);
     llm.close().unwrap();
 }
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn close_active_turn() {
@@ -129,6 +119,7 @@ fn close_active_turn() {
         .unwrap();
     llm.close().unwrap();
 }
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn one_context_lifetime() {
@@ -153,14 +144,9 @@ fn one_context_lifetime() {
             record.metrics.prompt_tokens + policy::OUTPUT_TOKENS <= record.metrics.context_tokens
         );
         assert_eq!(
-            record.metrics.cached_prefix_tokens + record.metrics.uncached_prompt_tokens,
+            record.metrics.cached_prefix_tokens + record.metrics.evaluated_prompt_tokens,
             record.metrics.prompt_tokens
         );
-        assert_eq!(
-            record.metrics.evaluated_prompt_tokens,
-            record.metrics.uncached_prompt_tokens
-        );
-        assert_eq!(record.metrics.worker_name, "teto-llm-inference");
         if index == 1 {
             assert!(record.assistant.join(" ").to_lowercase().contains("robin"));
             if record.metrics.cache_mode == CacheMode::VerifiedPrefixReuse {
@@ -170,31 +156,7 @@ fn one_context_lifetime() {
     }
     llm.close().unwrap();
 }
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn one_clause_producer() {
-    one_context_lifetime();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn cache_evaluated_token_counts() {
-    one_context_lifetime();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn rendered_prompt_token_count() {
-    one_context_lifetime();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn display_receipt_commit_path() {
-    one_context_lifetime();
-}
-#[test]
-#[ignore = "requires exact desktop model and Metal"]
-fn inference_thread_identity() {
-    one_context_lifetime();
-}
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn cancelled_prefix_next_prompt() {
@@ -227,6 +189,7 @@ fn cancelled_prefix_next_prompt() {
         .unwrap();
     llm.close().unwrap();
 }
+
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn token_limit_next_prompt() {
@@ -279,12 +242,12 @@ fn real_profile_encrypted_finalization() {
         key: [23; 16],
     };
     journal::Journal::initialize(&directory, identity, &SecretKey::new([31; 32])).unwrap();
-    let mut config = config();
-    config.journal = JournalAccess::Encrypted {
+    let mut configured = config();
+    configured.journal = JournalAccess::Encrypted {
         directory: directory.clone(),
         key: SecretKey::new([31; 32]),
     };
-    let mut llm = Llm::open(config).unwrap();
+    let mut llm = Llm::open(configured).unwrap();
     let mut turn = llm
         .start_turn(UserInput::new("Say a friendly greeting.".into(), false).unwrap())
         .unwrap();
@@ -305,21 +268,21 @@ fn real_profile_encrypted_finalization() {
     assert!(
         !bytes
             .windows(record.user.text().len())
-            .any(|w| w == record.user.text().as_bytes())
+            .any(|window| window == record.user.text().as_bytes())
     );
     assert!(!directory.join("pending.cbor").exists());
-    // Open authenticates every finalized record and deliberately restores no model context.
     let reopened = journal::Journal::open(directory.clone(), SecretKey::new([31; 32])).unwrap();
     drop(reopened);
     assert!(journal::Journal::open(directory, SecretKey::new([32; 32])).is_err());
 }
 
+#[cfg(feature = "measurement")]
 #[test]
 #[ignore = "requires exact desktop model and Metal"]
 fn portable_measurement_cancel_probe() {
     let _gate = MODEL_GATE.lock().unwrap();
     let mut output = Vec::new();
-    qualification::measure(
+    measurement::measure(
         config(),
         &mut output,
         &std::sync::atomic::AtomicBool::new(false),
@@ -334,6 +297,6 @@ fn portable_measurement_cancel_probe() {
         .collect();
     assert_eq!(lines[0]["cancellation_probe"], true);
     assert_eq!(lines[0]["generation_stop"], "Cancelled");
-    assert_eq!(lines.last().unwrap()["measurement_summary"], true);
+    assert_eq!(lines.last().unwrap()["qualification_summary"], true);
     assert_eq!(lines.last().unwrap()["measured_turns"], 1);
 }

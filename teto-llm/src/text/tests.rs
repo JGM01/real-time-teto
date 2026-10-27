@@ -54,10 +54,6 @@ fn clause_order() {
     }
 }
 #[test]
-fn clause_indices() {
-    clause_order();
-}
-#[test]
 fn every_clause_has_turn() {
     for clause in render(&[b"Hello. Goodbye."], true).unwrap() {
         assert_eq!(clause.turn().get(), 1);
@@ -67,10 +63,6 @@ fn every_clause_has_turn() {
 fn output_token_bound() {
     let clauses = render(&[b"A complete sentence. An unfinished tail"], false).unwrap();
     assert_eq!(strings(&clauses), ["A complete sentence."]);
-}
-#[test]
-fn token_limit_with_context_headroom() {
-    output_token_bound();
 }
 #[test]
 fn normalization_omits_code_tables_urls_emoji() {
@@ -136,4 +128,16 @@ fn abbreviation_wrappers_preserve_punctuation() {
         strings(&result).join(" "),
         "Ask (Doctor) Smith; for example, say hello."
     );
+}
+
+proptest! {
+    #[test]
+    fn arbitrary_bytes_are_bounded(bytes in prop::collection::vec(any::<u8>(), 0..400)) {
+        if let Ok(clauses) = render(&[&bytes], true) {
+            for clause in clauses {
+                prop_assert!(clause.text().chars().count() <= policy::LATER_CHARS);
+                prop_assert!(!clause.text().contains('<'));
+            }
+        }
+    }
 }

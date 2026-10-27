@@ -1,6 +1,7 @@
 //! Native-free clause values and private parent/worker transport.
 #![forbid(unsafe_code)]
 
+pub mod measurement;
 pub mod policy;
 mod types;
 mod wire;
@@ -10,7 +11,7 @@ pub use wire::*;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-/// Stable categories. Diagnostic messages never contain response text or keys.
+/// Stable error categories. Diagnostic text never contains response text or keys.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ErrorKind {
     Config,
@@ -28,50 +29,65 @@ pub enum ErrorKind {
     Cancelled,
 }
 
+/// Whether an encrypted pending record reached durable storage.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PendingDurability {
+    #[default]
+    Unknown,
+    Durable,
+    NotDurable,
+}
+
 /// An opaque, redacted subsystem failure.
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Error {
     kind: ErrorKind,
-    pending_durable: Option<bool>,
+    pending: PendingDurability,
 }
 impl Error {
     pub fn new(kind: ErrorKind) -> Self {
         Self {
             kind,
-            pending_durable: None,
+            pending: PendingDurability::Unknown,
         }
     }
     pub fn kind(&self) -> ErrorKind {
         self.kind
     }
     pub fn with_pending_durable(mut self, durable: bool) -> Self {
-        self.pending_durable = Some(durable);
+        self.pending = if durable {
+            PendingDurability::Durable
+        } else {
+            PendingDurability::NotDurable
+        };
         self
     }
-    pub fn pending_durable(&self) -> Option<bool> {
-        self.pending_durable
+    pub fn pending_durability(&self) -> PendingDurability {
+        self.pending
     }
 }
 impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "LLM {:?} failure", self.kind)?;
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(formatter, "LLM {:?} failure", self.kind)?;
         if self.kind == ErrorKind::JournalFull {
-            f.write_str(
+            formatter.write_str(
                 "; select or initialize another journal, or restart in explicit no-journal mode",
             )?;
         }
-        if let Some(durable) = self.pending_durable {
-            write!(
-                f,
-                "; admission stopped; encrypted pending record durable={durable}"
-            )?;
+        match self.pending {
+            PendingDurability::Unknown => (),
+            PendingDurability::Durable => {
+                formatter.write_str("; admission stopped; encrypted pending record is durable")?
+            }
+            PendingDurability::NotDurable => formatter
+                .write_str("; admission stopped; encrypted pending record is not durable")?,
         }
         Ok(())
     }
 }
 impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(self, f)
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(self, formatter)
     }
 }
 impl std::error::Error for Error {}
