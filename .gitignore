@@ -1,0 +1,7 @@
+**/target/
+models/*.gguf
+models/*.bin
+models/*.partial
+.DS_Store
+*.xcuserstate
+**/xcuserdata/

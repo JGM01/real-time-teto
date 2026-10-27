@@ -1,0 +1,74 @@
+{
+  "cases": [
+    {
+      "case": "append",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 22,
+      "forced_failure": false,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": true,
+      "prefix_tokens": 1944,
+      "prompt_tokens": 1966
+    },
+    {
+      "case": "normalized",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 21,
+      "forced_failure": false,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": true,
+      "prefix_tokens": 1942,
+      "prompt_tokens": 1963
+    },
+    {
+      "case": "token_limit",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 18,
+      "forced_failure": false,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": true,
+      "prefix_tokens": 1944,
+      "prompt_tokens": 1962
+    },
+    {
+      "case": "interrupted",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 18,
+      "forced_failure": false,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": true,
+      "prefix_tokens": 1944,
+      "prompt_tokens": 1962
+    },
+    {
+      "case": "evicted",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 20,
+      "forced_failure": false,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": true,
+      "prefix_tokens": 15,
+      "prompt_tokens": 35
+    },
+    {
+      "case": "removal_failure",
+      "continuation_equal": true,
+      "evaluated_prompt_tokens": 1956,
+      "forced_failure": true,
+      "greedy_tokens_compared": 8,
+      "partial_remove_succeeded": false,
+      "prefix_tokens": 0,
+      "prompt_tokens": 1956
+    }
+  ],
+  "context": 4096,
+  "greedy": true,
+  "model_sha256": "3eca3b8f6d7baf218a7dd6bba5fb59a56ee25fe2d567b6f5f589b4f697eca51d",
+  "runtime": "llama-cpp-2=0.1.154;llama.cpp=5f55650a78f92aff4d48d671423e888fac0469ff",
+  "swa_full": true,
+  "device": "Mac15,7",
+  "processor": "Apple M3 Pro",
+  "memory_bytes": 38654705664,
+  "scope": "KV suffix-removal and greedy continuation equivalence only; not latency, thermal or whole-model qualification",
+  "os": "27.0.1"
+}

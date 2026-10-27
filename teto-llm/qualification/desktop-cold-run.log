@@ -1,0 +1,361 @@
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.025 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":1,"first_clause_after_load_ms":408.060209,"first_clause_from_launch_ms":32588.009876,"load_ms":32179.949667,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":331.368417,"first_clause_ms":408.01625,"generated_tokens":11,"generation_ms":322.002417,"headroom_tokens":3510,"journal_ms":10.931166000000001,"last_clause_ms":576.898,"prompt_ms":254.56224999999998,"prompt_render_ms":0.32904100000000003,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":2,"first_clause_after_load_ms":501.268417,"first_clause_from_launch_ms":33248.781501,"load_ms":32747.513084,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":407.343917,"first_clause_ms":501.209417,"generated_tokens":11,"generation_ms":405.297917,"headroom_tokens":3510,"journal_ms":9.325166,"last_clause_ms":717.3530420000001,"prompt_ms":311.075625,"prompt_render_ms":0.972333,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.022 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":3,"first_clause_after_load_ms":513.2496669999999,"first_clause_from_launch_ms":34619.75975,"load_ms":34106.510083,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":418.394041,"first_clause_ms":513.152916,"generated_tokens":11,"generation_ms":409.10158299999995,"headroom_tokens":3510,"journal_ms":9.894584,"last_clause_ms":731.359333,"prompt_ms":321.429083,"prompt_render_ms":0.825167,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.021 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":4,"first_clause_after_load_ms":428.266084,"first_clause_from_launch_ms":33890.296501000004,"load_ms":33462.030417,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":352.646916,"first_clause_ms":428.211166,"generated_tokens":11,"generation_ms":320.774334,"headroom_tokens":3510,"journal_ms":7.529542,"last_clause_ms":597.923875,"prompt_ms":274.819291,"prompt_render_ms":2.326625,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":5,"first_clause_after_load_ms":435.829708,"first_clause_from_launch_ms":33848.46675,"load_ms":33412.637042,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":360.904875,"first_clause_ms":435.773084,"generated_tokens":11,"generation_ms":320.707542,"headroom_tokens":3510,"journal_ms":11.303625,"last_clause_ms":605.606542,"prompt_ms":282.50045800000004,"prompt_render_ms":2.3969590000000003,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":6,"first_clause_after_load_ms":401.56679099999997,"first_clause_from_launch_ms":33099.088499,"load_ms":32697.521707999997,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":327.192542,"first_clause_ms":401.52125,"generated_tokens":11,"generation_ms":317.828208,"headroom_tokens":3510,"journal_ms":10.479709,"last_clause_ms":569.500792,"prompt_ms":250.665792,"prompt_render_ms":1.00325,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.010 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":7,"first_clause_after_load_ms":498.251667,"first_clause_from_launch_ms":33664.829292,"load_ms":33166.577625000005,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":400.0015,"first_clause_ms":498.199958,"generated_tokens":11,"generation_ms":381.5722089999999,"headroom_tokens":3510,"journal_ms":9.202125,"last_clause_ms":688.245875,"prompt_ms":305.42458300000004,"prompt_render_ms":1.247208,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":8,"first_clause_after_load_ms":404.950875,"first_clause_from_launch_ms":33435.756625,"load_ms":33030.80575,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":330.346791,"first_clause_ms":404.899291,"generated_tokens":11,"generation_ms":318.46037500000006,"headroom_tokens":3510,"journal_ms":9.052917,"last_clause_ms":573.260041,"prompt_ms":253.793375,"prompt_render_ms":1.0015,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":9,"first_clause_after_load_ms":422.609458,"first_clause_from_launch_ms":33320.343916,"load_ms":32897.734458,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":345.39124999999996,"first_clause_ms":422.562541,"generated_tokens":11,"generation_ms":320.977751,"headroom_tokens":3510,"journal_ms":11.363667,"last_clause_ms":590.8997499999999,"prompt_ms":268.950458,"prompt_render_ms":0.968791,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":10,"first_clause_after_load_ms":403.700792,"first_clause_from_launch_ms":32850.968125,"load_ms":32447.267333,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":329.25933299999997,"first_clause_ms":403.654833,"generated_tokens":11,"generation_ms":317.80845800000003,"headroom_tokens":3510,"journal_ms":10.365667,"last_clause_ms":572.2629999999999,"prompt_ms":253.39254100000002,"prompt_render_ms":1.057084,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":11,"first_clause_after_load_ms":457.460584,"first_clause_from_launch_ms":33667.898334,"load_ms":33210.43775,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":375.04274999999996,"first_clause_ms":457.373333,"generated_tokens":11,"generation_ms":358.85729100000003,"headroom_tokens":3510,"journal_ms":8.660959,"last_clause_ms":645.097417,"prompt_ms":285.203583,"prompt_render_ms":1.029709,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":12,"first_clause_after_load_ms":397.311083,"first_clause_from_launch_ms":33514.510083,"load_ms":33117.199,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":326.28675000000004,"first_clause_ms":397.268459,"generated_tokens":11,"generation_ms":307.181208,"headroom_tokens":3510,"journal_ms":22.385209,"last_clause_ms":559.351709,"prompt_ms":251.20720899999998,"prompt_render_ms":0.958625,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.008 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":13,"first_clause_after_load_ms":396.966166,"first_clause_from_launch_ms":32559.227166,"load_ms":32162.261000000002,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":325.712042,"first_clause_ms":396.921833,"generated_tokens":11,"generation_ms":308.2506239999999,"headroom_tokens":3510,"journal_ms":9.268041,"last_clause_ms":558.516583,"prompt_ms":249.87816700000002,"prompt_render_ms":0.383042,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":14,"first_clause_after_load_ms":399.875167,"first_clause_from_launch_ms":32318.322333999997,"load_ms":31918.447167,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":325.052209,"first_clause_ms":399.786334,"generated_tokens":11,"generation_ms":313.6471669999999,"headroom_tokens":3510,"journal_ms":8.753791,"last_clause_ms":566.813375,"prompt_ms":252.15316700000002,"prompt_render_ms":1.0012910000000002,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.008 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":15,"first_clause_after_load_ms":394.4535,"first_clause_from_launch_ms":32812.18204100001,"load_ms":32417.728541000004,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":322.770125,"first_clause_ms":394.405917,"generated_tokens":11,"generation_ms":307.341,"headroom_tokens":3510,"journal_ms":8.658958,"last_clause_ms":556.117292,"prompt_ms":247.740875,"prompt_render_ms":1.030792,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.010 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":16,"first_clause_after_load_ms":416.650083,"first_clause_from_launch_ms":33241.743333000006,"load_ms":32825.093250000005,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":342.14579200000003,"first_clause_ms":416.60075,"generated_tokens":11,"generation_ms":327.767917,"headroom_tokens":3510,"journal_ms":12.217375,"last_clause_ms":593.019375,"prompt_ms":264.231333,"prompt_render_ms":1.016,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":17,"first_clause_after_load_ms":409.75470800000005,"first_clause_from_launch_ms":33450.297292,"load_ms":33040.542584,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":335.354666,"first_clause_ms":409.708958,"generated_tokens":11,"generation_ms":319.6366659999999,"headroom_tokens":3510,"journal_ms":11.302541,"last_clause_ms":577.969833,"prompt_ms":257.85816700000004,"prompt_render_ms":0.47125,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":18,"first_clause_after_load_ms":430.32675,"first_clause_from_launch_ms":33925.264665999995,"load_ms":33494.937915999995,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":353.374917,"first_clause_ms":430.27575,"generated_tokens":11,"generation_ms":333.31570899999997,"headroom_tokens":3510,"journal_ms":16.493750000000002,"last_clause_ms":606.849458,"prompt_ms":272.41725,"prompt_render_ms":1.112916,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":19,"first_clause_after_load_ms":420.59554199999997,"first_clause_from_launch_ms":33920.923084,"load_ms":33500.327542,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":340.952042,"first_clause_ms":420.530125,"generated_tokens":11,"generation_ms":351.344458,"headroom_tokens":3510,"journal_ms":11.375584,"last_clause_ms":615.0962089999999,"prompt_ms":262.495875,"prompt_render_ms":1.253417,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.009 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 30150.67 MB
+turn: 1 generation=Eos playback=Complete truncated=false partial=false
+{"asr_resident":true,"audio":"pending","cold_process_sample":20,"first_clause_after_load_ms":411.945958,"first_clause_from_launch_ms":33355.566166,"load_ms":32943.620208,"metrics":{"cache_mode":"VerifiedPrefixReuse","cache_reason":"Cold","cached_prefix_tokens":0,"cancel_ms":null,"characters":39,"clauses":2,"context_tokens":4096,"evaluated_prompt_tokens":74,"evicted_tokens":0,"evicted_turns":0,"first_answer_ms":337.19125,"first_clause_ms":411.88633400000003,"generated_tokens":11,"generation_ms":320.962125,"headroom_tokens":3510,"journal_ms":9.340042,"last_clause_ms":581.335,"prompt_ms":259.10166699999996,"prompt_render_ms":1.266583,"prompt_tokens":74,"queue_high_water":1,"queue_wait_ms":0.0,"uncached_prompt_tokens":74,"worker_name":"teto-llm-inference"}}
+{"audio":"pending","cold_process_summary":true,"definition":"fresh worker/model/context; OS page and shader caches uncontrolled","p50_ms":33355.566166,"p95_ms":33925.264665999995,"samples":20}

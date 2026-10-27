@@ -1,0 +1,17 @@
+PRODUCT_BUNDLE_IDENTIFIER = org.teto.PhoneSpike
+PRODUCT_NAME = TetoPhoneSpike
+CODE_SIGN_STYLE = Automatic
+GENERATE_INFOPLIST_FILE = YES
+CURRENT_PROJECT_VERSION = 1
+MARKETING_VERSION = 0.1
+TARGETED_DEVICE_FAMILY = 1
+SUPPORTED_PLATFORMS = iphoneos
+SWIFT_OBJC_BRIDGING_HEADER = $(SRCROOT)/App/TetoPhoneSpike.h
+LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/target/aarch64-apple-ios/release
+OTHER_LDFLAGS = $(inherited) -lteto_phone_spike -lc++ -framework Metal -framework Foundation -framework Accelerate
+INFOPLIST_KEY_UIFileSharingEnabled = YES
+INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES
+INFOPLIST_KEY_UILaunchScreen_Generation = YES
+INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait
+ENABLE_USER_SCRIPT_SANDBOXING = YES
+ALWAYS_SEARCH_USER_PATHS = NO

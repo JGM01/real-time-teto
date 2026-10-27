@@ -1,0 +1,6 @@
+{
+  "teto-cli": "7999073f936cfb0e32212567e7d9a45ce2d7df1e06f67bbece15731f098d9684",
+  "teto-llm-worker": "61963bc71c7b1db7cfcbdba4a51c50b980ebe47c08f5844dc58ab1eac61d4db9",
+  "rust": "1.88.0",
+  "scope": "Desktop measurement binary identities; native decode/cache/context and Policy V1 desktop limits unchanged by subsequent boundary hardening."
+}

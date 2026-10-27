@@ -1,0 +1,29 @@
+[package]
+name = "teto-llm"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[dependencies]
+teto-llm-protocol = { path = "../teto-llm-protocol" }
+llama-cpp-2 = { version = "=0.1.154", default-features = false }
+llama-cpp-sys-2 = { version = "=0.1.154", default-features = false }
+sha2 = "=0.10.9"
+chacha20poly1305 = "=0.10.1"
+getrandom = "=0.3.4"
+zeroize = "=1.8.2"
+serde = { version = "1", features = ["derive"] }
+ciborium = "=0.2.2"
+fs2 = "=0.4.3"
+tracing = "0.1"
+serde_json = "1"
+serde_bytes = "=0.11.19"
+crossbeam-channel = "=0.5.15"
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+llama-cpp-2 = { version = "=0.1.154", default-features = false, features = ["metal"] }
+
+[dev-dependencies]
+tempfile = "3"
+proptest = "1"

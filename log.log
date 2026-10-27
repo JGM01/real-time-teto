@@ -1,0 +1,21 @@
+jacob@Trollbook-Pro teto % TETO_WHISPER_MODEL="$PWD/models/ggml-small.en.bin" cargo run -p teto-cli
+   Compiling teto-core v0.1.0 (/Users/jacob/Programming/teto/teto-core)
+   Compiling teto-cli v0.1.0 (/Users/jacob/Programming/teto/teto-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.92s
+     Running `target/debug/teto-cli`
+2026-10-26T23:36:15.394902Z  WARN whisper_rs::ggml_logging_hook: ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+2026-10-26T23:36:15.974795Z  INFO teto_core::startup: startup pid=68755 model=/Users/jacob/Programming/teto/models/ggml-small.en.bin model_bytes=487614201 language="en" gpu=true whisper_cpp="1.8.3" core_version="0.1.0" debug=true os="macos" arch="aarch64" whisper_load_ms=207.60008299999998 earshot_open_ms=406.71524999999997 total_ms=614.388459
+Press SPACE to activate, Ctrl-C to quit.
+2026-10-26T23:36:30.366279Z  INFO teto_core::capture: capture id=1 outcome="speech" endpoint="complete" truncated=false audio_ms=6080.0 samples=97280 speech_onset_ms=608.0 speech_last_ms=6176.0 activation_to_ready_ms=116.382 decision_after_ready_ms=7372.622042 capture_stop_ms=14.314250000000001 vad_frames=230 vad_max_ms=1.196584 endpoint_calls=1 endpoint_max_ms=143.850291 state_init_ms=13.674999999999999 decode_ms=278.4735 segments=1 chars=95 total_ms=7796.218791
+transcript: Hey, what's up? Do you happen to know what the best black and white cookie is in New York City?
+Press SPACE to activate, Ctrl-C to quit.
+2026-10-26T23:37:04.487754Z  INFO teto_core::capture: capture id=2 outcome="speech" endpoint="complete" truncated=false audio_ms=22432.0 samples=358912 speech_onset_ms=800.0 speech_last_ms=22720.0 activation_to_ready_ms=69.318625 decision_after_ready_ms=23915.529583000003 capture_stop_ms=5.902125 vad_frames=747 vad_max_ms=1.48525 endpoint_calls=1 endpoint_max_ms=144.39833299999998 state_init_ms=11.033166000000001 decode_ms=499.361125 segments=1 chars=323 total_ms=24501.921917
+transcript: So I got these AirPods and I think they're pretty cool. They don't have any cords and I am a little curious how they are able to communicate with each other and the phone. I'm assuming that's their Bluetooth, but I don't know specifically. I know Apple has a lot of different proprietary protocols like AirPlay and whatnot.
+Press SPACE to activate, Ctrl-C to quit.
+2026-10-26T23:37:34.831059Z  INFO teto_core::capture: capture id=3 outcome="speech" endpoint="complete" truncated=false audio_ms=21280.0 samples=340480 speech_onset_ms=1696.0 speech_last_ms=22464.0 activation_to_ready_ms=69.401292 decision_after_ready_ms=23671.387875 capture_stop_ms=13.725459 vad_frames=739 vad_max_ms=2.312916 endpoint_calls=1 endpoint_max_ms=145.773458 state_init_ms=11.85775 decode_ms=432.218 segments=1 chars=240 total_ms=24199.357916
+transcript: The Mac Mini that I got was almost $900, which is crazy because initially it sold for $500 not too long ago. At least it's not something crazy like the Mac Studio, which I think can go somewhere as high as $12,000, which is incredibly high.
+Press SPACE to activate, Ctrl-C to quit.
+2026-10-26T23:37:49.916426Z  INFO teto_core::capture: capture id=4 outcome="speech" endpoint="complete" truncated=false audio_ms=6688.0 samples=107008 speech_onset_ms=1856.0 speech_last_ms=8032.0 activation_to_ready_ms=76.087541 decision_after_ready_ms=9239.378 capture_stop_ms=13.97875 vad_frames=288 vad_max_ms=7.176542 endpoint_calls=1 endpoint_max_ms=143.06787500000002 state_init_ms=11.315000000000001 decode_ms=183.29524999999998 segments=1 chars=9 total_ms=9524.72325
+transcript: 1,225,375
+Press SPACE to activate, Ctrl-C to quit.
+2026-10-26T23:37:57.402198Z  INFO teto_cli::shutdown: shutdown interrupted=true elapsed_ms=12.863875

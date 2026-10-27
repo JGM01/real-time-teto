@@ -1,0 +1,4 @@
+[workspace]
+members = ["teto-core", "teto-cli", "teto-llm-protocol", "teto-llm"]
+exclude = ["earshot"]
+resolver = "3"

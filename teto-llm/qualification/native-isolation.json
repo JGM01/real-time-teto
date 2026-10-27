@@ -1,0 +1,7 @@
+{
+  "parent_contains_whisper": true,
+  "child_contains_llama": true,
+  "parent_excludes_llama": true,
+  "child_excludes_whisper": true,
+  "child_excludes_earshot": true
+}

@@ -1,0 +1,2214 @@
+{
+  "binary_sha256": {
+    "teto-cli": "0aef17c4187a0aaa5fe28e4c55de207e79aacdfaedcaa18541d15de8b9939a55",
+    "teto-llm-worker": "3e77429ea7a52dda20765366e0e62a0277bf530fb463a06608261f61707261a5"
+  },
+  "kind": "lifecycle",
+  "exit_code": 0,
+  "elapsed_seconds": 1844.200989957957,
+  "peak_parent_child_rss_bytes": 16235659264,
+  "samples": [
+    {
+      "thermal_state_raw": 0,
+      "seconds": 0.1,
+      "parent_child_rss_bytes": 10010624,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 5.1,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 10.1,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 15.2,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 20.2,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 25.2,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 30.3,
+      "parent_child_rss_bytes": 709689344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 35.3,
+      "parent_child_rss_bytes": 16234496000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 40.3,
+      "parent_child_rss_bytes": 16235118592,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 45.4,
+      "parent_child_rss_bytes": 16235495424,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 50.6,
+      "parent_child_rss_bytes": 16235659264,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 55.6,
+      "parent_child_rss_bytes": 16165945344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 60.6,
+      "parent_child_rss_bytes": 16166273024,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 65.7,
+      "parent_child_rss_bytes": 16166846464,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 70.7,
+      "parent_child_rss_bytes": 16166486016,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 75.8,
+      "parent_child_rss_bytes": 16167092224,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 80.8,
+      "parent_child_rss_bytes": 16167239680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 85.8,
+      "parent_child_rss_bytes": 16167239680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 90.9,
+      "parent_child_rss_bytes": 16167321600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 95.9,
+      "parent_child_rss_bytes": 16167321600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 100.9,
+      "parent_child_rss_bytes": 16167321600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 106.0,
+      "parent_child_rss_bytes": 16136192000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 111.0,
+      "parent_child_rss_bytes": 16136192000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 116.1,
+      "parent_child_rss_bytes": 16136192000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 121.1,
+      "parent_child_rss_bytes": 16136208384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 126.1,
+      "parent_child_rss_bytes": 16136208384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 131.2,
+      "parent_child_rss_bytes": 16136208384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 136.2,
+      "parent_child_rss_bytes": 16136208384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 141.2,
+      "parent_child_rss_bytes": 16136208384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 146.3,
+      "parent_child_rss_bytes": 15997583360,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 151.3,
+      "parent_child_rss_bytes": 15997648896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 156.3,
+      "parent_child_rss_bytes": 15997648896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 161.4,
+      "parent_child_rss_bytes": 15997648896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 166.4,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 171.5,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 176.5,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 181.5,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 186.6,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 191.6,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 196.6,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 201.7,
+      "parent_child_rss_bytes": 15991586816,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 206.7,
+      "parent_child_rss_bytes": 15991603200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 211.7,
+      "parent_child_rss_bytes": 15991603200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 216.8,
+      "parent_child_rss_bytes": 15991603200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 221.8,
+      "parent_child_rss_bytes": 15991603200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 226.8,
+      "parent_child_rss_bytes": 15991521280,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 231.9,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 236.9,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 242.0,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 247.0,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 252.0,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 257.1,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 262.1,
+      "parent_child_rss_bytes": 15991504896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 267.1,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 272.2,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 277.2,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 282.3,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 287.3,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 292.3,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 297.4,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 302.4,
+      "parent_child_rss_bytes": 15991734272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 307.5,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 312.5,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 317.5,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 322.6,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 327.6,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 332.7,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 337.7,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 342.7,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 347.8,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 352.8,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 357.8,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 362.9,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 367.9,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 373.0,
+      "parent_child_rss_bytes": 15991717888,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 378.0,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 383.0,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 388.1,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 393.1,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 398.1,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 403.2,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 408.2,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 413.2,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 418.3,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 423.3,
+      "parent_child_rss_bytes": 15991488512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 428.3,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 433.4,
+      "parent_child_rss_bytes": 15991570432,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 438.4,
+      "parent_child_rss_bytes": 15991521280,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 443.5,
+      "parent_child_rss_bytes": 15945744384,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 448.5,
+      "parent_child_rss_bytes": 15964504064,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 453.5,
+      "parent_child_rss_bytes": 15928246272,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 458.6,
+      "parent_child_rss_bytes": 15964225536,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 463.6,
+      "parent_child_rss_bytes": 15964602368,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 468.7,
+      "parent_child_rss_bytes": 15965044736,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 473.7,
+      "parent_child_rss_bytes": 15965044736,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 478.7,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 483.8,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 488.8,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 493.8,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 498.9,
+      "parent_child_rss_bytes": 15965241344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 503.9,
+      "parent_child_rss_bytes": 15965241344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 509.0,
+      "parent_child_rss_bytes": 15965290496,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 514.0,
+      "parent_child_rss_bytes": 15965290496,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 519.0,
+      "parent_child_rss_bytes": 15965388800,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 524.1,
+      "parent_child_rss_bytes": 15965388800,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 529.1,
+      "parent_child_rss_bytes": 15965421568,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 534.1,
+      "parent_child_rss_bytes": 15963373568,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 539.2,
+      "parent_child_rss_bytes": 15964667904,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 544.2,
+      "parent_child_rss_bytes": 15964667904,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 549.2,
+      "parent_child_rss_bytes": 15964700672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 554.3,
+      "parent_child_rss_bytes": 15964700672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 559.3,
+      "parent_child_rss_bytes": 15964782592,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 564.4,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 569.4,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 574.4,
+      "parent_child_rss_bytes": 15964979200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 579.5,
+      "parent_child_rss_bytes": 15964979200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 584.5,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 589.5,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 594.6,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 599.6,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 604.6,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 609.7,
+      "parent_child_rss_bytes": 15965192192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 614.7,
+      "parent_child_rss_bytes": 15964782592,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 619.8,
+      "parent_child_rss_bytes": 15964782592,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 624.8,
+      "parent_child_rss_bytes": 15964766208,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 629.9,
+      "parent_child_rss_bytes": 15964766208,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 634.9,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 640.0,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 645.0,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 650.0,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 655.1,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 660.1,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 665.2,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 670.2,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 675.2,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 680.3,
+      "parent_child_rss_bytes": 15965143040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 685.3,
+      "parent_child_rss_bytes": 15967895552,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 690.4,
+      "parent_child_rss_bytes": 15968124928,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 695.4,
+      "parent_child_rss_bytes": 15967207424,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 700.4,
+      "parent_child_rss_bytes": 15967780864,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 705.5,
+      "parent_child_rss_bytes": 15968305152,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 710.5,
+      "parent_child_rss_bytes": 15968714752,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 715.5,
+      "parent_child_rss_bytes": 15968960512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 720.6,
+      "parent_child_rss_bytes": 15968649216,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 725.6,
+      "parent_child_rss_bytes": 15968632832,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 730.7,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 735.7,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 740.8,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 745.8,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 750.8,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 755.9,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 760.9,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 765.9,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 771.0,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 776.0,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 781.1,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 786.1,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 791.1,
+      "parent_child_rss_bytes": 15968665600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 796.2,
+      "parent_child_rss_bytes": 15968714752,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 801.2,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 806.2,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 811.3,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 816.3,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 821.3,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 826.4,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 831.4,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 836.5,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 841.5,
+      "parent_child_rss_bytes": 15968796672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 846.5,
+      "parent_child_rss_bytes": 15968862208,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 851.6,
+      "parent_child_rss_bytes": 15968862208,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 856.6,
+      "parent_child_rss_bytes": 15968403456,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 861.6,
+      "parent_child_rss_bytes": 15968403456,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 866.7,
+      "parent_child_rss_bytes": 15968485376,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 871.7,
+      "parent_child_rss_bytes": 15968485376,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 876.7,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 881.8,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 886.8,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 891.9,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 896.9,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 901.9,
+      "parent_child_rss_bytes": 15968567296,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 907.0,
+      "parent_child_rss_bytes": 15968567296,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 912.0,
+      "parent_child_rss_bytes": 15968583680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 917.0,
+      "parent_child_rss_bytes": 15968583680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 922.1,
+      "parent_child_rss_bytes": 15968583680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 927.1,
+      "parent_child_rss_bytes": 15968583680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 932.1,
+      "parent_child_rss_bytes": 15968354304,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 937.2,
+      "parent_child_rss_bytes": 15968354304,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 942.2,
+      "parent_child_rss_bytes": 15968354304,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 947.3,
+      "parent_child_rss_bytes": 15968354304,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 952.3,
+      "parent_child_rss_bytes": 15968354304,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 957.3,
+      "parent_child_rss_bytes": 15968436224,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 962.4,
+      "parent_child_rss_bytes": 15968436224,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 967.4,
+      "parent_child_rss_bytes": 15968468992,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 972.4,
+      "parent_child_rss_bytes": 15968468992,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 977.5,
+      "parent_child_rss_bytes": 15967191040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 982.5,
+      "parent_child_rss_bytes": 15968288768,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 987.6,
+      "parent_child_rss_bytes": 15968288768,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 992.6,
+      "parent_child_rss_bytes": 15968321536,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 997.6,
+      "parent_child_rss_bytes": 15968321536,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1002.7,
+      "parent_child_rss_bytes": 15968321536,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1007.7,
+      "parent_child_rss_bytes": 15968321536,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1012.7,
+      "parent_child_rss_bytes": 15968337920,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1017.8,
+      "parent_child_rss_bytes": 15968337920,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1022.8,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1027.8,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1032.9,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1037.9,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1042.9,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1048.0,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1053.0,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1058.1,
+      "parent_child_rss_bytes": 15968501760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1063.1,
+      "parent_child_rss_bytes": 15968518144,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1068.1,
+      "parent_child_rss_bytes": 15968518144,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1073.2,
+      "parent_child_rss_bytes": 15966453760,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1078.2,
+      "parent_child_rss_bytes": 15965077504,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1083.3,
+      "parent_child_rss_bytes": 15966191616,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1088.3,
+      "parent_child_rss_bytes": 15958016000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1093.3,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1098.4,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1103.4,
+      "parent_child_rss_bytes": 15963701248,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1108.4,
+      "parent_child_rss_bytes": 15960621056,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1113.5,
+      "parent_child_rss_bytes": 15964864512,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1118.5,
+      "parent_child_rss_bytes": 15965241344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1123.6,
+      "parent_child_rss_bytes": 15965241344,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1128.6,
+      "parent_child_rss_bytes": 15965585408,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1133.7,
+      "parent_child_rss_bytes": 15965585408,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1138.7,
+      "parent_child_rss_bytes": 15965601792,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1143.7,
+      "parent_child_rss_bytes": 15965601792,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1148.8,
+      "parent_child_rss_bytes": 15965650944,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1153.8,
+      "parent_child_rss_bytes": 15965650944,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1158.8,
+      "parent_child_rss_bytes": 15965683712,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1163.9,
+      "parent_child_rss_bytes": 15965683712,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1168.9,
+      "parent_child_rss_bytes": 15965683712,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1173.9,
+      "parent_child_rss_bytes": 15965962240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1179.0,
+      "parent_child_rss_bytes": 15965962240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1184.0,
+      "parent_child_rss_bytes": 15965995008,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1189.1,
+      "parent_child_rss_bytes": 15965995008,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1194.1,
+      "parent_child_rss_bytes": 15965995008,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1199.1,
+      "parent_child_rss_bytes": 15965995008,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1204.2,
+      "parent_child_rss_bytes": 15966011392,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1209.2,
+      "parent_child_rss_bytes": 15966011392,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1214.2,
+      "parent_child_rss_bytes": 15966011392,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1219.3,
+      "parent_child_rss_bytes": 15966011392,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1224.3,
+      "parent_child_rss_bytes": 15966011392,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1229.3,
+      "parent_child_rss_bytes": 15966060544,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1234.4,
+      "parent_child_rss_bytes": 15966060544,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1239.4,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1244.4,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1249.5,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1254.5,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1259.5,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1264.6,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1269.6,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1274.7,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1279.7,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1284.7,
+      "parent_child_rss_bytes": 15966126080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1289.8,
+      "parent_child_rss_bytes": 542244864,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1294.8,
+      "parent_child_rss_bytes": 542375936,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1299.8,
+      "parent_child_rss_bytes": 542375936,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1304.9,
+      "parent_child_rss_bytes": 542375936,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1309.9,
+      "parent_child_rss_bytes": 542375936,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1314.9,
+      "parent_child_rss_bytes": 542375936,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1320.0,
+      "parent_child_rss_bytes": 627408896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1325.0,
+      "parent_child_rss_bytes": 16067543040,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1330.0,
+      "parent_child_rss_bytes": 16067788800,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1335.1,
+      "parent_child_rss_bytes": 16068067328,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1340.1,
+      "parent_child_rss_bytes": 16068378624,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1345.2,
+      "parent_child_rss_bytes": 16068608000,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1350.2,
+      "parent_child_rss_bytes": 16068820992,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1355.2,
+      "parent_child_rss_bytes": 16069099520,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1360.3,
+      "parent_child_rss_bytes": 16069148672,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1365.3,
+      "parent_child_rss_bytes": 16069279744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1370.3,
+      "parent_child_rss_bytes": 16069279744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1375.4,
+      "parent_child_rss_bytes": 16059088896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1380.4,
+      "parent_child_rss_bytes": 16059088896,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1385.4,
+      "parent_child_rss_bytes": 16000008192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1390.5,
+      "parent_child_rss_bytes": 16000008192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1395.5,
+      "parent_child_rss_bytes": 16000008192,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1400.6,
+      "parent_child_rss_bytes": 16000024576,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1405.6,
+      "parent_child_rss_bytes": 16000024576,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1410.6,
+      "parent_child_rss_bytes": 16000122880,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1415.7,
+      "parent_child_rss_bytes": 16000122880,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1420.7,
+      "parent_child_rss_bytes": 16000155648,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1425.7,
+      "parent_child_rss_bytes": 16000155648,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1430.8,
+      "parent_child_rss_bytes": 16000155648,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1435.8,
+      "parent_child_rss_bytes": 16000155648,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1440.8,
+      "parent_child_rss_bytes": 16000073728,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1445.9,
+      "parent_child_rss_bytes": 15990554624,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1450.9,
+      "parent_child_rss_bytes": 15990554624,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1456.0,
+      "parent_child_rss_bytes": 15990702080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1461.0,
+      "parent_child_rss_bytes": 15990702080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1466.0,
+      "parent_child_rss_bytes": 15990702080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1471.1,
+      "parent_child_rss_bytes": 15990702080,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1476.1,
+      "parent_child_rss_bytes": 15990734848,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1481.1,
+      "parent_child_rss_bytes": 15990734848,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1486.2,
+      "parent_child_rss_bytes": 15990734848,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1491.2,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1496.3,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1501.3,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1506.3,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1511.4,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1516.4,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1521.5,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1526.5,
+      "parent_child_rss_bytes": 15990751232,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1531.5,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1536.6,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1541.6,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1546.7,
+      "parent_child_rss_bytes": 15989473280,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1551.7,
+      "parent_child_rss_bytes": 15989473280,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1556.7,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1561.8,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1566.8,
+      "parent_child_rss_bytes": 15990538240,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1571.8,
+      "parent_child_rss_bytes": 15990636544,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1576.9,
+      "parent_child_rss_bytes": 15990669312,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1581.9,
+      "parent_child_rss_bytes": 15990669312,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1587.0,
+      "parent_child_rss_bytes": 15990669312,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1592.0,
+      "parent_child_rss_bytes": 15990669312,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1597.1,
+      "parent_child_rss_bytes": 15989506048,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1602.1,
+      "parent_child_rss_bytes": 15990620160,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1607.2,
+      "parent_child_rss_bytes": 15990521856,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1612.3,
+      "parent_child_rss_bytes": 15990865920,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1617.3,
+      "parent_child_rss_bytes": 15989571584,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1622.4,
+      "parent_child_rss_bytes": 15990636544,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1627.4,
+      "parent_child_rss_bytes": 15990636544,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1632.5,
+      "parent_child_rss_bytes": 15990767616,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1637.6,
+      "parent_child_rss_bytes": 15990865920,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1642.6,
+      "parent_child_rss_bytes": 15991078912,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1647.8,
+      "parent_child_rss_bytes": 15991193600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1652.8,
+      "parent_child_rss_bytes": 15991111680,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1657.9,
+      "parent_child_rss_bytes": 15991160832,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1662.9,
+      "parent_child_rss_bytes": 15991160832,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1667.9,
+      "parent_child_rss_bytes": 15991193600,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1673.0,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1678.0,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1683.0,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1688.1,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1693.1,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1698.2,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1703.2,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1708.2,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1713.3,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 1,
+      "seconds": 1718.3,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1723.3,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1728.4,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1733.4,
+      "parent_child_rss_bytes": 15991455744,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1738.4,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1743.5,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1748.5,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1753.6,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1758.6,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1763.6,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1768.7,
+      "parent_child_rss_bytes": 15991472128,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1773.7,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1778.7,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1783.8,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1788.8,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1793.8,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1798.9,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1803.9,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1808.9,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1814.0,
+      "parent_child_rss_bytes": 15991537664,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1819.0,
+      "parent_child_rss_bytes": 15991603200,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1824.0,
+      "parent_child_rss_bytes": 15991701504,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1829.1,
+      "parent_child_rss_bytes": 15991701504,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1834.1,
+      "parent_child_rss_bytes": 15991701504,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    },
+    {
+      "thermal_state_raw": 0,
+      "seconds": 1839.2,
+      "parent_child_rss_bytes": 15991701504,
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded"
+    }
+  ],
+  "journal_directory": "/var/folders/v6/yskw3vpn29q8yc135gm3nq1m0000gn/T/teto-qualification-gwv_7mbh/journal",
+  "journal": "enabled",
+  "audio": "pending: real TTS required",
+  "device": "Mac15,7",
+  "os": "27.0.1",
+  "memory_measurement": "summed process RSS sampled every five seconds; shared pages may be counted twice"
+}

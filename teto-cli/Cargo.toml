@@ -1,0 +1,30 @@
+[package]
+name = "teto-cli"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[[bin]]
+name = "teto-cli"
+path = "src/main.rs"
+
+[dependencies]
+teto-core = { path = "../teto-core" }
+crossterm = "=0.29.0"
+ctrlc = "=3.5.2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+teto-llm-protocol = { path = "../teto-llm-protocol" }
+zeroize = "=1.8.2"
+sha2 = "=0.10.9"
+getrandom = "=0.3.4"
+serde_json = "1"
+rustix = { version = "=1.1.4", features = ["event", "stdio"] }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+security-framework = "=3.7.0"
+core-foundation = "=0.10.1"
+
+[dev-dependencies]
+tempfile = "3"

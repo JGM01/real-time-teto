@@ -1,0 +1,26 @@
+[package]
+name = "teto-core"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+earshot = { path = "../earshot" }
+thiserror = "2"
+tracing = "0.1"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+whisper-rs = { version = "=0.16.0", features = ["metal", "tracing_backend"] }
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+whisper-rs = { version = "=0.16.0", features = ["tracing_backend"] }
+
+[dev-dependencies]
+earshot = { path = "../earshot", features = ["tooling"] }
+hound = "=3.5.1"
+proptest = "1"
+teto-llm-protocol = { path = "../teto-llm-protocol" }

@@ -1,0 +1,14 @@
+[package]
+name = "teto-phone-spike"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+teto-llm = { path = "../teto-llm" }

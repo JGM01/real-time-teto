@@ -1,0 +1,174 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000010 /* App/TetoPhoneSpikeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000008 /* App/TetoPhoneSpikeApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000008 /* App/TetoPhoneSpikeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/TetoPhoneSpikeApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000009 /* App/TetoPhoneSpike.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = App/TetoPhoneSpike.h; sourceTree = "<group>"; };
+		A0000000000000000000000A /* TetoPhoneSpike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetoPhoneSpike.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000011 /* App/Spike.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App/Spike.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A0000000000000000000000D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		16B5B5E730904D6D00F5EA92 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000011 /* App/Spike.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		A00000000000000000000003 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000008 /* App/TetoPhoneSpikeApp.swift */,
+				A00000000000000000000009 /* App/TetoPhoneSpike.h */,
+				A00000000000000000000004 /* Products */,
+				16B5B5E730904D6D00F5EA92 /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A0000000000000000000000A /* TetoPhoneSpike.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000005 /* TetoPhoneSpike */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0000000000000000000000B /* Build configuration list for PBXNativeTarget "TetoPhoneSpike" */;
+			buildPhases = (
+				A0000000000000000000000C /* Sources */,
+				A0000000000000000000000D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TetoPhoneSpike;
+			productName = TetoPhoneSpike;
+			productReference = A0000000000000000000000A /* TetoPhoneSpike.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2700;
+			};
+			buildConfigurationList = A00000000000000000000002 /* Build configuration list for PBXProject "TetoPhoneSpike" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000003;
+			productRefGroup = A00000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00000000000000000000005 /* TetoPhoneSpike */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A0000000000000000000000C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000010 /* App/TetoPhoneSpikeApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00000000000000000000007 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A0000000000000000000000E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00000000000000000000011 /* App/Spike.xcconfig */;
+			buildSettings = {
+				DEVELOPMENT_TEAM = JNVX4T2527;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A0000000000000000000000F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00000000000000000000011 /* App/Spike.xcconfig */;
+			buildSettings = {
+				DEVELOPMENT_TEAM = JNVX4T2527;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000002 /* Build configuration list for PBXProject "TetoPhoneSpike" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000006 /* Debug */,
+				A00000000000000000000007 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0000000000000000000000B /* Build configuration list for PBXNativeTarget "TetoPhoneSpike" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0000000000000000000000E /* Debug */,
+				A0000000000000000000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}

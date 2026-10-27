@@ -1,0 +1,7 @@
+{
+  "text_followup_and_eof": true,
+  "ctrl_c_during_output": true,
+  "broken_stdout_finalizes_failed": true,
+  "active_child_crash_is_service_failure": true,
+  "encrypted_journal_written": true
+}
