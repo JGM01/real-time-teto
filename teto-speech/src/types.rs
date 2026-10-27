@@ -2,18 +2,12 @@ use std::{fmt, num::NonZeroU64, sync::Arc};
 
 use crate::error::{Result, SpeechError};
 
-/// Maximum input Unicode scalar values in one clause.
-pub const MAX_INPUT_SCALARS: usize = 240;
-/// Maximum phones in one clause.
-pub const MAX_PHONES: usize = 512;
-/// Maximum words in one clause.
-pub const MAX_WORDS: usize = 64;
-/// Maximum syllables in one clause.
-pub const MAX_SYLLABLES: usize = 256;
-/// Maximum breaks in one clause.
-pub const MAX_BREAKS: usize = 64;
-/// Maximum clause index.
-pub const MAX_CLAUSES: u32 = 512;
+pub use crate::limits::*;
+pub use crate::plan::{PlannedUnit, ProsodyPlan, Realization, RealizationPart, UnitPlan};
+pub use crate::sequence::PhonemeSequence;
+pub use crate::voicebank::manifest::{
+    Alias, OtoEntry, PitchGroup, Source, SourceId, VoicebankManifest,
+};
 
 /// Identity of one speech item across every stage.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -50,12 +44,19 @@ pub struct SpeechInput {
 
 impl SpeechInput {
     /// Create an input from normalized clause text.
-    pub fn new(key: SpeechKey, text: impl Into<Arc<str>>) -> Result<Self> {
-        let text = text.into();
-        if text.is_empty() || text.chars().count() > MAX_INPUT_SCALARS || text.contains('\0') {
+    pub fn new(key: SpeechKey, text: impl AsRef<str>) -> Result<Self> {
+        let text = text.as_ref();
+        SpeechKey::new(key.epoch, key.turn.get(), key.clause)?;
+        if text.trim().is_empty()
+            || text.chars().count() > MAX_INPUT_SCALARS
+            || text.chars().any(char::is_control)
+        {
             return Err(SpeechError::InvalidInput);
         }
-        Ok(Self { key, text })
+        Ok(Self {
+            key,
+            text: Arc::from(text),
+        })
     }
 
     /// Return the key.
@@ -83,12 +84,21 @@ impl fmt::Debug for SpeechInput {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ByteSpan {
     /// First byte.
-    pub start: u32,
+    pub(crate) start: u32,
     /// One past the last byte.
-    pub end: u32,
+    pub(crate) end: u32,
 }
 
 impl ByteSpan {
+    pub fn start(self) -> u32 {
+        self.start
+    }
+    pub fn end(self) -> u32 {
+        self.end
+    }
+    pub fn range(self) -> std::ops::Range<usize> {
+        self.start as usize..self.end as usize
+    }
     /// Create a span.
     pub fn new(start: u32, end: u32) -> Result<Self> {
         if start > end {
@@ -102,12 +112,21 @@ impl ByteSpan {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct IndexSpan {
     /// First index.
-    pub start: u32,
+    pub(crate) start: u32,
     /// One past the last index.
-    pub end: u32,
+    pub(crate) end: u32,
 }
 
 impl IndexSpan {
+    pub fn start(self) -> u32 {
+        self.start
+    }
+    pub fn end(self) -> u32 {
+        self.end
+    }
+    pub fn range(self) -> std::ops::Range<usize> {
+        self.start as usize..self.end as usize
+    }
     /// Create a span.
     pub fn new(start: u32, end: u32) -> Result<Self> {
         if start > end {
@@ -183,8 +202,8 @@ pub enum Stress {
 /// One English phone with optional stress.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EnglishPhone {
-    pub phone: ArpaPhone,
-    pub stress: Option<Stress>,
+    pub(crate) phone: ArpaPhone,
+    pub(crate) stress: Option<Stress>,
 }
 
 /// One syllable and its phone spans.
@@ -253,55 +272,6 @@ pub struct TextBreak {
     pub kind: BreakKind,
 }
 
-/// English phones with word, syllable and break structure.
-#[derive(Debug, Clone)]
-pub struct PhonemeSequence {
-    pub input: SpeechInput,
-    pub phones: Box<[EnglishPhone]>,
-    pub words: Box<[LexicalWord]>,
-    pub syllables: Box<[Syllable]>,
-    pub breaks: Box<[TextBreak]>,
-    pub frontend_revision: [u8; 32],
-}
-
-impl PhonemeSequence {
-    /// Validate all spans and bounds.
-    pub fn validate(&self) -> Result<()> {
-        if self.phones.len() > MAX_PHONES
-            || self.words.len() > MAX_WORDS
-            || self.syllables.len() > MAX_SYLLABLES
-            || self.breaks.len() > MAX_BREAKS
-        {
-            return Err(SpeechError::Bounds);
-        }
-        let phones = self.phones.len() as u32;
-        let syllables = self.syllables.len() as u32;
-        for word in &self.words {
-            check_span(word.phones, phones)?;
-            check_span(word.syllables, syllables)?;
-        }
-        for syllable in &self.syllables {
-            check_span(syllable.phones, phones)?;
-            check_span(syllable.onset, phones)?;
-            check_span(syllable.nucleus, phones)?;
-            check_span(syllable.coda, phones)?;
-        }
-        for item in &self.breaks {
-            if item.after_phone >= phones {
-                return Err(SpeechError::Bounds);
-            }
-        }
-        Ok(())
-    }
-}
-
-fn check_span(span: IndexSpan, len: u32) -> Result<()> {
-    if span.end > len {
-        return Err(SpeechError::Bounds);
-    }
-    Ok(())
-}
-
 /// Voicebank alias inventory identity.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AliasInventoryId(pub [u8; 32]);
@@ -318,38 +288,6 @@ pub struct PitchId(pub u32);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UnitId(pub u32);
 
-/// One alias row in a voicebank.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Alias {
-    pub id: AliasId,
-    pub text: Box<str>,
-    pub phones: Box<[ArpaPhone]>,
-    pub pitch: Option<PitchId>,
-}
-
-/// One OTO timing row.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct OtoEntry {
-    pub alias: AliasId,
-    pub source: u32,
-    pub offset_us: u64,
-    pub preutterance_us: u64,
-    pub overlap_us: u64,
-    pub cutoff_us: i64,
-    pub consonant_velocity: Option<f32>,
-    pub pitch: Option<PitchId>,
-}
-
-/// A versioned imported voicebank.
-#[derive(Debug, Clone)]
-pub struct VoicebankManifest {
-    pub revision: [u8; 32],
-    pub inventory: AliasInventoryId,
-    pub aliases: Box<[Alias]>,
-    pub oto: Box<[OtoEntry]>,
-    pub pitches: Box<[PitchId]>,
-}
-
 /// One phone timing on the target timeline.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PhoneTiming {
@@ -364,35 +302,6 @@ pub struct ProsodyPoint {
     pub at_us: u64,
     pub f0_millihz: Option<u32>,
     pub gain_q16: u32,
-}
-
-/// Duration and prosody for one clause.
-#[derive(Debug, Clone)]
-pub struct ProsodyPlan {
-    pub key: SpeechKey,
-    pub duration_us: u64,
-    pub timings: Box<[PhoneTiming]>,
-    pub contour: Box<[ProsodyPoint]>,
-}
-
-/// One selected voicebank unit.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PlannedUnit {
-    pub unit: UnitId,
-    pub alias: AliasId,
-    pub target_phones: IndexSpan,
-    pub start_us: u64,
-    pub end_us: u64,
-    pub pitch: Option<PitchId>,
-}
-
-/// One selected unit plan.
-#[derive(Debug, Clone)]
-pub struct UnitPlan {
-    pub key: SpeechKey,
-    pub bank_revision: [u8; 32],
-    pub units: Box<[PlannedUnit]>,
-    pub prosody: ProsodyPlan,
 }
 
 /// Device sample format.
@@ -431,61 +340,4 @@ pub struct PlaybackCompletion {
     pub key: SpeechKey,
     pub last_device_frame_exclusive: u64,
     pub evidence: CompletionEvidence,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn key() -> SpeechKey {
-        SpeechKey::new(0, 1, 0).unwrap()
-    }
-
-    #[test]
-    fn speech_input_rejects_empty_and_oversized() {
-        assert!(SpeechInput::new(key(), "").is_err());
-        let long = "a".repeat(MAX_INPUT_SCALARS + 1);
-        assert!(SpeechInput::new(key(), long).is_err());
-        assert!(SpeechInput::new(key(), "hello").is_ok());
-    }
-
-    #[test]
-    fn speech_key_rejects_zero_turn() {
-        assert!(SpeechKey::new(0, 0, 0).is_err());
-        assert!(SpeechKey::new(0, 1, MAX_CLAUSES).is_err());
-    }
-
-    #[test]
-    fn spans_reject_reversed_bounds() {
-        assert!(IndexSpan::new(2, 1).is_err());
-        assert!(ByteSpan::new(2, 1).is_err());
-        assert!(IndexSpan::new(1, 1).unwrap().is_empty());
-    }
-
-    #[test]
-    fn phoneme_sequence_rejects_out_of_range_spans() {
-        let input = SpeechInput::new(key(), "hello").unwrap();
-        let sequence = PhonemeSequence {
-            input,
-            phones: Box::new([]),
-            words: Box::new([LexicalWord {
-                text: ByteSpan::new(0, 5).unwrap(),
-                phones: IndexSpan::new(0, 1).unwrap(),
-                syllables: IndexSpan::new(0, 0).unwrap(),
-                part_of_speech: PartOfSpeech::Unknown,
-                source: PronunciationSource::Lexicon,
-                status: PronunciationStatus::Selected,
-            }]),
-            syllables: Box::new([]),
-            breaks: Box::new([]),
-            frontend_revision: [0; 32],
-        };
-        assert!(matches!(sequence.validate(), Err(SpeechError::Bounds)));
-    }
-
-    #[test]
-    fn input_debug_redacts_text() {
-        let input = SpeechInput::new(key(), "secret words").unwrap();
-        assert!(!format!("{input:?}").contains("secret"));
-    }
 }

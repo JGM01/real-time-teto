@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 path = "src/lib.rs"
 
 [dependencies]
-earshot = { path = "../earshot" }
+earshot = { workspace = true }
 thiserror = "2"
 tracing = "0.1"
 
@@ -21,7 +21,7 @@ whisper-rs = { version = "=0.16.0", features = ["metal", "tracing_backend"] }
 whisper-rs = { version = "=0.16.0", features = ["tracing_backend"] }
 
 [dev-dependencies]
-earshot = { path = "../earshot", features = ["tooling"] }
+earshot = { workspace = true, features = ["tooling"] }
 hound = "=3.5.1"
 proptest = "1"
 teto-llm-protocol = { path = "../teto-llm-protocol" }

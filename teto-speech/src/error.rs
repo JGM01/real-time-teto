@@ -1,6 +1,16 @@
 /// A bounded speech failure.
 #[derive(Debug, thiserror::Error)]
 pub enum SpeechError {
+    #[error("unsupported speech text at bytes {span:?}")]
+    UnsupportedText { span: crate::types::ByteSpan },
+    #[error("invalid lexical data at line {line}")]
+    LexiconInvalid { line: u32 },
+    #[error("invalid speech span")]
+    InvalidSpan,
+    #[error("invalid OTO timing at line {line}")]
+    OtoTiming { line: u32 },
+    #[error("speech asset I/O failed: {0}")]
+    Io(#[from] std::io::Error),
     /// The input is empty, malformed or out of range.
     #[error("invalid speech input")]
     InvalidInput,
@@ -24,7 +34,11 @@ pub enum SpeechError {
     VoicebankInvalid,
     /// No unit can render a target phone span.
     #[error("missing voicebank unit")]
-    MissingUnit,
+    MissingUnit {
+        phones: crate::types::IndexSpan,
+        pitch: crate::types::PitchId,
+        probes: u32,
+    },
     /// Rendering failed.
     #[error("render failed")]
     Render,

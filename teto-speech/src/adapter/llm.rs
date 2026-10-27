@@ -9,5 +9,5 @@ use crate::{
 /// Build a speech input from one clause.
 pub fn from_clause(clause: &Clause, epoch: u64) -> Result<SpeechInput> {
     let key = SpeechKey::new(epoch, clause.turn().get(), clause.index().get())?;
-    SpeechInput::new(key, clause.text().to_owned())
+    SpeechInput::new(key, clause.text())
 }

@@ -1,0 +1,16 @@
+[package]
+name = "earshot-audit"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+license = "MIT OR Apache-2.0"
+description = "Qualification and replay harness for Earshot"
+
+[dependencies]
+earshot = { workspace = true, features = ["tooling"] }
+crossbeam-channel = "0.5"
+thiserror = "2"
+
+[dev-dependencies]
+hound = "=3.5.1"

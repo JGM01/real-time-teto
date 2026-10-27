@@ -4,7 +4,7 @@ export RUSTC := $(TOOLCHAIN_BIN)rustc
 export RUSTDOC := $(TOOLCHAIN_BIN)rustdoc
 CARGO := $(TOOLCHAIN_BIN)cargo
 
-.PHONY: fmt clippy test doc build build-release check comments invariants policy-check qualify phone-build
+.PHONY: fmt clippy test doc build build-release check comments invariants policy-check qualify phone-build speech-qualify speech-fuzz
 fmt:
 	$(CARGO) fmt --all -- --check
 format:
@@ -16,6 +16,9 @@ test:
 	$(CARGO) test --workspace $(TEST_FILTER)
 test-features:
 	$(CARGO) test -p teto-speech --features llm-adapter
+	$(CARGO) test -p teto-speech --features cmudict,g2p-gru,voicebank-wav,llm-adapter
+	$(CARGO) clippy -p teto-speech --all-targets --features cmudict,g2p-gru,voicebank-wav,llm-adapter -- -D warnings -D clippy::too_many_lines
+	RUSTDOCFLAGS="-D warnings" $(CARGO) doc -p teto-speech --features cmudict,g2p-gru,voicebank-wav,llm-adapter --no-deps
 doc:
 	RUSTDOCFLAGS="-D warnings" $(CARGO) doc --workspace --no-deps
 build:
@@ -49,3 +52,10 @@ phone-clean-native:
 	$(CARGO) clean --manifest-path phone-spike/Cargo.toml -p llama-cpp-sys-2 --release --target aarch64-apple-ios
 phone-link: phone-build
 	xcrun swiftc -parse-as-library -sdk "$$(xcrun --sdk iphoneos --show-sdk-path)" -target arm64-apple-ios17.0 -module-cache-path /tmp/teto-swift-module-cache -import-objc-header phone-spike/App/TetoPhoneSpike.h phone-spike/App/TetoPhoneSpikeApp.swift -L phone-spike/target/aarch64-apple-ios/release -lteto_phone_spike -lc++ -framework Metal -framework Foundation -framework Accelerate -o phone-spike/target/TetoPhoneSpike
+
+speech-qualify:
+	python3 tools/qualify_speech.py --bank voicebanks/TETO-English-150401.zip
+speech-fuzz:
+	mkdir -p target/p3/fuzz-corpus/oto target/p3/fuzz-corpus/alias_planner
+	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run oto target/p3/fuzz-corpus/oto fuzz/seeds/oto -- -runs=10000 -max_len=4096 -timeout=5
+	PATH="$(CURDIR)/target/p3/tools/bin:$(PATH)" RUSTC="$$(rustup which --toolchain nightly rustc)" RUSTDOC="$$(rustup which --toolchain nightly rustdoc)" rustup run nightly cargo fuzz run alias_planner target/p3/fuzz-corpus/alias_planner fuzz/seeds/alias_planner -- -runs=10000 -max_len=4096 -timeout=5

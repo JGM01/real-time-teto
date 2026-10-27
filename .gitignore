@@ -1,11 +1,96 @@
-**/target/
-models/*.gguf
-models/*.bin
-models/*.partial
-.DS_Store
-*.xcuserstate
-**/xcuserdata/
+# Rust build output across the root and nested workspaces.
+target/
+*.rs.bk
+
+# Native build output and compiler databases.
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.o
+*.obj
+*.a
+*.lib
+*.rlib
+*.rmeta
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.dSYM/
+
+# .NET tooling output. Keep Rust src/bin/ directories visible.
+/tools/**/bin/
+/tools/**/obj/
+
+# Python environments, bytecode, and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.tox/
+.nox/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Coverage, profiling, and generated fuzz corpora.
+.coverage
+.coverage.*
+htmlcov/
+*.profraw
+*.profdata
+perf.data
+perf.data.*
+flamegraph.svg
+**/fuzz/corpus/
+**/fuzz/artifacts/
+**/fuzz/coverage/
+
+# Caller-supplied model weights and partial downloads.
+# Bundled assets and test fixtures remain visible outside models/.
+**/models/**/*.gguf
+**/models/**/*.bin
+**/models/**/*.onnx
+**/models/**/*.npz
+**/models/**/*.safetensors
+**/models/**/*.pt
+**/models/**/*.pth
+**/models/**/*.partial
 
 # User-supplied voicebanks. Do not redistribute.
-voicebanks/*
-!voicebanks/README.md
+/voicebanks/*
+!/voicebanks/README.md
+
+# macOS and Xcode user state.
+.DS_Store
+.AppleDouble/
+.LSOverride
+._*
+.Spotlight-V100/
+.Trashes/
+.fseventsd/
+.TemporaryItems/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Windows and Linux desktop metadata.
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.directory
+.Trash-*/
+
+# Editor recovery files. Keep shared editor configuration visible.
+*.swp
+*.swo
+*~

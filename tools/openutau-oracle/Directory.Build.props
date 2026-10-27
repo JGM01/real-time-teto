@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>../../target/p3/dotnet/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>../../target/p3/dotnet/bin/</BaseOutputPath>
+  </PropertyGroup>
+</Project>

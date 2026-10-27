@@ -8,8 +8,9 @@ edition = "2024"
 cargo-fuzz = true
 
 [dependencies]
+teto-speech = {path="../teto-speech",features=["cmudict","voicebank-wav","testing"]}
 libfuzzer-sys = "0.4"
-teto-llm = { path = "..", features = ["testing"] }
+teto-llm = { path = "../teto-llm", features = ["testing"] }
 teto-llm-protocol = { path = "../teto-llm-protocol" }
 
 [[bin]]
@@ -21,5 +22,17 @@ doc = false
 [[bin]]
 name = "frame"
 path = "fuzz_targets/frame.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "oto"
+path = "fuzz_targets/oto.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "alias_planner"
+path = "fuzz_targets/alias_planner.rs"
 test = false
 doc = false

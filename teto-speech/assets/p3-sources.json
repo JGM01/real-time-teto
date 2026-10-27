@@ -1,0 +1,107 @@
+{
+  "cmudict": {
+    "repository": "cmusphinx/cmudict",
+    "revision": "74790861f652b15e4ac49015a90074ad62a27690",
+    "files": [
+      {
+        "path": "cmudict.dict",
+        "sha256": "81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22",
+        "bytes": 3618488
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "bd4ce8e44170a5f9f481310ca85c51de3c4f851a65e679b40e603b143bd3542a",
+        "bytes": 1754
+      }
+    ]
+  },
+  "g2p": {
+    "repository": "Kyubyong/g2p",
+    "revision": "c6439c274c42b9724a7fee1dc07ca6a4c68a0538",
+    "files": [
+      {
+        "path": "g2p_en/g2p.py",
+        "sha256": "6e2d3a76039a5696648ca258d1b65a51616ddbf43239baa4e5db6452e4151b3e",
+        "bytes": 7595
+      },
+      {
+        "path": "g2p_en/checkpoint20.npz",
+        "sha256": "b8af35e4596d8dd5836dfd3fe9b2ba4f97b9c311efe8879544cbcfcbd566d8c6",
+        "bytes": 3342298
+      },
+      {
+        "path": "LICENSE.txt",
+        "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+        "bytes": 11357
+      }
+    ]
+  },
+  "OpenUtau": {
+    "repository": "openutau/OpenUtau",
+    "revision": "b7c35b90941695074ead1063037099f81cd588e0",
+    "files": [
+      {
+        "path": "OpenUtau.Plugin.Builtin/EnXSampaPhonemizer.cs",
+        "sha256": "cfb782e3a05548657c6cc383ecc666e9ac848a70851d1b7aa4608e0bc99b73d2",
+        "bytes": 46328
+      },
+      {
+        "path": "OpenUtau.Plugin.Builtin/SyllableBasedPhonemizer.cs",
+        "sha256": "67b5aec22ae7875a0761e1418934e5cee520af06ffc08046d0b89c3535d28498",
+        "bytes": 118093
+      },
+      {
+        "path": "LICENSE.txt",
+        "sha256": "cdef6370f9e705c804fd1acbe1b1c65027c13186c466b51ccb0323d5607cc9c4",
+        "bytes": 1074
+      }
+    ]
+  },
+  "corpora": {
+    "g2p-words.txt": "b2b86db6e1984819e080d6143a2f2eb4ee5a9828fd8b65bad54ac3a5c4ae005c",
+    "coverage-1050.txt": "857e5f426695c1fd3e2a5b6b426277edfb548a69b495bb6c6cf8df7e1d03e53c",
+    "parity-50.txt": "9bc05693799187685643f99fbff5ad2c1752611f71bfa2ecfe5946c8c09a6516"
+  },
+  "allowed_coverage_repairs": {
+    "2": [
+      [
+        12,
+        13
+      ],
+      [
+        13,
+        14
+      ]
+    ],
+    "7": [
+      [
+        17,
+        18
+      ]
+    ],
+    "12": [
+      [
+        21,
+        22
+      ]
+    ],
+    "23": [
+      [
+        5,
+        6
+      ]
+    ],
+    "35": [
+      [
+        17,
+        18
+      ]
+    ],
+    "41": [
+      [
+        12,
+        13
+      ]
+    ]
+  }
+}
